@@ -428,6 +428,45 @@ Example:
       end
   end
 
+TlsGetCertChain
+~~~~~~~~~~~~~~~
+
+Expose the entire certificate chain to the script through TlsGetCertChain.
+
+Example:
+
+::
+
+  function init (args)
+      local needs = {}
+      needs["protocol"] = "tls"
+      return needs
+  end
+
+  function setup (args)
+      x509 = require('openssl.x509')
+      filename = SCLogPath() .. "/" .. "lua_tls_cert.log"
+      file = assert(io.open(filename, "a"))
+  end
+
+  function log (args)
+      chain = TlsGetCertChain()
+
+      if chain == nil then
+          return
+      end
+
+      for n, t in pairs(chain) do
+          cert = x509.new(t["data"], "DER")
+          file:write(cert:text() .. "\n")
+      end
+
+      file:flush()
+  end
+
+  function deinit (args)
+      file:close(file)
+  end
 
 SSH
 ---
