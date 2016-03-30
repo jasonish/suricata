@@ -22,3 +22,4 @@ Suricata User Guide
    capture-hardware/index.rst
    man/index.rst
    acknowledgements
+   licenses/index.rst
