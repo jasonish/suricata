@@ -74,6 +74,7 @@ enum PktSrcEnum {
 #include "decode-erspan.h"
 #include "decode-ethernet.h"
 #include "decode-gre.h"
+#include "decode-esp.h"
 #include "decode-ppp.h"
 #include "decode-pppoe.h"
 #include "decode-sll.h"
@@ -537,6 +538,7 @@ typedef struct Packet_
     PPPOEDiscoveryHdr *pppoedh;
 
     GREHdr *greh;
+    EspHdr *esph;
 
     VLANHdr *vlanh[2];
 
@@ -949,6 +951,7 @@ int DecodeGRE(ThreadVars *, DecodeThreadVars *, Packet *, uint8_t *, uint32_t, P
 int DecodeVLAN(ThreadVars *, DecodeThreadVars *, Packet *, uint8_t *, uint32_t, PacketQueue *);
 int DecodeMPLS(ThreadVars *, DecodeThreadVars *, Packet *, uint8_t *, uint32_t, PacketQueue *);
 int DecodeERSPAN(ThreadVars *, DecodeThreadVars *, Packet *, uint8_t *, uint32_t, PacketQueue *);
+int DecodeESP(ThreadVars *, DecodeThreadVars *, Packet *, const uint8_t *, uint32_t, PacketQueue *);
 int DecodeTEMPLATE(ThreadVars *, DecodeThreadVars *, Packet *, const uint8_t *, uint32_t, PacketQueue *);
 
 #ifdef UNITTESTS
