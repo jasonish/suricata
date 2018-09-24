@@ -664,6 +664,7 @@ typedef struct DecodeThreadVars_
     uint16_t counter_udp;
     uint16_t counter_icmpv4;
     uint16_t counter_icmpv6;
+    uint16_t counter_udplite;
 
     uint16_t counter_sll;
     uint16_t counter_raw;

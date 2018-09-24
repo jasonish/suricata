@@ -51,7 +51,7 @@ int DecodeUDPLITE(ThreadVars *tv, DecodeThreadVars *dtv, Packet *p,
 {
     /* TODO add counter for your type of packet to DecodeThreadVars,
      * and register it in DecodeRegisterPerfCounters */
-    //StatsIncr(tv, dtv->counter_udplite);
+    StatsIncr(tv, dtv->counter_udplite);
 
     /* Validation: make sure that the input data is big enough to hold
      *             the header */
@@ -68,8 +68,17 @@ int DecodeUDPLITE(ThreadVars *tv, DecodeThreadVars *dtv, Packet *p,
     p->sp = SCNtohs(p->udpliteh->sport);
     p->dp = SCNtohs(p->udpliteh->dport);
 
-    SCLogNotice("sport: %d; dport: %d", SCNtohs(p->udpliteh->sport),
-            SCNtohs(p->udpliteh->dport));
+    uint16_t cov = SCNtohs(p->udpliteh->coverage);
+
+    SCLogNotice("sport: %d; dport: %d; coverage: %d",
+            SCNtohs(p->udpliteh->sport),
+            SCNtohs(p->udpliteh->dport),
+            SCNtohs(p->udpliteh->coverage));
+
+    /* Coverage values 1-7 and > 20 are invalid. */
+    if (cov > 20 || (cov >=1 && cov <= 7)) {
+        ENGINE_SET_EVENT(p, UDPLITE_INVALID_COV);
+    }
 
     return TM_ECODE_OK;
 }

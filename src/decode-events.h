@@ -190,6 +190,8 @@ enum {
     /* Cisco Fabric Path/DCE events. */
     DCE_PKT_TOO_SMALL,
 
+    UDPLITE_INVALID_COV,
+
     /* END OF DECODE EVENTS ON SINGLE PACKET */
     DECODE_EVENT_PACKET_MAX,
 

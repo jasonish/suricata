@@ -1,0 +1,1 @@
+alert pkthdr any any -> any any (msg:"TRAINING UDPLite invalid coverage"; decode-event:udplite.invalid_cov; sid:1;)

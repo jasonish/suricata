@@ -419,6 +419,7 @@ void DecodeRegisterPerfCounters(DecodeThreadVars *dtv, ThreadVars *tv)
     dtv->counter_ppp = StatsRegisterCounter("decoder.ppp", tv);
     dtv->counter_pppoe = StatsRegisterCounter("decoder.pppoe", tv);
     dtv->counter_gre = StatsRegisterCounter("decoder.gre", tv);
+    dtv->counter_udplite = StatsRegisterCounter("decoder.udplite", tv);
     dtv->counter_vlan = StatsRegisterCounter("decoder.vlan", tv);
     dtv->counter_vlan_qinq = StatsRegisterCounter("decoder.vlan_qinq", tv);
     dtv->counter_ieee8021ah = StatsRegisterCounter("decoder.ieee8021ah", tv);

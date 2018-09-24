@@ -34,7 +34,7 @@
 typedef struct UdpliteHdr_ {
     uint16_t sport;
     uint16_t dport;
-    uint16_t csum_coverage;
+    uint16_t coverage;
     uint16_t csum;
 } __attribute__((__packed__)) UdpliteHdr;
 
