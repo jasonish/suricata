@@ -88,6 +88,7 @@ enum PktSrcEnum {
 #include "decode-null.h"
 #include "decode-vlan.h"
 #include "decode-mpls.h"
+#include "decode-udplite.h"
 
 #include "detect-reference.h"
 
@@ -537,6 +538,8 @@ typedef struct Packet_
     PPPOEDiscoveryHdr *pppoedh;
 
     GREHdr *greh;
+
+    const UdpliteHdr *udpliteh;
 
     VLANHdr *vlanh[2];
 

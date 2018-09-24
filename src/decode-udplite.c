@@ -64,29 +64,12 @@ int DecodeUDPLITE(ThreadVars *tv, DecodeThreadVars *dtv, Packet *p,
     }
 
     /* Now we can access the header */
-    const UdpliteHdr *hdr = (const UdpliteHdr *)pkt;
+    p->udpliteh = (const UdpliteHdr *)pkt;
+    p->sp = SCNtohs(p->udpliteh->sport);
+    p->dp = SCNtohs(p->udpliteh->dport);
 
-    /* lets assume we have UDP encapsulated */
-    if (hdr->proto == 17) {
-        /* we need to pass on the pkt and it's length minus the current
-         * header */
-        size_t hdr_len = sizeof(UdpliteHdr);
-
-        /* in this example it's clear that hdr_len can't be bigger than
-         * 'len', but in more complex cases checking that we can't underflow
-         * len is very important
-        if (hdr_len >= len) {
-            ENGINE_SET_EVENT(p,UDPLITE_MALFORMED_HDRLEN);
-            return TM_ECODE_FAILED;
-        }
-         */
-
-        /* invoke the next decoder on the remainder of the data */
-        return DecodeUDP(tv, dtv, p, (uint8_t *)pkt + hdr_len, len - hdr_len, pq);
-    } else {
-        //ENGINE_SET_EVENT(p,UDPLITE_UNSUPPORTED_PROTOCOL);
-        return TM_ECODE_FAILED;
-    }
+    SCLogNotice("sport: %d; dport: %d", SCNtohs(p->udpliteh->sport),
+            SCNtohs(p->udpliteh->dport));
 
     return TM_ECODE_OK;
 }

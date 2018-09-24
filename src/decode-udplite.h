@@ -32,9 +32,10 @@
  * mind while constructing this. */
 
 typedef struct UdpliteHdr_ {
-    uint8_t proto;
-    uint8_t pad0;
-    uint16_t pad1;
+    uint16_t sport;
+    uint16_t dport;
+    uint16_t csum_coverage;
+    uint16_t csum;
 } __attribute__((__packed__)) UdpliteHdr;
 
 #endif /* __DECODE_UDPLITE_H__ */
