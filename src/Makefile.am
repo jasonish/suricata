@@ -260,6 +260,7 @@ detect-target.c detect-target.h \
 detect-template.c detect-template.h \
 detect-udplite_coverage.c detect-udplite_coverage.h \
 detect-template2.c detect-template2.h \
+detect-udplite_coverage_prefilter.c detect-udplite_coverage_prefilter.h \
 detect-ftpdata.c detect-ftpdata.h \
 detect-template-rust-buffer.c detect-template-rust-buffer.h \
 detect-template-buffer.c detect-template-buffer.h \

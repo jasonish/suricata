@@ -4,4 +4,8 @@ alert ip any any -> any any (msg:"TRAINING UDPLite coverage 20"; udplite_coverag
 alert ip any any -> any any (msg:"TRAINING UDPlite coverage 8"; udplite_coverage:8; sid:3;)
 alert ip any any -> any any (msg:"TRAINING UDPlite coverage range 8-20"; udplite_coverage:8-20; sid:4;)
 
-alert ip any any -> any any (msg:"TRAINING UDPlite LUA coverage"; lua:udplite.lua; sid:5;)
+# alert ip any any -> any any (msg:"TRAINING UDPlite LUA coverage"; lua:udplite.lua; sid:5;)
+
+alert ip any any -> any any (msg:"TRAINING UDPLite coverage_prefilter 20"; udplite_coverage_prefilter:20; prefilter; sid:6;) 
+alert ip any any -> any any (msg:"TRAINING UDPlite coverage 8"; udplite_coverage_prefilter:8; prefilter; sid:7;)
+alert ip any any -> any any (msg:"TRAINING UDPlite coverage range 8-20"; udplite_coverage_prefilter:8-20; prefilter; sid:8;)

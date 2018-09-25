@@ -180,6 +180,7 @@
 #include "detect-template.h"
 #include "detect-udplite_coverage.h"
 #include "detect-template2.h"
+#include "detect-udplite_coverage_prefilter.h"
 #include "detect-krb5-cname.h"
 #include "detect-krb5-errcode.h"
 #include "detect-krb5-msgtype.h"
@@ -510,6 +511,7 @@ void SigTableSetup(void)
     DetectTemplateRegister();
     DetectUdplite_coverageRegister();
     DetectTemplate2Register();
+    DetectUdplite_coverage_prefilterRegister();
     DetectKrb5CNameRegister();
     DetectKrb5ErrCodeRegister();
     DetectKrb5MsgTypeRegister();
