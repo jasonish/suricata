@@ -76,6 +76,7 @@
 #include "output-json-dhcp.h"
 #include "output-json-template.h"
 #include "output-json-template-rust.h"
+#include "output-json-udplite.h"
 #include "output-json-template-packet.h"
 #include "output-lua.h"
 #include "output-json-dnp3.h"
@@ -1110,6 +1111,8 @@ void OutputRegisterLoggers(void)
     JsonTemplateLogRegister();
     /* Template Rust JSON logger. */
     JsonTemplateRustLogRegister();
+    /* UDPLite packet logger. */
+    JsonUDPLiteLogRegister();
     /* Template JSON packet logger. */
     JsonTemplatePacketLogRegister();
 }
