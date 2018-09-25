@@ -1,0 +1,1 @@
+alert ip any any -> any any (msg:"TRAINING LUA sameport"; lua:sameport.lua; sid:1;)
