@@ -2,3 +2,4 @@ alert pkthdr any any -> any any (msg:"TRAINING UDPLite invalid coverage"; decode
 
 alert ip any any -> any any (msg:"TRAINING UDPLite coverage 20"; udplite_coverage:20; sid:2;) 
 alert ip any any -> any any (msg:"TRAINING UDPlite coverage 8"; udplite_coverage:8; sid:3;)
+alert ip any any -> any any (msg:"TRAINING UDPlite coverage range 8-20"; udplite_coverage:8-20; sid:4;)

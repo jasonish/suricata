@@ -32,6 +32,7 @@
 typedef struct DetectUdplite_coverageData_ {
     uint8_t arg1;
     uint8_t arg2;
+    bool is_range;
 } DetectUdplite_coverageData;
 
 /** \brief registers the keyword into the engine. Called from
