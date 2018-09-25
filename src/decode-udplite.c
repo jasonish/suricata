@@ -67,6 +67,7 @@ int DecodeUDPLITE(ThreadVars *tv, DecodeThreadVars *dtv, Packet *p,
     p->udpliteh = (const UdpliteHdr *)pkt;
     p->sp = SCNtohs(p->udpliteh->sport);
     p->dp = SCNtohs(p->udpliteh->dport);
+    FlowSetupPacket(p);
 
     uint16_t cov = SCNtohs(p->udpliteh->coverage);
 
