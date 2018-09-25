@@ -34,7 +34,10 @@
 /**
  * \brief Regex for parsing our keyword options
  */
+#if 0
 #define PARSE_REGEX  "^\\s*([0-9]+)?\\s*,s*([0-9]+)?\\s*$"
+#endif
+#define PARSE_REGEX  "^\\s*([0-9]+)"
 static pcre *parse_regex;
 static pcre_extra *parse_regex_study;
 
@@ -91,7 +94,6 @@ static int DetectUdplite_coverageMatch (ThreadVars *t, DetectEngineThreadCtx *de
 {
     int ret = 0;
     const DetectUdplite_coverageData *udplite_coveraged = (const DetectUdplite_coverageData *) ctx;
-#if 0
     if (PKT_IS_PSEUDOPKT(p)) {
         /* fake pkt */
     }
@@ -104,12 +106,10 @@ static int DetectUdplite_coverageMatch (ThreadVars *t, DetectEngineThreadCtx *de
         SCLogDebug("packet is of not IPv4 or IPv6");
         return ret;
     }
-#endif
-    /* packet payload access */
-    if (p->payload != NULL && p->payload_len > 0) {
-        if (udplite_coveraged->arg1 == p->payload[0] &&
-            udplite_coveraged->arg2 == p->payload[p->payload_len - 1])
-        {
+
+    if (p->udpliteh != NULL) {
+        uint16_t cov = ntohs(p->udpliteh->coverage);
+        if (udplite_coveraged->arg1 == cov) {
             ret = 1;
         }
     }
@@ -128,14 +128,13 @@ static int DetectUdplite_coverageMatch (ThreadVars *t, DetectEngineThreadCtx *de
 static DetectUdplite_coverageData *DetectUdplite_coverageParse (const char *udplite_coveragestr)
 {
     char arg1[4] = "";
-    char arg2[4] = "";
 #define MAX_SUBSTRINGS 30
     int ov[MAX_SUBSTRINGS];
 
     int ret = pcre_exec(parse_regex, parse_regex_study,
                     udplite_coveragestr, strlen(udplite_coveragestr),
                     0, 0, ov, MAX_SUBSTRINGS);
-    if (ret != 3) {
+    if (ret != 2) {
         SCLogError(SC_ERR_PCRE_MATCH, "parse error, ret %" PRId32 "", ret);
         return NULL;
     }
@@ -145,21 +144,13 @@ static DetectUdplite_coverageData *DetectUdplite_coverageParse (const char *udpl
         SCLogError(SC_ERR_PCRE_GET_SUBSTRING, "pcre_copy_substring failed");
         return NULL;
     }
-    SCLogDebug("Arg1 \"%s\"", arg1);
-
-    ret = pcre_copy_substring((char *) udplite_coveragestr, ov, MAX_SUBSTRINGS, 2, arg2, sizeof(arg2));
-    if (ret < 0) {
-        SCLogError(SC_ERR_PCRE_GET_SUBSTRING, "pcre_copy_substring failed");
-        return NULL;
-    }
-    SCLogDebug("Arg2 \"%s\"", arg2);
+    SCLogNotice("Arg1 \"%s\"", arg1);
 
     DetectUdplite_coverageData *udplite_coveraged = SCMalloc(sizeof (DetectUdplite_coverageData));
     if (unlikely(udplite_coveraged == NULL))
         return NULL;
 
     udplite_coveraged->arg1 = (uint8_t)atoi(arg1);
-    udplite_coveraged->arg2 = (uint8_t)atoi(arg2);
 
     return udplite_coveraged;
 }
