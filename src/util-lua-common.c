@@ -270,6 +270,17 @@ static int LuaCallbackTimeStringPushToStackFromFlow(lua_State *luastate, const F
     return 1;
 }
 
+static int LuaCallbackUdpliteCoverage(lua_State *luastate)
+{
+    const Packet *p = LuaStateGetPacket(luastate);
+    if (p->udpliteh != NULL) {
+        lua_pushinteger(luastate, ntohs(p->udpliteh->coverage));
+    } else {
+        lua_pushinteger(luastate, -1);
+    }
+    return 1;
+}
+
 /** \internal
  *  \brief Wrapper for getting ts info into a lua script
  *  \retval cnt number of items placed on the stack
@@ -920,6 +931,10 @@ int LuaRegisterFunctions(lua_State *luastate)
 
     lua_pushcfunction(luastate, LuaCallbackThreadInfo);
     lua_setglobal(luastate, "SCThreadInfo");
+
+    lua_pushcfunction(luastate, LuaCallbackUdpliteCoverage);
+    lua_setglobal(luastate, "SCUdpLiteCoverage");
+
     return 0;
 }
 
