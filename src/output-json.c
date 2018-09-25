@@ -522,6 +522,7 @@ void JsonFiveTuple(const Packet *p, enum OutputJsonLogDirection dir, json_t *js)
         case IPPROTO_UDP:
         case IPPROTO_TCP:
         case IPPROTO_SCTP:
+        case IPPROTO_UDPLITE:
             json_object_set_new(js, "src_port", json_integer(sp));
             break;
     }
@@ -534,6 +535,7 @@ void JsonFiveTuple(const Packet *p, enum OutputJsonLogDirection dir, json_t *js)
         case IPPROTO_UDP:
         case IPPROTO_TCP:
         case IPPROTO_SCTP:
+        case IPPROTO_UDPLITE:
             json_object_set_new(js, "dest_port", json_integer(dp));
             break;
     }
