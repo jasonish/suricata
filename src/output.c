@@ -74,6 +74,7 @@
 #include "output-json-ikev2.h"
 #include "output-json-krb5.h"
 #include "output-json-dhcp.h"
+#include "output-json-gopher.h"
 #include "output-json-template.h"
 #include "output-json-template-rust.h"
 #include "output-json-udplite.h"
@@ -1107,6 +1108,8 @@ void OutputRegisterLoggers(void)
     JsonKRB5LogRegister();
     /* DHCP JSON logger. */
     JsonDHCPLogRegister();
+    /* Gopher JSON logger. */
+    JsonGopherLogRegister();
     /* Template JSON logger. */
     JsonTemplateLogRegister();
     /* Template Rust JSON logger. */

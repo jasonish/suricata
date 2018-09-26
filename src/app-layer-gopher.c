@@ -261,6 +261,7 @@ static int GopherParseRequest(Flow *f, void *statev,
     memcpy(tx->request_buffer, input, input_len);
     tx->request_buffer_len = input_len;
 
+#if 0
     /* Here we check for an empty message and create an app-layer
      * event. */
     if ((input_len == 1 && tx->request_buffer[0] == '\n') ||
@@ -268,6 +269,11 @@ static int GopherParseRequest(Flow *f, void *statev,
         SCLogNotice("Creating event for empty message.");
         AppLayerDecoderEventsSetEventRaw(&tx->decoder_events,
             GOPHER_DECODER_EVENT_EMPTY_MESSAGE);
+    }
+#endif
+
+    if (input_len == 2) {
+        tx->directory_listing = true;
     }
 
 end:

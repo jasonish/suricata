@@ -52,6 +52,8 @@ typedef struct GopherTransaction
     uint8_t response_done; /*<< Flag to be set when the response is
                             * seen. */
 
+    bool directory_listing;
+
     DetectEngineState *de_state;
 
     TAILQ_ENTRY(GopherTransaction) next;
