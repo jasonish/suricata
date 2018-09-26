@@ -108,6 +108,9 @@ const char *AppProtoToString(AppProto alproto)
         case ALPROTO_TEMPLATE_RUST:
             proto_name = "template-rust";
             break;
+        case ALPROTO_RSYNC:
+            proto_name = "rsync";
+            break;
         case ALPROTO_FAILED:
             proto_name = "failed";
             break;
@@ -149,6 +152,7 @@ AppProto StringToAppProto(const char *proto_name)
     if (strcmp(proto_name,"dhcp")==0) return ALPROTO_DHCP;
     if (strcmp(proto_name,"template")==0) return ALPROTO_TEMPLATE;
     if (strcmp(proto_name,"template-rust")==0) return ALPROTO_TEMPLATE_RUST;
+    if (strcmp(proto_name,"rsync")==0) return ALPROTO_RSYNC;
     if (strcmp(proto_name,"failed")==0) return ALPROTO_FAILED;
 
     return ALPROTO_UNKNOWN;

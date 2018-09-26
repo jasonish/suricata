@@ -53,6 +53,7 @@ enum AppProtoEnum {
     ALPROTO_DHCP,
     ALPROTO_TEMPLATE,
     ALPROTO_TEMPLATE_RUST,
+    ALPROTO_RSYNC,
 
     /* used by the probing parser when alproto detection fails
      * permanently for that particular stream */
