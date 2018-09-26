@@ -184,7 +184,6 @@ static DetectUdplite_coverage_prefilterData *DetectUdplite_coverage_prefilterPar
                 udplite_coverage_prefilterd->mode = DETECT_UDPLITE_COVERAGE_PREFILTER_LT;
                 udplite_coverage_prefilterd->arg1 = (uint16_t) atoi(arg3);
 
-                SCLogDebug("udplite_coverage_prefilter is %"PRIu16"",udplite_coverage_prefilterd->arg1);
                 if (strlen(arg1) > 0)
                     goto error;
 
@@ -196,7 +195,6 @@ static DetectUdplite_coverage_prefilterData *DetectUdplite_coverage_prefilterPar
                 udplite_coverage_prefilterd->mode = DETECT_UDPLITE_COVERAGE_PREFILTER_GT;
                 udplite_coverage_prefilterd->arg1 = (uint16_t) atoi(arg3);
 
-                SCLogDebug("udplite_coverage_prefilter is %"PRIu16"",udplite_coverage_prefilterd->arg1);
                 if (strlen(arg1) > 0)
                     goto error;
 
@@ -211,7 +209,6 @@ static DetectUdplite_coverage_prefilterData *DetectUdplite_coverage_prefilterPar
                 udplite_coverage_prefilterd->arg1 = (uint16_t) atoi(arg1);
 
                 udplite_coverage_prefilterd->arg2 = (uint16_t) atoi(arg3);
-                SCLogDebug("udplite_coverage_prefilter is %"PRIu8" to %"PRIu8"",udplite_coverage_prefilterd->arg1, udplite_coverage_prefilterd->arg2);
                 if (udplite_coverage_prefilterd->arg1 >= udplite_coverage_prefilterd->arg2) {
                     SCLogError(SC_ERR_INVALID_SIGNATURE, "Invalid udplite_coverage_prefilter range. ");
                     goto error;
@@ -322,7 +319,6 @@ PrefilterPacketUdplite_coverage_prefilterMatch(DetectEngineThreadCtx *det_ctx, P
      * that these will be inspected further */
     if (Udplite_coverage_prefilterMatch(coverage, ctx->v1.u16[0], ctx->v1.u16[1], ctx->v1.u16[2]))
     {
-        SCLogDebug("packet matches udplite_coverage_prefilter/hl %u", pudplite_coverage_prefilter);
         PrefilterAddSids(&det_ctx->pmq, ctx->sigs_array, ctx->sigs_cnt);
     }
 }
