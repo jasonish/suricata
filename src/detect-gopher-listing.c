@@ -64,17 +64,21 @@ void DetectGopherListingRegister(void)
     sigmatch_table[DETECT_AL_GOPHER_LISTING].flags |= SIGMATCH_NOOPT;
 
     /* register inspect engines - these are called per signature */
+#if 0
     DetectAppLayerInspectEngineRegister2("gopher_listing",
             ALPROTO_GOPHER, SIG_FLAG_TOSERVER, 0,
             DetectEngineInspectBufferGeneric, GetData);
+#endif
     DetectAppLayerInspectEngineRegister2("gopher_listing",
             ALPROTO_GOPHER, SIG_FLAG_TOCLIENT, 0,
             DetectEngineInspectBufferGeneric, GetData);
 
+#if 0
     /* register mpm engines - these are called in the prefilter stage */
     DetectAppLayerMpmRegister2("gopher_listing", SIG_FLAG_TOSERVER, 0,
             PrefilterGenericMpmRegister, GetData,
             ALPROTO_GOPHER, 0);
+#endif
     DetectAppLayerMpmRegister2("gopher_listing", SIG_FLAG_TOCLIENT, 0,
             PrefilterGenericMpmRegister, GetData,
             ALPROTO_GOPHER, 0);
@@ -121,6 +125,14 @@ static InspectionBuffer *GetData(DetectEngineThreadCtx *det_ctx,
     if (buffer->inspect == NULL) {
         const GopherTransaction  *tx = (GopherTransaction *)txv;
 
+        if (flow_flags & STREAM_TOCLIENT && tx->directory_listing) {
+            data = tx->response_buffer;
+            data_len = tx->response_buffer_len;
+        } else {
+            return NULL;
+        }
+
+#if 0
         if (flow_flags & STREAM_TOSERVER) {
             data = tx->request_buffer;
             data_len = tx->request_buffer_len;
@@ -130,6 +142,7 @@ static InspectionBuffer *GetData(DetectEngineThreadCtx *det_ctx,
         } else {
             return NULL; /* no buffer */
         }
+#endif
 
         InspectionBufferSetup(buffer, data, data_len);
         InspectionBufferApplyTransforms(buffer, transforms);
