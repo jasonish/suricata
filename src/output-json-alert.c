@@ -50,6 +50,7 @@
 #include "app-layer-htp.h"
 #include "app-layer-htp-xff.h"
 #include "app-layer-ftp.h"
+#include "app-layer-gopher.h"
 #include "util-classification-config.h"
 #include "util-syslog.h"
 #include "util-logopenfile.h"
@@ -153,6 +154,43 @@ static void AlertJsonSsh(const Flow *f, json_t *js)
         JsonSshLogJSON(tjs, ssh_state);
 
         json_object_set_new(js, "ssh", tjs);
+    }
+
+    return;
+}
+
+static void AlertJsonGopher(const Flow *f, const uint64_t tx_id, json_t *js)
+{
+    GopherState *gopher_state = (GopherState *)FlowGetAppState(f);
+    if (gopher_state) {
+        GopherTransaction *tx = AppLayerParserGetTx(IPPROTO_TCP, ALPROTO_GOPHER,
+            gopher_state, tx_id);
+        if (tx) {
+            json_t *gopherjs = json_object();
+            if (likely(gopherjs != NULL)) {
+                
+                /* Convert the request buffer to a string then log. */
+                char *request_buffer = BytesToString(tx->request_buffer,
+                        tx->request_buffer_len);
+                if (request_buffer != NULL) {
+                    json_object_set_new(gopherjs, "uri", json_string(request_buffer));
+                    SCFree(request_buffer);
+                }
+                json_object_set_new(gopherjs, "directory_listing",
+                        json_boolean(tx->directory_listing));
+                
+                /* Convert the response buffer to a string then log. */
+                char *response_buffer = BytesToString(tx->response_buffer,
+                        tx->response_buffer_len);
+                if (response_buffer != NULL) {
+                    json_object_set_new(gopherjs, "response",
+                            json_string(response_buffer));
+                    SCFree(response_buffer);
+                }
+                
+                json_object_set_new(js, "gopher", gopherjs);
+            }
+        }
     }
 
     return;
@@ -511,6 +549,11 @@ static int AlertJson(ThreadVars *tv, JsonAlertLogThread *aft, const Packet *p)
             if (proto == ALPROTO_DNS) {
                 AlertJsonDns(p->flow, pa->tx_id, js);
             }
+
+            if (proto == ALPROTO_GOPHER) {
+                AlertJsonGopher(p->flow, pa->tx_id, js);
+            }
+            
         }
 
         if (p->flow) {
