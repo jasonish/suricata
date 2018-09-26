@@ -348,12 +348,14 @@ static int GopherParseResponse(Flow *f, void *statev, AppLayerParserState *pstat
                 tx->response_buffer[i+2] == '\n') {
             tx->response_done = 1;
 
+#if 0
             fprintf(stderr, "\nRequest:\n");
             PrintRawDataFp(stderr, tx->request_buffer, tx->request_buffer_len);
             fprintf(stderr, "\n");
             fprintf(stderr, "\nResponse:\n");
             PrintRawDataFp(stderr, tx->response_buffer, tx->response_buffer_len);
             fprintf(stderr, "\n");
+#endif
         }
     }
 
