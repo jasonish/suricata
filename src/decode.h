@@ -1060,6 +1060,10 @@ void DecodeGlobalConfig(void);
 #define IPPROTO_SHIM6 140
 #endif
 
+#ifndef IPPROTO_UDPLITE
+#define IPPROTO_UDPLITE 136
+#endif
+
 /* pcap provides this, but we don't want to depend on libpcap */
 #ifndef DLT_EN10MB
 #define DLT_EN10MB 1
