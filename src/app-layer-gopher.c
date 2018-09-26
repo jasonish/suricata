@@ -41,11 +41,11 @@
 #include "app-layer-gopher.h"
 
 #include "util-unittest.h"
-
+#include "util-print.h"
 
 /* The default port to probe for echo traffic if not provided in the
  * configuration file. */
-#define GOPHER_DEFAULT_PORT "7"
+#define GOPHER_DEFAULT_PORT "70"
 
 /* The minimum size for a message. For some protocols this might
  * be the size of a header. */
@@ -315,29 +315,41 @@ static int GopherParseResponse(Flow *f, void *statev, AppLayerParserState *pstat
     SCLogNotice("Found transaction %"PRIu64" for response on state %p.",
         tx->tx_id, state);
 
-    /* If the protocol requires multiple chunks of data to complete, you may
-     * run into the case where you have existing response data.
-     *
-     * In this case, we just log that there is existing data and free it. But
-     * you might want to realloc the buffer and append the data.
-     */
-    if (tx->response_buffer != NULL) {
-        SCLogNotice("WARNING: Transaction already has response data, "
-            "existing data will be overwritten.");
-        SCFree(tx->response_buffer);
+    if (tx->response_buffer_len == 0) {
+        /* Make a copy of the response. */
+        tx->response_buffer = SCCalloc(1, input_len);
+        if (unlikely(tx->response_buffer == NULL)) {
+            goto end;
+        }
+        memcpy(tx->response_buffer, input, input_len);
+        tx->response_buffer_len = input_len;
+    } else {
+        uint8_t *tmp = SCRealloc(tx->response_buffer,
+                tx->response_buffer_len + input_len);
+        if (tmp == NULL) {
+            goto end;
+        }
+        tx->response_buffer = tmp;
+        memcpy(tx->response_buffer + tx->response_buffer_len,
+                input, input_len);
+        tx->response_buffer_len += input_len;
     }
 
-    /* Make a copy of the response. */
-    tx->response_buffer = SCCalloc(1, input_len);
-    if (unlikely(tx->response_buffer == NULL)) {
-        goto end;
-    }
-    memcpy(tx->response_buffer, input, input_len);
-    tx->response_buffer_len = input_len;
+    if (tx->response_buffer_len > 2) {
+        uint64_t i = tx->response_buffer_len - 3;
+        if (tx->response_buffer[i] == '.' &&
+                tx->response_buffer[i+1] == '\r' &&
+                tx->response_buffer[i+2] == '\n') {
+            tx->response_done = 1;
 
-    /* Set the response_done flag for transaction state checking in
-     * GopherGetStateProgress(). */
-    tx->response_done = 1;
+            fprintf(stderr, "\nRequest:\n");
+            PrintRawDataFp(stderr, tx->request_buffer, tx->request_buffer_len);
+            fprintf(stderr, "\n");
+            fprintf(stderr, "\nResponse:\n");
+            PrintRawDataFp(stderr, tx->response_buffer, tx->response_buffer_len);
+            fprintf(stderr, "\n");
+        }
+    }
 
 end:
     return 0;
