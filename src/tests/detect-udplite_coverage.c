@@ -29,7 +29,7 @@
 
 static int DetectUdplite_coverageParseTest01 (void)
 {
-    DetectUdplite_coverageData *udplite_coveraged = DetectUdplite_coverageParse("1,10");
+    DetectUdplite_coverageData *udplite_coveraged = DetectUdplite_coverageParse("1-10");
     FAIL_IF_NULL(udplite_coveraged);
     FAIL_IF(!(udplite_coveraged->arg1 == 1 && udplite_coveraged->arg2 == 10));
     DetectUdplite_coverageFree(udplite_coveraged);
@@ -45,7 +45,7 @@ static int DetectUdplite_coverageSignatureTest01 (void)
     DetectEngineCtx *de_ctx = DetectEngineCtxInit();
     FAIL_IF_NULL(de_ctx);
 
-    Signature *sig = DetectEngineAppendSig(de_ctx, "alert ip any any -> any any (udplite_coverage:1,10; sid:1; rev:1;)");
+    Signature *sig = DetectEngineAppendSig(de_ctx, "alert ip any any -> any any (udplite_coverage:1-10; sid:1; rev:1;)");
     FAIL_IF_NULL(sig);
 
     DetectEngineCtxFree(de_ctx);
