@@ -18,7 +18,6 @@
 /*
  * TODO: Update \author in this file and app-layer-gopher.h.
  * TODO: Implement your app-layer logic with unit tests.
- * TODO: Remove SCLogNotice statements or convert to debug.
  */
 
 /**
@@ -65,6 +64,8 @@ enum {
     GOPHER_DECODER_EVENT_EMPTY_MESSAGE,
 };
 
+static StreamingBufferConfig stream_buffer_config;
+
 SCEnumCharMap gopher_decoder_event_table[] = {
     {"EMPTY_MESSAGE", GOPHER_DECODER_EVENT_EMPTY_MESSAGE},
 
@@ -107,11 +108,19 @@ static void GopherTxFree(void *txv)
 
 static void *GopherStateAlloc(void)
 {
-    SCLogNotice("Allocating gopher state.");
+    SCLogDebug("Allocating gopher state.");
     GopherState *state = SCCalloc(1, sizeof(GopherState));
     if (unlikely(state == NULL)) {
         return NULL;
     }
+    state->file_container = FileContainerAlloc();
+    if (state->file_container == NULL) {
+        SCLogError(SC_ERR_MEM_ALLOC,
+                "Failed to allocate file container for Gopher.");
+        SCFree(state);
+        return NULL;
+    }
+       
     TAILQ_INIT(&state->tx_list);
     return state;
 }
@@ -120,11 +129,12 @@ static void GopherStateFree(void *state)
 {
     GopherState *gopher_state = state;
     GopherTransaction *tx;
-    SCLogNotice("Freeing gopher state.");
+    SCLogDebug("Freeing gopher state.");
     while ((tx = TAILQ_FIRST(&gopher_state->tx_list)) != NULL) {
         TAILQ_REMOVE(&gopher_state->tx_list, tx, next);
         GopherTxFree(tx);
     }
+    FileContainerFree(gopher_state->file_container);
     SCFree(gopher_state);
 }
 
@@ -139,7 +149,7 @@ static void GopherStateTxFree(void *statev, uint64_t tx_id)
     GopherState *state = statev;
     GopherTransaction *tx = NULL, *ttx;
 
-    SCLogNotice("Freeing transaction %"PRIu64, tx_id);
+    SCLogDebug("Freeing transaction %"PRIu64, tx_id);
 
     TAILQ_FOREACH_SAFE(tx, &state->tx_list, next, ttx) {
 
@@ -155,7 +165,7 @@ static void GopherStateTxFree(void *statev, uint64_t tx_id)
         return;
     }
 
-    SCLogNotice("Transaction %"PRIu64" not found.", tx_id);
+    SCLogDebug("Transaction %"PRIu64" not found.", tx_id);
 }
 
 static int GopherStateGetEventInfo(const char *event_name, int *event_id,
@@ -198,11 +208,11 @@ static AppProto GopherProbingParser(Flow *f, uint8_t *input, uint32_t input_len)
 {
     /* Very simple test - if there is input, this is gopher. */
     if (input_len >= GOPHER_MIN_FRAME_LEN) {
-        SCLogNotice("Detected as ALPROTO_GOPHER.");
+        SCLogDebug("Detected as ALPROTO_GOPHER.");
         return ALPROTO_GOPHER;
     }
 
-    SCLogNotice("Protocol not detected as ALPROTO_GOPHER.");
+    SCLogDebug("Protocol not detected as ALPROTO_GOPHER.");
     return ALPROTO_UNKNOWN;
 }
 
@@ -212,7 +222,7 @@ static int GopherParseRequest(Flow *f, void *statev,
 {
     GopherState *state = statev;
 
-    SCLogNotice("Parsing gopher request: len=%"PRIu32, input_len);
+    SCLogDebug("Parsing gopher request: len=%"PRIu32, input_len);
 
     /* Likely connection closed, we can just return here. */
     if ((input == NULL || input_len == 0) &&
@@ -248,10 +258,10 @@ static int GopherParseRequest(Flow *f, void *statev,
      */
     GopherTransaction *tx = GopherTxAlloc(state);
     if (unlikely(tx == NULL)) {
-        SCLogNotice("Failed to allocate new Gopher tx.");
+        SCLogDebug("Failed to allocate new Gopher tx.");
         goto end;
     }
-    SCLogNotice("Allocated Gopher tx %"PRIu64".", tx->tx_id);
+    SCLogDebug("Allocated Gopher tx %"PRIu64".", tx->tx_id);
 
     /* Make a copy of the request. */
     tx->request_buffer = SCCalloc(1, input_len);
@@ -266,7 +276,7 @@ static int GopherParseRequest(Flow *f, void *statev,
      * event. */
     if ((input_len == 1 && tx->request_buffer[0] == '\n') ||
         (input_len == 2 && tx->request_buffer[0] == '\r')) {
-        SCLogNotice("Creating event for empty message.");
+        SCLogDebug("Creating event for empty message.");
         AppLayerDecoderEventsSetEventRaw(&tx->decoder_events,
             GOPHER_DECODER_EVENT_EMPTY_MESSAGE);
     }
@@ -287,7 +297,7 @@ static int GopherParseResponse(Flow *f, void *statev, AppLayerParserState *pstat
     GopherState *state = statev;
     GopherTransaction *tx = NULL, *ttx;
 
-    SCLogNotice("Parsing Gopher response.");
+    SCLogDebug("Parsing Gopher response.");
 
     /* Likely connection closed, we can just return here. */
     if ((input == NULL || input_len == 0) &&
@@ -313,12 +323,12 @@ static int GopherParseResponse(Flow *f, void *statev, AppLayerParserState *pstat
     }
 
     if (tx == NULL) {
-        SCLogNotice("Failed to find transaction for response on state %p.",
+        SCLogDebug("Failed to find transaction for response on state %p.",
             state);
         goto end;
     }
 
-    SCLogNotice("Found transaction %"PRIu64" for response on state %p.",
+    SCLogDebug("Found transaction %"PRIu64" for response on state %p.",
         tx->tx_id, state);
 
     if (tx->response_buffer_len == 0) {
@@ -347,7 +357,6 @@ static int GopherParseResponse(Flow *f, void *statev, AppLayerParserState *pstat
                 tx->response_buffer[i+1] == '\r' &&
                 tx->response_buffer[i+2] == '\n') {
             tx->response_done = 1;
-
 #if 0
             fprintf(stderr, "\nRequest:\n");
             PrintRawDataFp(stderr, tx->request_buffer, tx->request_buffer_len);
@@ -359,6 +368,21 @@ static int GopherParseResponse(Flow *f, void *statev, AppLayerParserState *pstat
         }
     }
 
+    if (tx->response_done && !tx->directory_listing) {
+        SCLogNotice("Saving Gopher file.");
+        uint16_t flags = FileFlowToFlags(f, STREAM_TOCLIENT);
+        File *ff = FileOpenFile(state->file_container, &stream_buffer_config,
+                tx->request_buffer, tx->request_buffer_len - 2,
+                tx->response_buffer, tx->response_buffer_len, flags);
+        if (ff == NULL) {
+            SCLogNotice("Failed to open file.");
+            goto end;
+        }
+        if (FileCloseFile(state->file_container, NULL, 0, flags) != 0) {
+            SCLogNotice("Failed to save file.");
+        }
+    }
+
 end:
     return 0;
 }
@@ -366,7 +390,7 @@ end:
 static uint64_t GopherGetTxCnt(void *statev)
 {
     const GopherState *state = statev;
-    SCLogNotice("Current tx count is %"PRIu64".", state->transaction_max);
+    SCLogDebug("Current tx count is %"PRIu64".", state->transaction_max);
     return state->transaction_max;
 }
 
@@ -375,17 +399,17 @@ static void *GopherGetTx(void *statev, uint64_t tx_id)
     GopherState *state = statev;
     GopherTransaction *tx;
 
-    SCLogNotice("Requested tx ID %"PRIu64".", tx_id);
+    SCLogDebug("Requested tx ID %"PRIu64".", tx_id);
 
     TAILQ_FOREACH(tx, &state->tx_list, next) {
         if (tx->tx_id == tx_id) {
-            SCLogNotice("Transaction %"PRIu64" found, returning tx object %p.",
+            SCLogDebug("Transaction %"PRIu64" found, returning tx object %p.",
                 tx_id, tx);
             return tx;
         }
     }
 
-    SCLogNotice("Transaction ID %"PRIu64" not found.", tx_id);
+    SCLogDebug("Transaction ID %"PRIu64" not found.", tx_id);
     return NULL;
 }
 
@@ -427,7 +451,7 @@ static int GopherGetStateProgress(void *txv, uint8_t direction)
 {
     GopherTransaction *tx = txv;
 
-    SCLogNotice("Transaction progress requested for tx ID %"PRIu64
+    SCLogDebug("Transaction progress requested for tx ID %"PRIu64
         ", direction=0x%02x", tx->tx_id, direction);
 
     if (direction & STREAM_TOCLIENT && tx->response_done) {
@@ -462,6 +486,19 @@ static int GopherSetTxDetectState(void *vtx,
     return 0;
 }
 
+static FileContainer *GopherStateGetFiles(void *state, uint8_t direction)
+{
+    if (state == NULL)
+        return NULL;
+
+    GopherState *gopher = (GopherState *)state;
+
+    if (direction & STREAM_TOSERVER) {
+        SCReturnPtr(NULL, "FileContainer");
+    }
+    SCReturnPtr(gopher->file_container, "FileContainer");
+}
+
 void RegisterGopherParsers(void)
 {
     const char *proto_name = "gopher";
@@ -470,13 +507,13 @@ void RegisterGopherParsers(void)
      * the configuration file then it will be enabled by default. */
     if (AppLayerProtoDetectConfProtoDetectionEnabled("tcp", proto_name)) {
 
-        SCLogNotice("Gopher TCP protocol detection enabled.");
+        SCLogDebug("Gopher TCP protocol detection enabled.");
 
         AppLayerProtoDetectRegisterProtocol(ALPROTO_GOPHER, proto_name);
 
         if (RunmodeIsUnittests()) {
 
-            SCLogNotice("Unittest mode, registeringd default configuration.");
+            SCLogDebug("Unittest mode, registeringd default configuration.");
             AppLayerProtoDetectPPRegister(IPPROTO_TCP, GOPHER_DEFAULT_PORT,
                 ALPROTO_GOPHER, 0, GOPHER_MIN_FRAME_LEN, STREAM_TOSERVER,
                 GopherProbingParser, NULL);
@@ -487,7 +524,7 @@ void RegisterGopherParsers(void)
             if (!AppLayerProtoDetectPPParseConfPorts("tcp", IPPROTO_TCP,
                     proto_name, ALPROTO_GOPHER, 0, GOPHER_MIN_FRAME_LEN,
                     GopherProbingParser, NULL)) {
-                SCLogNotice("No gopher app-layer configuration, enabling echo"
+                SCLogDebug("No gopher app-layer configuration, enabling echo"
                     " detection TCP detection on port %s.",
                     GOPHER_DEFAULT_PORT);
                 AppLayerProtoDetectPPRegister(IPPROTO_TCP,
@@ -501,13 +538,13 @@ void RegisterGopherParsers(void)
     }
 
     else {
-        SCLogNotice("Protocol detecter and parser disabled for Gopher.");
+        SCLogDebug("Protocol detecter and parser disabled for Gopher.");
         return;
     }
 
     if (AppLayerParserConfParserEnabled("tcp", proto_name)) {
 
-        SCLogNotice("Registering Gopher protocol parser.");
+        SCLogDebug("Registering Gopher protocol parser.");
 
         /* Register functions for state allocation and freeing. A
          * state is allocated for every new Gopher flow. */
@@ -550,9 +587,15 @@ void RegisterGopherParsers(void)
             GopherStateGetEventInfo);
         AppLayerParserRegisterGetEventsFunc(IPPROTO_TCP, ALPROTO_GOPHER,
             GopherGetEvents);
+
+        AppLayerParserRegisterGetFilesFunc(IPPROTO_TCP, ALPROTO_GOPHER,
+            GopherStateGetFiles);
+
+        /* Configure the stream buffer. */
+        memset(&stream_buffer_config, 0, sizeof(stream_buffer_config));
     }
     else {
-        SCLogNotice("Gopher protocol parsing disabled.");
+        SCLogDebug("Gopher protocol parsing disabled.");
     }
 
 #ifdef UNITTESTS

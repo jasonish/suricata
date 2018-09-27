@@ -70,6 +70,8 @@ typedef struct GopherState {
      *  transaction ID for each transaction is allocted
      *  by incrementing this value. */
     uint64_t transaction_max;
+
+    FileContainer *file_container;
 } GopherState;
 
 #endif /* __APP_LAYER_GOPHER_H__ */
