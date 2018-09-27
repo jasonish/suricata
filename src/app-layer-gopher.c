@@ -103,6 +103,10 @@ static void GopherTxFree(void *txv)
 
     AppLayerDecoderEventsFreeEvents(&tx->decoder_events);
 
+    if (tx->de_state != NULL) {
+        DetectEngineStateFree(tx->de_state);
+    }
+
     SCFree(tx);
 }
 
