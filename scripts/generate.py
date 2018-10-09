@@ -26,6 +26,138 @@ class SetupError(Exception):
     pass
 
 @register
+class Parser:
+
+    _name = "parser"
+    _description = "Generate app-layer parser (C)"
+
+    def __init__(self, args):
+        self.args = args
+        self.name = self.args.name
+
+    @classmethod
+    def register(cls, parser):
+        parser.add_argument("name", help="Name of protocol")
+
+    def run(self):
+        if not self.name:
+            raise SetupError("The protocol name cannot be empty.")
+        if self.name[0] != self.name.upper()[0]:
+            raise SetupError(
+                "The protocol name must begin with an upper case letter.")
+        if proto_exists(self.name):
+            raise SetupError("Protocol already exists.")
+        self.copy_templates()
+        self.patch_makefile_am()
+        self.patch_app_layer_protos_h()
+        self.patch_app_layer_protos_c()
+        self.patch_app_layer_detect_proto_c()
+        self.patch_app_layer_parser_c()
+        self.patch_suricata_yaml_in()
+
+    def copy_templates(self):
+        lower = self.name.lower()
+        pairs = (
+            ("src/app-layer-template.c",
+             "src/app-layer-%s.c" % (lower)),
+            ("src/app-layer-template.h",
+             "src/app-layer-%s.h" % (lower)),
+        )
+        copy_templates(self.name, pairs)
+
+    def patch_makefile_am(self):
+        print("Patching src/Makefile.am.")
+        output = io.StringIO()
+        with open("src/Makefile.am") as infile:
+            for line in infile:
+                if line.startswith("app-layer-template.c"):
+                    output.write(line.replace("template", self.name.lower()))
+                output.write(line)
+        open("src/Makefile.am", "w").write(output.getvalue())
+
+    def patch_app_layer_protos_h(self):
+        filename = "src/app-layer-protos.h"
+        print("Patching %s." % (filename))
+        output = io.StringIO()
+        with open(filename) as infile:
+            for line in infile:
+                if line.find("ALPROTO_TEMPLATE,") > -1:
+                    output.write(line.replace("TEMPLATE", self.name.upper()))
+                output.write(line)
+        open(filename, "w").write(output.getvalue())
+
+    def patch_app_layer_protos_c(self):
+        filename = "src/app-layer-protos.c"
+        print("Patching %s." % (filename))
+        output = io.StringIO()
+
+        # Read in all the lines as we'll be doing some multi-line
+        # duplications.
+        inlines = open(filename).readlines()
+        for i, line in enumerate(inlines):
+
+            if line.find("case ALPROTO_TEMPLATE:") > -1:
+                # Duplicate the section starting an this line and
+                # including the following 2 lines.
+                for j in range(i, i + 3):
+                    temp = inlines[j]
+                    temp = temp.replace("TEMPLATE", self.name.upper())
+                    temp = temp.replace("template", self.name.lower())
+                    output.write(temp)
+
+            if line.find("return ALPROTO_TEMPLATE;") > -1:
+                output.write(
+                    line.replace("TEMPLATE", self.name.upper()).replace(
+                        "template", self.name.lower()))
+
+            output.write(line)
+        open(filename, "w").write(output.getvalue())
+
+    def patch_app_layer_detect_proto_c(self):
+        upper = self.name.upper()
+        filename = "src/app-layer-detect-proto.c"
+        print("Patching %s." % (filename))
+        output = io.StringIO()
+        inlines = open(filename).readlines()
+        for i, line in enumerate(inlines):
+            if line.find("== ALPROTO_TEMPLATE)") > -1:
+                output.write(inlines[i].replace("TEMPLATE", upper))
+                output.write(inlines[i+1].replace("TEMPLATE", upper))
+            output.write(line)
+        open(filename, "w").write(output.getvalue())
+
+    def patch_app_layer_parser_c(self):
+        filename = "src/app-layer-parser.c"
+        print("Patching %s." % (filename))
+        output = io.StringIO()
+        inlines = open(filename).readlines()
+        for line in inlines:
+            if line.find("app-layer-template.h") > -1:
+                output.write(line.replace("template", self.name.lower()))
+            if line.find("RegisterTemplateParsers()") > -1:
+                output.write(line.replace("Template", self.name))
+            output.write(line)
+        open(filename, "w").write(output.getvalue())
+
+    def patch_suricata_yaml_in(self):
+        filename = "suricata.yaml.in"
+        print("Patching %s." % (filename))
+        output = io.StringIO()
+        inlines = open(filename).readlines()
+        for i, line in enumerate(inlines):
+            if line.find("protocols:") > -1:
+                if inlines[i-1].find("app-layer:") > -1:
+                    output.write(line)
+                    output.write("""    %s:
+          enabled: yes
+""" % (self.name.lower()))
+                    # Skip writing out the current line, already done.
+                    continue
+
+            output.write(line)
+        open(filename, "w").write(output.getvalue())
+
+@register
 class PacketLogger:
 
     _name = "packet-logger"
@@ -156,6 +288,13 @@ def copy_templates(proto, pairs, replacements=()):
 def fail_if_exists(filename):
     if os.path.exists(filename):
         raise SetupError("%s already exists" % (filename))
+
+def proto_exists(proto):
+    upper = proto.upper()
+    for line in open("src/app-layer-protos.h"):
+        if line.find("ALPROTO_%s," % (upper)) > -1:
+            return True
+    return False
 
 def main():
     parser = argparse.ArgumentParser()
