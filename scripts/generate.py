@@ -12,9 +12,9 @@ import re
 generators = {}
 
 def register(cls):
-    generators[cls.name] = {
-        "name": cls.name,
-        "description": cls.description,
+    generators[cls._name] = {
+        "name": cls._name,
+        "description": cls._description,
         "class": cls,
     }
 
@@ -28,8 +28,8 @@ class SetupError(Exception):
 @register
 class PacketLogger:
 
-    name = "packet-logger"
-    description = "Generate a JSON packet logger"
+    _name = "packet-logger"
+    _description = "Generate a JSON packet logger"
 
     def __init__(self, args):
         self.args = args
@@ -37,7 +37,6 @@ class PacketLogger:
 
     @classmethod
     def register(cls, parser):
-        parser.set_defaults(func=setup_packet_logger)
         parser.add_argument("name", help="Name of packet logger")
 
     def run(self):
