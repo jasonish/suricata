@@ -1,4 +1,6 @@
 #! /usr/bin/env python3
+#
+# Utility script for generating new Suricata subsystems.
 
 import sys
 import os
@@ -7,6 +9,15 @@ import argparse
 import io
 import re
 
+generators = {}
+
+def register(cls):
+    generators[cls.name] = {
+        "name": cls.name,
+        "description": cls.description,
+        "class": cls,
+    }
+
 class SetupError(Exception):
     """Functions in this script can raise this error which will cause the
     application to abort displaying the provided error message, but
@@ -14,11 +25,20 @@ class SetupError(Exception):
     """
     pass
 
+@register
 class PacketLogger:
+
+    name = "packet-logger"
+    description = "Generate a JSON packet logger"
 
     def __init__(self, args):
         self.args = args
         self.name = args.name
+
+    @classmethod
+    def register(cls, parser):
+        parser.set_defaults(func=setup_packet_logger)
+        parser.add_argument("name", help="Name of packet logger")
 
     def run(self):
         # Make sure a logger with this name doesn't already exists.
@@ -138,20 +158,31 @@ def fail_if_exists(filename):
     if os.path.exists(filename):
         raise SetupError("%s already exists" % (filename))
 
-def setup_packet_logger(args):
-    PacketLogger(args).run()
-
 def main():
     parser = argparse.ArgumentParser()
+    parser.set_defaults(func=None)
 
     subparsers = parser.add_subparsers(title="commands")
 
-    sub = subparsers.add_parser('packet-logger')
-    sub.set_defaults(func=setup_packet_logger)
-    sub.add_argument("name", help="Name of packet logger")
+    for generator in generators.values():
+        sub = subparsers.add_parser(generator["name"])
+        sub.set_defaults(generator=generator["name"])
+        generator["class"].register(sub)
 
     args = parser.parse_args()
-    args.func(args)
+    if args.generator:
+        generators[args.generator]["class"](args).run()
+    else:
+        max_name = max(
+            [len(generator["name"]) for generator in generators.values()])
+        print("""No generator provided.
+
+Usage: generator.py <GENERATOR> [arguments...]
+
+Generators:""")
+        for generator in generators.values():
+            print("    %s - %s" % (generator["name"].ljust(max_name),
+                                   generator["description"]))
 
 if __name__ == "__main__":
     try:
