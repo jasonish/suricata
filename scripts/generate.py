@@ -159,7 +159,7 @@ def fail_if_exists(filename):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.set_defaults(func=None)
+    parser.set_defaults(generator=None)
 
     subparsers = parser.add_subparsers(title="commands")
 
