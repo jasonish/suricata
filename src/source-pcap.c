@@ -436,7 +436,9 @@ TmEcode ReceivePcapThreadInit(ThreadVars *tv, const void *initdata, void **data)
 #endif /* HAVE_PCAP_SET_BUFF */
 
     /* activate the handle */
+    SCPrivsRaise();
     int pcap_activate_r = pcap_activate(ptv->pcap_handle);
+    SCPrivsDrop();
     if (pcap_activate_r != 0) {
         SCLogError(SC_ERR_PCAP_ACTIVATE_HANDLE, "could not activate the "
                 "pcap handler, error %s", pcap_geterr(ptv->pcap_handle));
