@@ -262,6 +262,7 @@ int SetIfaceCaps(const char *ifname, int caps)
     strlcpy(ifr.ifr_name, ifname, sizeof(ifr.ifr_name));
     ifr.ifr_reqcap = caps;
 
+    SCPrivsRaise();
     if (ioctl(fd, SIOCSIFCAP, &ifr) == -1) {
         SCLogError(SC_ERR_SYSCALL,
                    "Unable to set caps for iface \"%s\": %s",
@@ -269,6 +270,7 @@ int SetIfaceCaps(const char *ifname, int caps)
         close(fd);
         return -1;
     }
+    SCPrivsDrop();
 
     close(fd);
     return 0;
