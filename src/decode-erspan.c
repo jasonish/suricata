@@ -36,8 +36,8 @@
 #include "decode-events.h"
 #include "decode-erspan.h"
 
-#include "util-unittest.h"
-#include "util-debug.h"
+#include "util/util-unittest.h"
+#include "util/util-debug.h"
 
 /**
  * \brief Functions to decode ERSPAN Type I and II packets
