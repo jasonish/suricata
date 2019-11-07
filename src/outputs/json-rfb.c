@@ -38,10 +38,10 @@
 #include "output.h"
 #include "outputs/json.h"
 
-#include "app-layer.h"
-#include "app-layer-parser.h"
+#include "app-layer/app-layer.h"
+#include "app-layer/app-layer-parser.h"
 
-#include "app-layer-rfb.h"
+#include "app-layer/rfb.h"
 #include "outputs/json-rfb.h"
 
 #include "rust-bindings.h"

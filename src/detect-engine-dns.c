@@ -38,9 +38,9 @@
 #include "util/print.h"
 #include "flow.h"
 
-#include "app-layer.h"
-#include "app-layer-parser.h"
-#include "app-layer-protos.h"
+#include "app-layer/app-layer.h"
+#include "app-layer/app-layer-parser.h"
+#include "app-layer/protos.h"
 #include "detect-engine-dns.h"
 
 #include "util/unittest.h"

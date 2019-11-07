@@ -23,7 +23,7 @@
 #include "suricata-common.h"
 #include "threads.h"
 #include "debug.h"
-#include "decode.h"
+#include "decoders/decode.h"
 #include "detect.h"
 
 #include "detect-parse.h"
@@ -41,14 +41,14 @@
 #include "util/unittest-helper.h"
 #include "util/spm.h"
 
-#include "app-layer.h"
-#include "app-layer-parser.h"
+#include "app-layer/app-layer.h"
+#include "app-layer/app-layer-parser.h"
 
 #include "detect-rfb-name.h"
 #include "stream-tcp.h"
 
 #include "rust.h"
-#include "app-layer-rfb.h"
+#include "app-layer/rfb.h"
 #include "rust-bindings.h"
 
 #define KEYWORD_NAME "rfb.name"

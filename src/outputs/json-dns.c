@@ -38,9 +38,9 @@
 
 #include "util/debug.h"
 #include "util/mem.h"
-#include "app-layer-parser.h"
+#include "app-layer/app-layer-parser.h"
 #include "output.h"
-#include "app-layer.h"
+#include "app-layer/app-layer.h"
 #include "util/privs.h"
 #include "util/buffer.h"
 #include "util/proto-name.h"

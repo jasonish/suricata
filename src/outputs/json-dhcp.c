@@ -39,8 +39,8 @@
 #include "output.h"
 #include "outputs/json.h"
 
-#include "app-layer.h"
-#include "app-layer-parser.h"
+#include "app-layer/app-layer.h"
+#include "app-layer/app-layer-parser.h"
 
 #include "outputs/json-dhcp.h"
 #include "rust.h"
