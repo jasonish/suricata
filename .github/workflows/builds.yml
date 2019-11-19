@@ -50,6 +50,14 @@ jobs:
       - run: ./configure --enable-unittests
       - run: make -j2
       - run: make check
+      - run: |
+          make dist
+          mkdir dist
+          mv *.tar.gz dist
+      - uses: actions/upload-artifact@v1
+        with:
+          name: dist
+          path: dist
 
   coccinelle-check:
     name: Ubuntu 18.04 Coccinelle Check
