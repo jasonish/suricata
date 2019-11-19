@@ -1,0 +1,128 @@
+name: builds
+
+on: [push, pull_request]
+
+jobs:
+
+  fedora-31:
+    name: Fedora 31
+    runs-on: ubuntu-latest
+    container: fedora:31
+    steps:
+      - run: |
+          dnf -y install \
+                autoconf \
+                automake \
+                cargo \
+                ccache \
+                diffutils \
+                file-devel \
+                gcc \
+                gcc-c++ \
+                git \
+                jansson-devel \
+                jq \
+                lua-devel \
+                libtool \
+                libyaml-devel \
+                libnfnetlink-devel \
+                libnetfilter_queue-devel \
+                libnet-devel \
+                libcap-ng-devel \
+                libevent-devel \
+                libmaxminddb-devel \
+                libpcap-devel \
+                libtool \
+                lz4-devel \
+                make \
+                nspr-devel \
+                nss-devel \
+                nss-softokn-devel \
+                pcre-devel \
+                pkgconfig \
+                python3-yaml \
+                sudo \
+                which \
+                zlib-devel
+      - uses: actions/checkout@v1
+      - run: ./qa/travis-libhtp.sh
+      - run: ./autogen.sh
+      - run: ./configure --enable-unittests
+      - run: make -j2
+      - run: make check
+
+  coccinelle-check:
+    name: Ubuntu 18.04 Coccinelle Check
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt -y install \
+                libpcre3 \
+                libpcre3-dev \
+                build-essential \
+                autoconf \
+                automake \
+                libtool \
+                libpcap-dev \
+                libnet1-dev \
+                libyaml-0-2 \
+                libyaml-dev \
+                zlib1g \
+                zlib1g-dev \
+                libcap-ng-dev \
+                libcap-ng0 \
+                make \
+                libmagic-dev \
+                libnetfilter-queue-dev \
+                libnetfilter-queue1 \
+                libnfnetlink-dev \
+                libnfnetlink0 \
+                libhiredis-dev \
+                libjansson-dev \
+                libevent-dev \
+                libevent-pthreads-2.1.6 \
+                libjansson-dev \
+                software-properties-common
+      - name: Install Coccinelle
+        run: |
+          sudo add-apt-repository -y ppa:npalix/coccinelle
+          sudo apt -y install coccinelle
+      - uses: actions/checkout@v1
+      - run: ./qa/travis-libhtp.sh
+      - run: ./autogen.sh
+      - run: ./configure --enable-unittests --enable-coccinelle
+      - run: make -j2
+      - run: make check
+
+  macos-latest:
+    name: MacOS Latest
+    runs-on: macos-latest
+    steps:
+      - run: |
+         brew install \
+          autoconf \
+          automake \
+          curl \
+          hiredis \
+          jansson \
+          jq \
+          libmagic \
+          libnet \
+          libtool \
+          libyaml \
+          lua \
+          nss \
+          nspr \
+          pcre \
+          pkg-config \
+          rust \
+          xz
+      - run: pip install PyYAML
+      - uses: actions/checkout@v1
+      - run: ./qa/travis-libhtp.sh
+      - run: ./autogen.sh
+      - run: ./configure --enable-unittests
+      - run: make -j2
+      - run: make check
