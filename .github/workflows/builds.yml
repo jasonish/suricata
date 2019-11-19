@@ -45,7 +45,7 @@ jobs:
                 which \
                 zlib-devel
       - uses: actions/checkout@v1
-      - run: ./qa/travis-libhtp.sh
+      - run: git clone https://github.com/OISF/libhtp -b 0.5.x
       - run: ./autogen.sh
       - run: ./configure --enable-unittests
       - run: make -j2
@@ -98,7 +98,7 @@ jobs:
           sudo add-apt-repository -y ppa:npalix/coccinelle
           sudo apt -y install coccinelle
       - uses: actions/checkout@v1
-      - run: ./qa/travis-libhtp.sh
+      - run: git clone https://github.com/OISF/libhtp -b 0.5.x
       - run: ./autogen.sh
       - run: ./configure --enable-unittests --enable-coccinelle
       - run: make -j2
@@ -129,7 +129,7 @@ jobs:
           xz
       - run: pip install PyYAML
       - uses: actions/checkout@v1
-      - run: ./qa/travis-libhtp.sh
+      - run: git clone https://github.com/OISF/libhtp -b 0.5.x
       - run: ./autogen.sh
       - run: ./configure --enable-unittests
       - run: make -j2
