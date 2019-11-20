@@ -4,6 +4,19 @@ on: [push, pull_request]
 
 jobs:
 
+  dist-test:
+    name: dist-test
+    runs-on: ubuntu-latest
+    container: fedora:31
+    steps:
+      - run: mkdir dist
+      - run: touch dist/one.txt
+      - run: touch dist/two.txt
+      - uses: actions/upload-artifact@v1
+        with:
+          name: dist
+          path: dist/*
+
   ubuntu-16-04-from-dist:
     name: Ubuntu 16.04 from dist
     runs-on: ubuntu-16.04
@@ -13,6 +26,8 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: dist
+      - run: ls -l
+      - run: pwd
       - run: tar zxvf suricata-*.tar.gz
 
   fedora-31:
