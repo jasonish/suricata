@@ -28,7 +28,7 @@ jobs:
           name: dist
       - run: ls -l
       - run: pwd
-      - run: tar zxvf suricata-*.tar.gz
+      - run: tar zxvf dist/suricata-*.tar.gz
 
   fedora-31:
     name: Fedora 31
