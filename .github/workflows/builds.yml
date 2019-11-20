@@ -4,26 +4,6 @@ on: [push, pull_request]
 
 jobs:
 
-  ubuntu-16-04-from-dist:
-    name: Ubuntu 16.04 from dist
-    runs-on: ubuntu-16.04
-    needs: fedora-31
-    steps:
-      - name: Download suricata.tar.gz
-        uses: actions/download-artifact@v1
-        with:
-          name: dist
-      - run: ls -l
-      - run: pwd
-      - run: mkdir suricata
-      - working-directory: suricata
-        run: |
-          tar zxvf ../dist/suricata-*.tar.gz --strip-components=1
-          ./configure
-          make -j2
-          make install
-          make install-conf
-
   fedora-31:
     name: Fedora 31
     runs-on: ubuntu-latest
@@ -78,6 +58,50 @@ jobs:
         with:
           name: dist
           path: dist
+
+  # An Ubuntu 16.04 build using the tarball generated in the Fedora 31
+  # build above.
+  ubuntu-16-04-from-dist:
+    name: Ubuntu 16.04 from dist
+    runs-on: ubuntu-16.04
+    needs: fedora-31
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt -y install \
+                libpcre3 \
+                libpcre3-dev \
+                build-essential \
+                libpcap-dev \
+                libnet1-dev \
+                libyaml-0-2 \
+                libyaml-dev \
+                zlib1g \
+                zlib1g-dev \
+                libcap-ng-dev \
+                libcap-ng0 \
+                make \
+                libmagic-dev \
+                libnetfilter-queue-dev \
+                libnetfilter-queue1 \
+                libnfnetlink-dev \
+                libnfnetlink0 \
+                libhiredis-dev \
+                libjansson-dev \
+                libevent-dev
+      - name: Download suricata.tar.gz
+        uses: actions/download-artifact@v1
+        with:
+          name: dist
+      - run: mkdir suricata
+      - working-directory: suricata
+        run: |
+          tar zxvf ../dist/suricata-*.tar.gz --strip-components=1
+          ./configure
+          make -j2
+          make install
+          make install-conf
 
   coccinelle-check:
     name: Ubuntu 18.04 Coccinelle Check
