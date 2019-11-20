@@ -4,6 +4,17 @@ on: [push, pull_request]
 
 jobs:
 
+  ubuntu-16-04-from-dist:
+    name: Ubuntu 16.04 from dist
+    runs-on: ubuntu-16.04
+    needs: fedora-31
+    steps:
+      - name: Download suricata.tar.gz
+        uses: actions/download-artifact@v1
+        with:
+          name: dist
+      - run: tar zxvf suricata-*.tar.gz
+
   fedora-31:
     name: Fedora 31
     runs-on: ubuntu-latest
