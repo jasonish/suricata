@@ -15,7 +15,7 @@ jobs:
       - uses: actions/upload-artifact@v1
         with:
           name: dist
-          path: dist/*
+          path: dist/one.txt
 
   ubuntu-16-04-from-dist:
     name: Ubuntu 16.04 from dist
