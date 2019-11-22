@@ -99,7 +99,7 @@ jobs:
         name: Uploading distribution
         with:
           name: dist
-          path: $DIST_FILENAME
+          path: ${{ DIST_FILENAME }}
 
   centos-7:
     name: CentOS 7
