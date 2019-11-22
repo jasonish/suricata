@@ -351,11 +351,11 @@ jobs:
         working-directory: suricata
         run: make check
       - working-directory: suricata
-        run: sudo make install
+        run: make install
       - working-directory: suricata
-        run: sudo make install-conf
+        run: make install-conf
       - working-directory: suricata
-        run: sudo make install-rules
+        run: make install-rules
 
   # An Ubuntu 14.04 build using the tarball generated in the CentOS 8
   # build above.
