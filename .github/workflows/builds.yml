@@ -2,6 +2,9 @@ name: builds
 
 on: [push, pull_request]
 
+env:
+  DIST_FILENAME: suricata-5.0.1-dev.tar.gz
+
 jobs:
 
   centos-8:
@@ -49,11 +52,25 @@ jobs:
                 pcre-devel \
                 pkgconfig \
                 python3-devel \
+                python3-sphinx \
                 python3-yaml \
                 rust-toolset \
                 sudo \
                 which \
                 zlib-devel
+          # These packages required to build the PDF.
+          yum -y install \
+                texlive-latex \
+                texlive-cmap \
+                texlive-collection-latexrecommended \
+                texlive-fncychap \
+                texlive-titlesec \
+                texlive-tabulary \
+                texlive-framed \
+                texlive-wrapfig \
+                texlive-upquote \
+                texlive-capt-of \
+                texlive-needspace \
       - uses: actions/checkout@v1
       - name: Bundling libhtp
         run: git clone https://github.com/OISF/libhtp -b 0.5.x
@@ -77,16 +94,12 @@ jobs:
       - name: Running unittests
         run: make check
       - name: Building distribution
-        run: |
-          make dist
-          mkdir dist
-          mv *.tar.gz dist
+        run: make dist
       - uses: actions/upload-artifact@v1
         name: Uploading distribution
         with:
           name: dist
-          path: dist
-      - run: ls -l /github/home/.cargo
+          path: $DIST_FILENAME
 
   centos-7:
     name: CentOS 7
