@@ -13,6 +13,14 @@ jobs:
     container: centos:8
     steps:
 
+      - run: touh $DIST_FILENAME
+
+      - uses: actions/upload-artifact@v1
+        name: Uploading distribution
+        with:
+          name: $DIST_FILENAME
+          path: $DIST_FILENAME
+
       # Cache Rust stuff.
       - name: Cache cargo registry
         uses: actions/cache@v1
