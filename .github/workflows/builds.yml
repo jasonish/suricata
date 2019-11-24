@@ -98,8 +98,8 @@ jobs:
       - uses: actions/upload-artifact@v1
         name: Uploading distribution
         with:
-          name: dist
-          path: ${{ DIST_FILENAME }}
+          name: $DIST_FILENAME
+          path: $DIST_FILENAME
 
   centos-7:
     name: CentOS 7
