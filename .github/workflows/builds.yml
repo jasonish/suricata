@@ -92,6 +92,16 @@ jobs:
         run: make -j2
       - name: Running unittests
         run: make check
+      - name: Fetching suricata-verify
+        run: git clone https://github.com/OISF/suricata-verify.git
+      - name: Running suricata-verify
+        run: |
+          for try in 1 2 3; do
+            if python3 ./suricata-verify/run.py --fail; then
+              exit 0
+            fi
+          done
+          exit 1
       - name: Building distribution
         run: |
           make dist
@@ -135,6 +145,7 @@ jobs:
                 nss-devel \
                 pcre-devel \
                 pkgconfig \
+                python2-pyyaml \
                 rust \
                 sudo \
                 which \
@@ -150,6 +161,24 @@ jobs:
         run: ./configure
       - working-directory: suricata
         run: make -j2
+      - working-directory: suricata
+        run: make check
+      - name: Fetching suricata-verify
+        working-directory: suricata
+        run: |
+          mkdir suricata-verify
+          cd suricata-verify
+          curl -L https://github.com/OISF/suricata-verify/archive/master.tar.gz | \
+              tar zxvf - --strip-components=1
+      - name: Running suricata-verify
+        working-directory: suricata
+        run: |
+          for try in 1 2 3; do
+            if python ./suricata-verify/run.py --fail; then
+              exit 0
+            fi
+          done
+          exit 1
       - working-directory: suricata
         run: make install
       - working-directory: suricata
@@ -193,6 +222,24 @@ jobs:
         run: ./configure
       - working-directory: suricata
         run: make -j2
+      - working-directory: suricata
+        run: make check
+      - name: Fetching suricata-verify
+        working-directory: suricata
+        run: |
+          mkdir suricata-verify
+          cd suricata-verify && \
+              curl -L https://github.com/OISF/suricata-verify/archive/master.tar.gz | \
+                  tar zxvf - --strip-components=1
+      - name: Running suricata-verify
+        working-directory: suricata
+        run: |
+          for try in 1 2 3; do
+            if python3 ./suricata-verify/run.py --fail; then
+              exit 0
+            fi
+          done
+          exit 1
       - working-directory: suricata
         run: make install
       - working-directory: suricata
@@ -255,7 +302,13 @@ jobs:
       - name: Fetching suricata-verify
         run: git clone https://github.com/OISF/suricata-verify.git
       - name: Running suricata-verify
-        run: python3 ./suricata-verify/run.py
+        run: |
+          for try in 1 2 3; do
+            if python3 ./suricata-verify/run.py --fail; then
+              exit 0
+            fi
+          done
+          exit 1
 
   ubuntu-18-04:
     name: Ubuntu 18.04 (Cocci)
@@ -315,7 +368,13 @@ jobs:
       - name: Fetching suricata-verify
         run: git clone https://github.com/OISF/suricata-verify.git
       - name: Running suricata-verify
-        run: ./suricata-verify/run.py
+        run: |
+          for try in 1 2 3; do
+            if python3 ./suricata-verify/run.py --fail; then
+              exit 0
+            fi
+          done
+          exit 1
 
   # An Ubuntu 16.04 build using the tarball generated in the CentOS 8
   # build above.
@@ -331,6 +390,7 @@ jobs:
           apt -y install \
                 build-essential \
                 curl \
+                jq \
                 libcap-ng-dev \
                 libcap-ng0 \
                 libevent-dev \
@@ -372,6 +432,22 @@ jobs:
       - name: Testing
         working-directory: suricata
         run: make check
+      - name: Fetching suricata-verify
+        working-directory: suricata
+        run: |
+          mkdir suricata-verify
+          cd suricata-verify
+          curl -L https://github.com/OISF/suricata-verify/archive/master.tar.gz | \
+              tar zxvf - --strip-components=1
+      - name: Running suricata-verify
+        working-directory: suricata
+        run: |
+          for try in 1 2 3; do
+            if python3 ./suricata-verify/run.py --fail; then
+              exit 0
+            fi
+          done
+          exit 1
       - working-directory: suricata
         run: make install
       - working-directory: suricata
@@ -443,7 +519,13 @@ jobs:
       - name: Fetching suricata-verify
         run: git clone https://github.com/OISF/suricata-verify.git
       - name: Running suricata-verify
-        run: ./suricata-verify/run.py
+        run: |
+          for try in 1 2 3; do
+            if python ./suricata-verify/run.py --fail; then
+              exit 0
+            fi
+          done
+          exit 1
 
   debian-9:
     name: Debian 9
@@ -504,7 +586,13 @@ jobs:
       - name: Fetching suricata-verify
         run: git clone https://github.com/OISF/suricata-verify.git
       - name: Running suricata-verify
-        run: ./suricata-verify/run.py
+        run: |
+          for try in 1 2 3; do
+            if python ./suricata-verify/run.py --fail; then
+              exit 0
+            fi
+          done
+          exit 1
 
   macos-latest:
     name: MacOS Latest
@@ -545,4 +633,13 @@ jobs:
       - name: Fetching suricata-verify
         run: git clone https://github.com/OISF/suricata-verify.git
       - name: Running suricata-verify
-        run: ./suricata-verify/run.py
+        run: |
+          for try in 1 2 3; do
+            echo "::debug::suricata-verify try: $try"
+            if python ./suricata-verify/run.py --fail; then
+              exit 0
+            else
+              echo "::warning::suricata-verify try $try failed"
+            fi
+          done
+          exit 1
