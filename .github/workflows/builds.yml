@@ -4,6 +4,10 @@ on:
   - push
   - pull_request
 
+env:
+  DEFAULT_SURICATA_VERIFY_REPO: https://github.com/OISF/suricata-verify
+  DEFAULT_SURICATA_VERIFY_BRANCH: master
+
 jobs:
 
   centos-8:
@@ -11,6 +15,29 @@ jobs:
     runs-on: ubuntu-latest
     container: centos:8
     steps:
+
+      - run: yum -y install jq curl
+
+      - name: Dump Info
+        env:
+          # If not a pull request PULL will be empty.
+          PULL: ${{ github.event.pull_request._links.self.href }}
+        run: |
+          verify_repo="${DEFAULT_SURICATA_VERIFY_REPO}"
+          verify_branch="${DEFAULT_SURICATA_VERIFY_BRANCH}"
+          if test "${PULL}"; then
+              body=$(curl -s "${PULL}" | jq -r .body)
+              repo=$(echo "${body}" | awk '/^suricata-verify-repo/ { print $2 }')
+              branch=$(echo "${body}" | awk '/^suricata-verify-branch/ { print $2 }')
+              if test "${repo}"; then
+                  verify_repo="${repo}"
+              fi
+              if test "${branch}"; then
+                  verify_branch="${branch}"
+              fi
+          fi
+          echo "Suricata-Verify Repo: ${verify_repo}"
+          echo "Suricata-Verify Branch: ${verify_branch}"
 
       # Cache Rust stuff.
       - name: Cache cargo registry
