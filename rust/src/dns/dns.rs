@@ -122,43 +122,16 @@ pub const DNS_RCODE_BADTRUNC: u16 = 22;
 /// gets logged.
 const MAX_TRANSACTIONS: usize = 32;
 
-#[repr(u32)]
+#[derive(Debug, PartialEq, suricata_derive::AppLayerEvent)]
 pub enum DNSEvent {
-    MalformedData = 0,
-    NotRequest = 1,
-    NotResponse = 2,
-    ZFlagSet = 3,
-}
-
-impl DNSEvent {
-    pub fn to_cstring(&self) -> &str {
-        match *self {
-            DNSEvent::MalformedData => "MALFORMED_DATA\0",
-            DNSEvent::NotRequest => "NOT_A_REQUEST\0",
-            DNSEvent::NotResponse => "NOT_A_RESPONSE\0",
-            DNSEvent::ZFlagSet => "Z_FLAG_SET\0",
-        }
-    }
-
-    pub fn from_id(id: u32) -> Option<DNSEvent> {
-        match id {
-            0 => Some(DNSEvent::MalformedData),
-            1 => Some(DNSEvent::NotRequest),
-            2 => Some(DNSEvent::NotResponse),
-            4 => Some(DNSEvent::ZFlagSet),
-            _ => None,
-        }
-    }
-
-    pub fn from_string(s: &str) -> Option<DNSEvent> {
-        match s.to_lowercase().as_ref() {
-            "malformed_data" => Some(DNSEvent::MalformedData),
-            "not_a_request" => Some(DNSEvent::NotRequest),
-            "not_a_response" => Some(DNSEvent::NotRequest),
-            "z_flag_set" => Some(DNSEvent::ZFlagSet),
-            _ => None
-        }
-    }
+    #[event(name = "malformed_data", id = 0)]
+    MalformedData,
+    #[event(name = "not_a_request", id = 1)]
+    NotRequest,
+    #[event(name = "not_a_response", id = 2)]
+    NotResponse,
+    #[event(name = "z_flag_set", id = 3)]
+    ZFlagSet,
 }
 
 #[no_mangle]
@@ -185,21 +158,19 @@ pub unsafe extern "C" fn rs_dns_state_get_event_info(
         return -1;
     }
 
-    let event_name = std::ffi::CStr::from_ptr(event_name);
-    if let Ok(event_name) = event_name.to_str() {
+    if let Ok(event_name) = std::ffi::CStr::from_ptr(event_name).to_str() {
         if let Some(event) = DNSEvent::from_string(event_name) {
             *event_id = event as std::os::raw::c_int;
             *event_type = core::APP_LAYER_EVENT_TYPE_TRANSACTION;
+            return 0;
         } else {
             // Unknown event...
             return -1;
         }
-    } else {
-        // UTF-8 conversion failed. Should not happen.
-        return -1;
     }
 
-    return 0;
+    // UTF-8 conversion failed. Should not happen.
+    return -1;
 }
 
 #[derive(Debug,PartialEq)]
@@ -1082,5 +1053,24 @@ mod tests {
 
         let mut state = DNSState::new();
         assert_eq!(0, state.parse_response_tcp(&request));
+    }
+
+    use super::DNSEvent;
+
+    #[test]
+    fn test_dns_event_from_id() {
+        assert_eq!(DNSEvent::from_id(0), Some(DNSEvent::MalformedData));
+        assert_eq!(DNSEvent::from_id(3), Some(DNSEvent::ZFlagSet));
+        assert_eq!(DNSEvent::from_id(9), None);
+    }
+
+    #[test]
+    fn test_dns_event_to_cstring() {
+        assert_eq!(DNSEvent::MalformedData.to_cstring(), "malformed_data\0");
+    }
+
+    #[test]
+    fn test_dns_event_from_string() {
+        assert_eq!(DNSEvent::from_string("malformed_data"), Some(DNSEvent::MalformedData));
     }
 }

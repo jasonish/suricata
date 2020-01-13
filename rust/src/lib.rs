@@ -34,6 +34,8 @@ extern crate kerberos_parser;
 extern crate tls_parser;
 extern crate x509_parser;
 
+extern crate suricata_derive;
+
 #[macro_use]
 pub mod log;
 

@@ -34,3 +34,5 @@ ipsec-parser = "0.4"
 snmp-parser = "0.3.0"
 tls-parser = "0.8"
 x509-parser = "0.4"
+
+suricata-derive = { path = "./derive" }
