@@ -1,4 +1,4 @@
-/* Copyright (C) 2018 Open Information Security Foundation
+/* Copyright (C) 2018-2020 Open Information Security Foundation
  *
  * You can copy, redistribute or modify this Program under the terms of
  * the GNU General Public License version 2 as published by the Free
@@ -18,7 +18,7 @@
 // written by Victor Julien
 
 use nom;
-use nom::be_u32;
+use nom::number::streaming::be_u32;
 
 use crate::core::*;
 use crate::log::*;
@@ -29,12 +29,12 @@ use crate::nfs::rpc_records::*;
 use crate::nfs::nfs_records::*;
 use crate::nfs::nfs4_records::*;
 
-use crate::kerberos;
+use crate::kerberos::{parse_kerberos5_request, Kerberos5Ticket, SecBlobError};
 
-named!(parse_req_gssapi<kerberos::Kerberos5Ticket>,
+named!(parse_req_gssapi<&[u8], Kerberos5Ticket, SecBlobError>,
    do_parse!(
         len: be_u32
-    >>  ap: flat_map!(take!(len), call!(kerberos::parse_kerberos5_request))
+    >>  ap: flat_map!(take!(len), parse_kerberos5_request)
     >> ( ap )
 ));
 

@@ -120,6 +120,14 @@ TmEcode PcapFileDispatch(PcapFileFileVars *ptv)
 {
     SCEnter();
 
+    /* initialize all the threads initial timestamp */
+    if (likely(ptv->first_pkt_hdr != NULL)) {
+        TmThreadsInitThreadsTimestamp(&ptv->first_pkt_ts);
+        PcapFileCallbackLoop((char *)ptv, ptv->first_pkt_hdr, (u_char *)ptv->first_pkt_data);
+        ptv->first_pkt_hdr = NULL;
+        ptv->first_pkt_data = NULL;
+    }
+
     int packet_q_len = 64;
     int r;
     TmEcode loop_result = TM_ECODE_OK;
@@ -160,6 +168,23 @@ TmEcode PcapFileDispatch(PcapFileFileVars *ptv)
     SCReturnInt(loop_result);
 }
 
+/** \internal
+ *  \brief get the timestamp of the first packet and rewind
+ *  \retval bool true on success, false on error
+ */
+static bool PeekFirstPacketTimestamp(PcapFileFileVars *pfv)
+{
+    int r = pcap_next_ex(pfv->pcap_handle, &pfv->first_pkt_hdr, &pfv->first_pkt_data);
+    if (r <= 0 || pfv->first_pkt_hdr == NULL) {
+        SCLogError(SC_ERR_PCAP_OPEN_OFFLINE,
+                "failed to get first packet timestamp. pcap_next_ex(): %d", r);
+        return false;
+    }
+    pfv->first_pkt_ts.tv_sec = pfv->first_pkt_hdr->ts.tv_sec;
+    pfv->first_pkt_ts.tv_usec = pfv->first_pkt_hdr->ts.tv_usec;
+    return true;
+}
+
 TmEcode InitPcapFile(PcapFileFileVars *pfv)
 {
     char errbuf[PCAP_ERRBUF_SIZE] = "";
@@ -196,39 +221,40 @@ TmEcode InitPcapFile(PcapFileFileVars *pfv)
     pfv->datalink = pcap_datalink(pfv->pcap_handle);
     SCLogDebug("datalink %" PRId32 "", pfv->datalink);
 
+    if (!PeekFirstPacketTimestamp(pfv))
+        SCReturnInt(TM_ECODE_FAILED);
+
     DecoderFunc temp;
     TmEcode validated = ValidateLinkType(pfv->datalink, &temp);
     SCReturnInt(validated);
 }
 
-TmEcode ValidateLinkType(int datalink, DecoderFunc *decoder)
+TmEcode ValidateLinkType(int datalink, DecoderFunc *DecoderFn)
 {
     switch (datalink) {
         case LINKTYPE_LINUX_SLL:
-            *decoder = DecodeSll;
+            *DecoderFn = DecodeSll;
             break;
         case LINKTYPE_ETHERNET:
-            *decoder = DecodeEthernet;
+            *DecoderFn = DecodeEthernet;
             break;
         case LINKTYPE_PPP:
-            *decoder = DecodePPP;
+            *DecoderFn = DecodePPP;
             break;
         case LINKTYPE_IPV4:
         case LINKTYPE_RAW:
         case LINKTYPE_RAW2:
         case LINKTYPE_GRE_OVER_IP:
-            *decoder = DecodeRaw;
+            *DecoderFn = DecodeRaw;
             break;
         case LINKTYPE_NULL:
-            *decoder = DecodeNull;
+            *DecoderFn = DecodeNull;
             break;
 
         default:
-            SCLogError(
-                    SC_ERR_UNIMPLEMENTED,
-                    "datalink type %" PRId32 " not (yet) supported in module PcapFile.",
-                    datalink
-            );
+            SCLogError(SC_ERR_UNIMPLEMENTED,
+                    "datalink type %"PRId32" not (yet) supported in module PcapFile.",
+                    datalink);
             SCReturnInt(TM_ECODE_FAILED);
     }
 

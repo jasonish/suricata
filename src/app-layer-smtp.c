@@ -1,4 +1,4 @@
-/* Copyright (C) 2007-2012 Open Information Security Foundation
+/* Copyright (C) 2007-2020 Open Information Security Foundation
  *
  * You can copy, redistribute or modify this Program under the terms of
  * the GNU General Public License version 2 as published by the Free
@@ -147,6 +147,8 @@ SCEnumCharMap smtp_decoder_event_table[ ] = {
       SMTP_DECODER_EVENT_MIME_LONG_HEADER_VALUE },
     { "MIME_LONG_BOUNDARY",
       SMTP_DECODER_EVENT_MIME_BOUNDARY_TOO_LONG },
+    { "MIME_LONG_FILENAME",
+      SMTP_DECODER_EVENT_MIME_LONG_FILENAME },
 
     /* Invalid behavior or content */
     { "DUPLICATE_FIELDS",
@@ -558,7 +560,7 @@ int SMTPProcessDataChunk(const uint8_t *chunk, uint32_t len,
  *
  * \param state The smtp state.
  *
- * \retval  0 On suceess.
+ * \retval  0 On success.
  * \retval -1 Either when we don't have any new lines to supply anymore or
  *            on failure.
  */
@@ -873,6 +875,9 @@ static void SetMimeEvents(SMTPState *state)
     if (msg->anomaly_flags & ANOM_LONG_BOUNDARY) {
         SMTPSetEvent(state, SMTP_DECODER_EVENT_MIME_BOUNDARY_TOO_LONG);
     }
+    if (msg->anomaly_flags & ANOM_LONG_FILENAME) {
+        SMTPSetEvent(state, SMTP_DECODER_EVENT_MIME_LONG_FILENAME);
+    }
 }
 
 /**
@@ -885,7 +890,7 @@ static int SMTPProcessCommandDATA(SMTPState *state, Flow *f,
     SCEnter();
 
     if (!(state->parser_state & SMTP_PARSER_STATE_COMMAND_DATA_MODE)) {
-        /* looks like are still waiting for a confirmination from the server */
+        /* looks like are still waiting for a confirmation from the server */
         return 0;
     }
 
@@ -3049,7 +3054,7 @@ end:
 }
 
 /*
- * \test Test smtp with just <LF> delimter instead of <CR><LF>.
+ * \test Test smtp with just <LF> delimiter instead of <CR><LF>.
  */
 static int SMTPParserTest04(void)
 {

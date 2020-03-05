@@ -16,7 +16,7 @@
  */
 
 //! Nom parsers for NFSv4 records
-use nom::{be_u32, be_u64};
+use nom::number::streaming::{be_u32, be_u64};
 
 use crate::nfs::types::*;
 

@@ -18,7 +18,9 @@
 // written by Giuseppe Longo <giuseppe@glono.it>
 
 use nom::*;
-use nom::{crlf, IResult};
+use nom::IResult;
+use nom::character::{is_alphabetic, is_alphanumeric, is_space};
+use nom::character::streaming::crlf;
 use std;
 use std::collections::HashMap;
 
@@ -159,7 +161,7 @@ named!(pub sip_take_line<&[u8], Option<String> >,
 pub fn parse_headers(mut input: &[u8]) -> IResult<&[u8], HashMap<String, String>> {
     let mut headers_map: HashMap<String, String> = HashMap::new();
     loop {
-        match crlf(input) {
+        match crlf(input) as IResult<&[u8],_> {
             Ok((_, _)) => {
                 break;
             }
@@ -177,6 +179,7 @@ pub fn parse_headers(mut input: &[u8]) -> IResult<&[u8], HashMap<String, String>
 
 fn parse_header_value(buf: &[u8]) -> IResult<&[u8], &[u8]> {
     let mut end_pos = 0;
+    let mut trail_spaces = 0;
     let mut idx = 0;
     while idx < buf.len() {
         match buf[idx] {
@@ -191,12 +194,16 @@ fn parse_header_value(buf: &[u8]) -> IResult<&[u8], &[u8]> {
                         continue;
                     }
                     _ => {
-                        return Ok((&buf[end_pos..], &buf[..end_pos]));
+                        return Ok((&buf[(end_pos + trail_spaces)..], &buf[..end_pos]));
                     }
                 }
             }
-            b' ' | b'\t' | b'\r' => {}
+            b' ' | b'\t' => {
+                trail_spaces += 1;
+            }
+            b'\r' => {}
             b => {
+                trail_spaces = 0;
                 if !is_header_value(b) {
                     return Err(Err::Incomplete(Needed::Size(1)));
                 }
@@ -219,6 +226,28 @@ mod tests {
                           From: <sip:voi18063@sip.cybercity.dk>;tag=903df0a\r\n\
                           To: <sip:voi18063@sip.cybercity.dk>\r\n\
                           Content-Length: 0\r\n\
+                          \r\n"
+            .as_bytes();
+
+        match sip_parse_request(buf) {
+            Ok((_, req)) => {
+                assert_eq!(req.method, "REGISTER");
+                assert_eq!(req.path, "sip:sip.cybercity.dk");
+                assert_eq!(req.version, "SIP/2.0");
+                assert_eq!(req.headers["Content-Length"], "0");
+            }
+            _ => {
+                assert!(false);
+            }
+        }
+    }
+
+    #[test]
+    fn test_parse_request_trail_space_header() {
+        let buf: &[u8] = "REGISTER sip:sip.cybercity.dk SIP/2.0\r\n\
+                          From: <sip:voi18063@sip.cybercity.dk>;tag=903df0a\r\n\
+                          To: <sip:voi18063@sip.cybercity.dk>\r\n\
+                          Content-Length: 0  \r\n\
                           \r\n"
             .as_bytes();
 

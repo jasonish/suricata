@@ -20,8 +20,9 @@
 use std;
 use std::ffi::{CStr,CString};
 use nom;
-use nom::be_u32;
-use der_parser::der_read_element_header;
+use nom::IResult;
+use nom::number::streaming::be_u32;
+use der_parser::der::der_read_element_header;
 use kerberos_parser::krb5_parser;
 use kerberos_parser::krb5::{EncryptionType,ErrorCode,MessageType,PrincipalName,Realm};
 use crate::applayer;
@@ -121,9 +122,9 @@ impl KRB5State {
             Ok((_rem,hdr)) => {
                 // Kerberos messages start with an APPLICATION header
                 if hdr.class != 0b01 { return 1; }
-                match hdr.tag {
+                match hdr.tag.0 {
                     10 => {
-                        self.req_id = hdr.tag;
+                        self.req_id = 10;
                     },
                     11 => {
                         let res = krb5_parser::parse_as_rep(i);
@@ -142,7 +143,7 @@ impl KRB5State {
                         self.req_id = 0;
                     },
                     12 => {
-                        self.req_id = hdr.tag;
+                        self.req_id = 12;
                     },
                     13 => {
                         let res = krb5_parser::parse_tgs_rep(i);
@@ -161,7 +162,7 @@ impl KRB5State {
                         self.req_id = 0;
                     },
                     14 => {
-                        self.req_id = hdr.tag;
+                        self.req_id = 14;
                     },
                     15 => {
                         self.req_id = 0;
@@ -445,7 +446,7 @@ pub extern "C" fn rs_krb5_probing_parser(_flow: *const Flow,
             // Kerberos messages start with an APPLICATION header
             if hdr.class != 0b01 { return unsafe{ALPROTO_FAILED}; }
             // Tag number should be <= 30
-            if hdr.tag >= 30 { return unsafe{ALPROTO_FAILED}; }
+            if hdr.tag.0 >= 30 { return unsafe{ALPROTO_FAILED}; }
             // Kerberos messages contain sequences
             if rem.is_empty() || rem[0] != 0x30 { return unsafe{ALPROTO_FAILED}; }
             // Check kerberos version
@@ -477,7 +478,7 @@ pub extern "C" fn rs_krb5_probing_parser_tcp(_flow: *const Flow,
 {
     let slice = build_slice!(input,input_len as usize);
     if slice.len() <= 14 { return unsafe{ALPROTO_FAILED}; }
-    match be_u32(slice) {
+    match be_u32(slice) as IResult<&[u8],u32> {
         Ok((rem, record_mark)) => {
             // protocol implementations forbid very large requests
             if record_mark > 16384 { return unsafe{ALPROTO_FAILED}; }
@@ -550,7 +551,7 @@ pub extern "C" fn rs_krb5_parse_request_tcp(_flow: *const core::Flow,
     let mut cur_i = tcp_buffer;
     while cur_i.len() > 0 {
         if state.record_ts == 0 {
-            match be_u32(cur_i) {
+            match be_u32(cur_i) as IResult<&[u8],u32> {
                 Ok((rem,record)) => {
                     state.record_ts = record as usize;
                     cur_i = rem;
@@ -608,7 +609,7 @@ pub extern "C" fn rs_krb5_parse_response_tcp(_flow: *const core::Flow,
     let mut cur_i = tcp_buffer;
     while cur_i.len() > 0 {
         if state.record_tc == 0 {
-            match be_u32(cur_i) {
+            match be_u32(cur_i) as IResult<&[u8],_> {
                 Ok((rem,record)) => {
                     state.record_tc = record as usize;
                     cur_i = rem;

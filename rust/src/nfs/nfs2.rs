@@ -1,4 +1,4 @@
-/* Copyright (C) 2017-2018 Open Information Security Foundation
+/* Copyright (C) 2017-2020 Open Information Security Foundation
  *
  * You can copy, redistribute or modify this Program under the terms of
  * the GNU General Public License version 2 as published by the Free
@@ -17,13 +17,15 @@
 
 // written by Victor Julien
 
-use nom;
 use crate::log::*;
 
 use crate::nfs::nfs::*;
 use crate::nfs::types::*;
 use crate::nfs::rpc_records::*;
 use crate::nfs::nfs2_records::*;
+
+use nom::IResult;
+use nom::number::streaming::be_u32;
 
 impl NFSState {
     /// complete request record
@@ -108,7 +110,7 @@ impl NFSState {
                 },
             }
         } else {
-            let stat = match nom::be_u32(&r.prog_data) {
+            let stat = match be_u32(&r.prog_data) as IResult<&[u8],_> {
                 Ok((_, stat)) => {
                     stat as u32
                 }
@@ -123,5 +125,4 @@ impl NFSState {
 
         0
     }
-
 }

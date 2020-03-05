@@ -17,7 +17,9 @@
 
 //! Nom parsers for RPCv2
 
-use nom::{be_u32, rest};
+use nom::IResult;
+use nom::combinator::rest;
+use nom::number::streaming::be_u32;
 
 #[derive(Debug,PartialEq)]
 pub enum RpcRequestCreds<'a> {
@@ -119,12 +121,16 @@ pub struct RpcPacketHeader<> {
     pub msgtype: u32,
 }
 
+fn parse_bits(i:&[u8]) -> IResult<&[u8],(u8,u32)> {
+    bits!(i,
+        tuple!(
+            take_bits!(1u8),       // is_last
+            take_bits!(31u32)))    // len
+}
+
 named!(pub parse_rpc_packet_header<RpcPacketHeader>,
     do_parse!(
-        fraghdr: bits!(tuple!(
-                take_bits!(u8, 1),       // is_last
-                take_bits!(u32, 31)))    // len
-
+        fraghdr: parse_bits
         >> xid: be_u32
         >> msgtype: be_u32
         >> (
@@ -152,7 +158,7 @@ pub struct RpcReplyPacket<'a> {
 }
 
 // top of request packet, just to get to procedure
-#[derive(Debug)]
+#[derive(Debug,PartialEq)]
 pub struct RpcRequestPacketPartial {
     pub hdr: RpcPacketHeader,
 
@@ -359,3 +365,56 @@ named!(pub parse_rpc_udp_reply<RpcReplyPacket>,
            }
    ))
 );
+
+#[cfg(test)]
+mod tests {
+    use crate::nfs::rpc_records::*;
+    use nom::Err::Incomplete;
+    use nom::Needed::Size;
+
+    #[test]
+    fn test_partial_input_too_short() {
+        let buf: &[u8] = &[
+            0x80, 0x00, 0x00, 0x9c, // flags
+            0x8e, 0x28, 0x02, 0x7e  // xid
+        ];
+
+        let r = parse_rpc_request_partial(buf);
+        match r {
+            Err(Incomplete(s)) => { assert_eq!(s, Size(4)); },
+            _ => { panic!("failed {:?}",r); }
+        }
+    }
+    #[test]
+    fn test_partial_input_ok() {
+        let buf: &[u8] = &[
+            0x80, 0x00, 0x00, 0x9c, // flags
+            0x8e, 0x28, 0x02, 0x7e, // xid
+            0x00, 0x00, 0x00, 0x01, // msgtype
+            0x00, 0x00, 0x00, 0x02, // rpcver
+            0x00, 0x00, 0x00, 0x03, // program
+            0x00, 0x00, 0x00, 0x04, // progver
+            0x00, 0x00, 0x00, 0x05, // procedure
+        ];
+        let expected = RpcRequestPacketPartial {
+            hdr: RpcPacketHeader {
+                    frag_is_last: true,
+                    frag_len: 156,
+                    xid: 2384986750,
+                    msgtype: 1
+                },
+            rpcver: 2,
+            program: 3,
+            progver: 4,
+            procedure: 5
+        };
+        let r = parse_rpc_request_partial(buf);
+        match r {
+            Ok((rem, hdr)) => {
+                assert_eq!(rem.len(), 0);
+                assert_eq!(hdr, expected);
+            },
+            _ => { panic!("failed {:?}",r); }
+        }
+    }
+}

@@ -1,4 +1,5 @@
 /* Copyright (C) 2012 BAE Systems
+ * Copyright (C) 2020 Open Information Security Foundation
  *
  * You can copy, redistribute or modify this Program under the terms of
  * the GNU General Public License version 2 as published by the Free
@@ -1830,28 +1831,61 @@ static int FindMimeHeader(const uint8_t *buf, uint32_t blen,
  * \param search_start The start of the search (ie. boundary=\")
  * \param search_end The end of the search (ie. \")
  * \param tlen The output length of the token (if found)
+ * \param max_len The maximum offset in which to search
+ * \param toolong Set if the field value was truncated to max_len.
+ *
+ * \return A pointer to the token if found, otherwise NULL if not found
+ */
+static uint8_t * FindMimeHeaderTokenRestrict(MimeDecField *field, const char *search_start,
+        const char *search_end, uint32_t *tlen, uint32_t max_len, bool *toolong)
+{
+    uint8_t *fptr, *tptr = NULL, *tok = NULL;
+
+    if (toolong)
+        *toolong = false;
+
+    SCLogDebug("Looking for token: %s", search_start);
+
+    /* Check for token definition */
+    size_t ss_len = strlen(search_start);
+    fptr = FindBuffer(field->value, field->value_len, (const uint8_t *)search_start, ss_len);
+    if (fptr != NULL) {
+        fptr += ss_len; /* Start at end of start string */
+        uint32_t offset = fptr - field->value;
+        if (offset > field->value_len) {
+            return tok;
+        }
+        tok = GetToken(fptr, field->value_len - offset, search_end, &tptr, tlen);
+        if (tok == NULL) {
+            return tok;
+        }
+        SCLogDebug("Found mime token");
+
+        /* Compare the actual token length against the maximum */
+        if (toolong && max_len && *tlen > max_len) {
+            SCLogDebug("Token length %d exceeds length restriction %d; truncating", *tlen, max_len);
+            *toolong = true;
+            *tlen = max_len;
+        }
+    }
+
+    return tok;
+}
+
+/**
+ * \brief Finds a mime header token within the specified field
+ *
+ * \param field The current field
+ * \param search_start The start of the search (ie. boundary=\")
+ * \param search_end The end of the search (ie. \")
+ * \param tlen The output length of the token (if found)
  *
  * \return A pointer to the token if found, otherwise NULL if not found
  */
 static uint8_t * FindMimeHeaderToken(MimeDecField *field, const char *search_start,
         const char *search_end, uint32_t *tlen)
 {
-    uint8_t *fptr, *tptr = NULL, *tok = NULL;
-
-    SCLogDebug("Looking for token: %s", search_start);
-
-    /* Check for token definition */
-    fptr = FindBuffer(field->value, field->value_len, (const uint8_t *)search_start, strlen(search_start));
-    if (fptr != NULL) {
-        fptr += strlen(search_start); /* Start at end of start string */
-        tok = GetToken(fptr, field->value_len - (fptr - field->value), search_end,
-                &tptr, tlen);
-        if (tok != NULL) {
-            SCLogDebug("Found mime token");
-        }
-    }
-
-    return tok;
+    return FindMimeHeaderTokenRestrict(field, search_start, search_end, tlen, 0, NULL);
 }
 
 /**
@@ -1899,7 +1933,8 @@ static int ProcessMimeHeaders(const uint8_t *buf, uint32_t len,
         /* Check for file attachment in content disposition */
         field = MimeDecFindField(entity, CTNT_DISP_STR);
         if (field != NULL) {
-            bptr = FindMimeHeaderToken(field, "filename=", TOK_END_STR, &blen);
+            bool truncated_name = false;
+            bptr = FindMimeHeaderTokenRestrict(field, "filename=", TOK_END_STR, &blen, NAME_MAX, &truncated_name);
             if (bptr != NULL) {
                 SCLogDebug("File attachment found in disposition");
                 entity->ctnt_flags |= CTNT_IS_ATTACHMENT;
@@ -1912,6 +1947,11 @@ static int ProcessMimeHeaders(const uint8_t *buf, uint32_t len,
                 }
                 memcpy(entity->filename, bptr, blen);
                 entity->filename_len = blen;
+
+                if (truncated_name) {
+                    state->stack->top->data->anomaly_flags |= ANOM_LONG_FILENAME;
+                    state->msg->anomaly_flags |= ANOM_LONG_FILENAME;
+                }
             }
         }
 
@@ -1941,7 +1981,8 @@ static int ProcessMimeHeaders(const uint8_t *buf, uint32_t len,
 
             /* Look for file name (if not already found) */
             if (!(entity->ctnt_flags & CTNT_IS_ATTACHMENT)) {
-                bptr = FindMimeHeaderToken(field, "name=", TOK_END_STR, &blen);
+                bool truncated_name = false;
+                bptr = FindMimeHeaderTokenRestrict(field, "name=", TOK_END_STR, &blen, NAME_MAX, &truncated_name);
                 if (bptr != NULL) {
                     SCLogDebug("File attachment found");
                     entity->ctnt_flags |= CTNT_IS_ATTACHMENT;
@@ -1954,6 +1995,11 @@ static int ProcessMimeHeaders(const uint8_t *buf, uint32_t len,
                     }
                     memcpy(entity->filename, bptr, blen);
                     entity->filename_len = blen;
+
+                    if (truncated_name) {
+                        state->stack->top->data->anomaly_flags |= ANOM_LONG_FILENAME;
+                        state->msg->anomaly_flags |= ANOM_LONG_FILENAME;
+                    }
                 }
             }
 
@@ -3035,6 +3081,126 @@ static int MimeIsIpv6HostTest01(void)
 }
 #undef TEST
 
+static int MimeDecParseLongFilename01(void)
+{
+    /* contains 276 character filename -- length restricted to 255 chars */
+    char mimemsg[] = "Content-Disposition: attachment; filename=\""
+                     "12characters12characters12characters12characters"
+                     "12characters12characters12characters12characters"
+                     "12characters12characters12characters12characters"
+                     "12characters12characters12characters12characters"
+                     "12characters12characters12characters12characters"
+                     "12characters12characters12characters.exe\"";
+
+    uint32_t line_count = 0;
+
+    MimeDecGetConfig()->decode_base64 = 1;
+    MimeDecGetConfig()->decode_quoted_printable = 1;
+    MimeDecGetConfig()->extract_urls = 1;
+
+    /* Init parser */
+    MimeDecParseState *state = MimeDecInitParser(&line_count,
+            TestDataChunkCallback);
+
+    const char *str = "From: Sender1";
+    FAIL_IF_NOT(MIME_DEC_OK == MimeDecParseLine((uint8_t *)str, strlen(str), 1, state));
+
+    str = "To: Recipient1";
+    FAIL_IF_NOT(MIME_DEC_OK == MimeDecParseLine((uint8_t *)str, strlen(str), 1, state));
+
+    str = "Content-Type: text/plain";
+    FAIL_IF_NOT(MIME_DEC_OK == MimeDecParseLine((uint8_t *)str, strlen(str), 1, state));
+
+    /* Contains 276 character filename */
+    FAIL_IF_NOT(MIME_DEC_OK == MimeDecParseLine((uint8_t *)mimemsg, strlen(mimemsg), 1, state));
+
+    str = "";
+    FAIL_IF_NOT(MIME_DEC_OK == MimeDecParseLine((uint8_t *)str, strlen(str), 1, state));
+
+    str = "A simple message line 1";
+    FAIL_IF_NOT(MIME_DEC_OK == MimeDecParseLine((uint8_t *)str, strlen(str), 1, state));
+
+    /* Completed */
+    FAIL_IF_NOT(MIME_DEC_OK == MimeDecParseComplete(state));
+
+    MimeDecEntity *msg = state->msg;
+    FAIL_IF_NOT(msg);
+
+    FAIL_IF_NOT(msg->anomaly_flags & ANOM_LONG_FILENAME);
+    FAIL_IF_NOT(msg->filename_len == NAME_MAX);
+
+    MimeDecFreeEntity(msg);
+
+    /* De Init parser */
+    MimeDecDeInitParser(state);
+
+    PASS;
+}
+
+static int MimeDecParseLongFilename02(void)
+{
+    /* contains 40 character filename and 500+ characters following filename */
+    char mimemsg[] = "Content-Disposition: attachment; filename=\""
+                     "12characters12characters12characters.exe\"; "
+                     "somejunkasfdasfsafasafdsasdasassdssdsd"
+                     "somejunkasfdasfsafasafdsasdasassdssdsd"
+                     "somejunkasfdasfsafasafdsasdasassdssdsd"
+                     "somejunkasfdasfsafasafdsasdasassdssdsd"
+                     "somejunkasfdasfsafasafdsasdasassdssdsd"
+                     "somejunkasfdasfsafasafdsasdasassdssdsd"
+                     "somejunkasfdasfsafasafdsasdasassdssdsd"
+                     "somejunkasfdasfsafasafdsasdasassdssdsd"
+                     "somejunkasfdasfsafasafdsasdasassdssdsd"
+                     "somejunkasfdasfsafasafdsasdasassdssdsd"
+                     "somejunkasfdasfsafasafdsasdasassdssdsd"
+                     "somejunkasfdasfsafasafdsasdasassdssdsd"
+                     "somejunkasfdasfsafasafdsasdasassdssdsd";
+
+    uint32_t line_count = 0;
+
+    MimeDecGetConfig()->decode_base64 = 1;
+    MimeDecGetConfig()->decode_quoted_printable = 1;
+    MimeDecGetConfig()->extract_urls = 1;
+
+    /* Init parser */
+    MimeDecParseState *state = MimeDecInitParser(&line_count,
+            TestDataChunkCallback);
+
+    const char *str = "From: Sender1";
+    FAIL_IF_NOT(MIME_DEC_OK == MimeDecParseLine((uint8_t *)str, strlen(str), 1, state));
+
+    str = "To: Recipient1";
+    FAIL_IF_NOT(MIME_DEC_OK == MimeDecParseLine((uint8_t *)str, strlen(str), 1, state));
+
+    str = "Content-Type: text/plain";
+    FAIL_IF_NOT(MIME_DEC_OK == MimeDecParseLine((uint8_t *)str, strlen(str), 1, state));
+
+    /* Contains 40 character filename */
+    FAIL_IF_NOT(MIME_DEC_OK == MimeDecParseLine((uint8_t *)mimemsg, strlen(mimemsg), 1, state));
+
+    str = "";
+    FAIL_IF_NOT(MIME_DEC_OK == MimeDecParseLine((uint8_t *)str, strlen(str), 1, state));
+
+    str = "A simple message line 1";
+    FAIL_IF_NOT(MIME_DEC_OK == MimeDecParseLine((uint8_t *)str, strlen(str), 1, state));
+
+    /* Completed */
+    FAIL_IF_NOT(MIME_DEC_OK == MimeDecParseComplete(state));
+
+    MimeDecEntity *msg = state->msg;
+    FAIL_IF_NOT(msg);
+
+    /* filename is not too long */
+    FAIL_IF(msg->anomaly_flags & ANOM_LONG_FILENAME);
+
+    MimeDecFreeEntity(msg);
+
+    /* De Init parser */
+    MimeDecDeInitParser(state);
+
+    PASS;
+}
+
 #endif /* UNITTESTS */
 
 void MimeDecRegisterTests(void)
@@ -3048,5 +3214,7 @@ void MimeDecRegisterTests(void)
     UtRegisterTest("MimeIsExeURLTest01", MimeIsExeURLTest01);
     UtRegisterTest("MimeIsIpv4HostTest01", MimeIsIpv4HostTest01);
     UtRegisterTest("MimeIsIpv6HostTest01", MimeIsIpv6HostTest01);
+    UtRegisterTest("MimeDecParseLongFilename01", MimeDecParseLongFilename01);
+    UtRegisterTest("MimeDecParseLongFilename02", MimeDecParseLongFilename02);
 #endif /* UNITTESTS */
 }

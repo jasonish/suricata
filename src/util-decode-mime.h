@@ -52,7 +52,7 @@
 
 /* Anomaly Flags */
 #define ANOM_INVALID_BASE64      1  /* invalid base64 chars */
-#define ANOM_INVALID_QP          2  /* invalid qouted-printable chars */
+#define ANOM_INVALID_QP          2  /* invalid quoted-printable chars */
 #define ANOM_LONG_HEADER_NAME    4  /* header is abnormally long */
 #define ANOM_LONG_HEADER_VALUE   8  /* header value is abnormally long
                                      * (includes multi-line) */
@@ -60,6 +60,7 @@
 #define ANOM_LONG_ENC_LINE      32  /* Lines that exceed 76 octets */
 #define ANOM_MALFORMED_MSG      64  /* Misc msg format errors found */
 #define ANOM_LONG_BOUNDARY     128  /* Boundary too long */
+#define ANOM_LONG_FILENAME     256  /* filename truncated */
 
 /* Publicly exposed size constants */
 #define DATA_CHUNK_SIZE  3072  /* Should be divisible by 3 */
