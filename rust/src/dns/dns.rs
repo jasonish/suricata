@@ -666,7 +666,7 @@ pub unsafe extern "C" fn rs_dns_parse_request(_flow: *const core::Flow,
                                        _flags: u8)
                                        -> std::os::raw::c_int {
     let state = cast_pointer!(state, DNSState);
-    let buf = unsafe{std::slice::from_raw_parts(input, input_len as usize)};
+    let buf = std::slice::from_raw_parts(input, input_len as usize);
     if state.parse_request(buf) {
         1
     } else {
@@ -684,7 +684,7 @@ pub unsafe extern "C" fn rs_dns_parse_response(_flow: *const core::Flow,
                                         _flags: u8)
                                         -> std::os::raw::c_int {
     let state = cast_pointer!(state, DNSState);
-    let buf = unsafe{std::slice::from_raw_parts(input, input_len as usize)};
+    let buf = std::slice::from_raw_parts(input, input_len as usize);
     if state.parse_response(buf) {
         1
     } else {
@@ -705,8 +705,7 @@ pub unsafe extern "C" fn rs_dns_parse_request_tcp(_flow: *const core::Flow,
     let state = cast_pointer!(state, DNSState);
     if input_len > 0 {
         if input != std::ptr::null_mut() {
-            let buf = unsafe{
-                std::slice::from_raw_parts(input, input_len as usize)};
+            let buf = std::slice::from_raw_parts(input, input_len as usize);
             return state.parse_request_tcp(buf) as std::os::raw::c_int;
         }
         state.request_gap(input_len);
@@ -726,8 +725,7 @@ pub unsafe extern "C" fn rs_dns_parse_response_tcp(_flow: *const core::Flow,
     let state = cast_pointer!(state, DNSState);
     if input_len > 0 {
         if input != std::ptr::null_mut() {
-            let buf = unsafe{
-                std::slice::from_raw_parts(input, input_len as usize)};
+            let buf = std::slice::from_raw_parts(input, input_len as usize);
             return state.parse_response_tcp(buf) as std::os::raw::c_int;
         }
         state.response_gap(input_len);
@@ -816,7 +814,7 @@ pub unsafe extern "C" fn rs_dns_state_get_tx(state: *mut std::os::raw::c_void,
     let state = cast_pointer!(state, DNSState);
     match state.get_tx(tx_id) {
         Some(tx) => {
-            return unsafe{transmute(tx)};
+            return transmute(tx);
         }
         None => {
             return std::ptr::null_mut();
