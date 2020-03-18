@@ -38,7 +38,7 @@ else
 	@rustup_home@ \
 		CARGO_HOME="$(CARGO_HOME)" \
 		CARGO_TARGET_DIR="$(abs_top_builddir)/rust/target" \
-		$(CARGO) build -vv $(RELEASE) \
+		$(CARGO) build --jobs 1 -vv $(RELEASE) \
 			--features "$(RUST_FEATURES)" $(RUST_TARGET)
 endif
 
