@@ -250,7 +250,6 @@ jobs:
         run: cargo install --force cbindgen
       - run: echo "::add-path::$HOME/.cargo/bin"
       - uses: actions/checkout@v1
-      - run: git clone https://github.com/OISF/libhtp -b 0.5.x
       - run: ./autogen.sh
       - run: ./configure --enable-unittests
       - run: make -j2
