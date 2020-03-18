@@ -586,7 +586,7 @@ suricata_SOURCES = main.c $(COMMON_SOURCES)
 
 # the library search path.
 suricata_LDFLAGS = $(all_libraries) ${SECLDFLAGS}
-suricata_LDADD = $(HTP_LDADD) $(RUST_LDADD)
+suricata_LDADD = $(RUST_LDADD)
 suricata_DEPENDENCIES = $(RUST_SURICATA_LIB)
 
 if BUILD_FUZZTARGETS
