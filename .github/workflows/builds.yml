@@ -453,7 +453,7 @@ jobs:
         working-directory: suricata-update
       - run: ./autogen.sh
       - run: ./configure --enable-unittests
-      - run: make -j2
+      - run: make -j1
       - run: make check
       - name: Fetching suricata-verify
         run: git clone https://github.com/OISF/suricata-verify.git
