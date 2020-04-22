@@ -913,7 +913,7 @@ json_t *CreateJSONHeader(const Packet *p, enum OutputJsonLogDirection dir,
             }
             break;
     }
-
+#error Intentional fail
     return js;
 }
 
