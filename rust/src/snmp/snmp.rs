@@ -465,26 +465,6 @@ pub extern "C" fn rs_snmp_state_get_event_info(event_name: *const std::os::raw::
 
 // for use with the C API call StateGetTxIterator
 #[no_mangle]
-pub extern "C" fn rs_snmp_state_get_tx_iterator(
-                                      state: &mut SNMPState,
-                                      min_tx_id: u64,
-                                      istate: &mut u64)
-                                      -> applayer::AppLayerGetTxIterTuple
-{
-    match state.get_tx_iterator(min_tx_id, istate) {
-        Some((tx, out_tx_id, has_next)) => {
-            let c_tx = unsafe { transmute(tx) };
-            let ires = applayer::AppLayerGetTxIterTuple::with_values(c_tx, out_tx_id, has_next);
-            return ires;
-        }
-        None => {
-            return applayer::AppLayerGetTxIterTuple::not_found();
-        }
-    }
-}
-
-// for use with the C API call StateGetTxIterator
-#[no_mangle]
 pub extern "C" fn rs_snmp_get_tx_iterator(_ipproto: u8,
                                           _alproto: AppProto,
                                           alstate: *mut std::os::raw::c_void,
@@ -583,7 +563,7 @@ pub unsafe extern "C" fn rs_register_snmp_parser() {
         localstorage_new   : None,
         localstorage_free  : None,
         get_files          : None,
-        get_tx_iterator    : None,
+        get_tx_iterator    : Some(rs_snmp_get_tx_iterator),
         get_tx_data        : rs_snmp_get_tx_data,
         apply_tx_config    : None,
         flags              : APP_LAYER_PARSER_OPT_UNIDIR_TXS,
@@ -597,7 +577,6 @@ pub unsafe extern "C" fn rs_register_snmp_parser() {
         if AppLayerParserConfParserEnabled(ip_proto_str.as_ptr(), parser.name) != 0 {
             let _ = AppLayerRegisterParser(&parser, alproto);
         }
-        AppLayerParserRegisterGetTxIterator(core::IPPROTO_UDP as u8, alproto, rs_snmp_get_tx_iterator);
     } else {
         SCLogDebug!("Protocol detector and parser disabled for SNMP.");
     }
