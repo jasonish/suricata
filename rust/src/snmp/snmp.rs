@@ -100,8 +100,6 @@ pub struct SNMPTransaction<'a> {
     tx_data: applayer::AppLayerTxData,
 }
 
-
-
 impl<'a> SNMPState<'a> {
     pub fn new() -> SNMPState<'a> {
         SNMPState{
@@ -292,11 +290,6 @@ impl<'a> Drop for SNMPTransaction<'a> {
     }
 }
 
-
-
-
-
-
 /// Returns *mut SNMPState
 #[no_mangle]
 pub extern "C" fn rs_snmp_state_new() -> *mut std::os::raw::c_void {
@@ -385,29 +378,6 @@ pub extern "C" fn rs_snmp_tx_get_alstate_progress(_tx: *mut std::os::raw::c_void
 }
 
 #[no_mangle]
-pub extern "C" fn rs_snmp_state_set_tx_detect_state(
-    tx: *mut std::os::raw::c_void,
-    de_state: &mut core::DetectEngineState) -> std::os::raw::c_int
-{
-    let tx = cast_pointer!(tx,SNMPTransaction);
-    tx.de_state = Some(de_state);
-    0
-}
-
-#[no_mangle]
-pub extern "C" fn rs_snmp_state_get_tx_detect_state(
-    tx: *mut std::os::raw::c_void)
-    -> *mut core::DetectEngineState
-{
-    let tx = cast_pointer!(tx,SNMPTransaction);
-    match tx.de_state {
-        Some(ds) => ds,
-        None => std::ptr::null_mut(),
-    }
-}
-
-
-#[no_mangle]
 pub extern "C" fn rs_snmp_state_get_events(tx: *mut std::os::raw::c_void)
                                            -> *mut core::AppLayerDecoderEvents
 {
@@ -485,10 +455,6 @@ pub extern "C" fn rs_snmp_get_tx_iterator(_ipproto: u8,
     }
 }
 
-
-
-static mut ALPROTO_SNMP : AppProto = ALPROTO_UNKNOWN;
-
 // Read PDU sequence and extract version, if similar to SNMP definition
 fn parse_pdu_enveloppe_version(i:&[u8]) -> IResult<&[u8],u32> {
     match parse_der_sequence(i) {
@@ -531,8 +497,11 @@ pub extern "C" fn rs_snmp_probing_parser(_flow: *const Flow,
     }
 }
 
+export_tx_get_detect_state!(rs_snmp_state_get_tx_detect_state, SNMPTransaction);
+export_tx_set_detect_state!(rs_snmp_state_set_tx_detect_state, SNMPTransaction);
 export_tx_data_get!(rs_snmp_get_tx_data, SNMPTransaction);
 
+static mut ALPROTO_SNMP : AppProto = ALPROTO_UNKNOWN;
 const PARSER_NAME : &'static [u8] = b"snmp\0";
 
 #[no_mangle]
