@@ -557,8 +557,8 @@ const PARSER_NAME : &'static [u8] = b"snmp\0";
 
 #[no_mangle]
 pub unsafe extern "C" fn rs_register_snmp_parser() {
-    let default_port = CString::new("161").unwrap();
-    let mut parser = RustParser {
+    let default_port = CString::new("[161,162]").unwrap();
+    let parser = RustParser {
         name               : PARSER_NAME.as_ptr() as *const std::os::raw::c_char,
         default_port       : default_port.as_ptr(),
         ipproto            : core::IPPROTO_UDP,
@@ -598,13 +598,6 @@ pub unsafe extern "C" fn rs_register_snmp_parser() {
             let _ = AppLayerRegisterParser(&parser, alproto);
         }
         AppLayerParserRegisterGetTxIterator(core::IPPROTO_UDP as u8, alproto, rs_snmp_get_tx_iterator);
-        // port 162
-        let default_port_traps = CString::new("162").unwrap();
-        parser.default_port = default_port_traps.as_ptr();
-        let _ = AppLayerRegisterProtocolDetection(&parser, 1);
-        if AppLayerParserConfParserEnabled(ip_proto_str.as_ptr(), parser.name) != 0 {
-            let _ = AppLayerRegisterParser(&parser, alproto);
-        }
     } else {
         SCLogDebug!("Protocol detector and parser disabled for SNMP.");
     }
