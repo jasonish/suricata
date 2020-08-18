@@ -905,6 +905,8 @@ void AppLayerParserTransactionsCleanup(Flow *f)
     uint64_t new_min = min;
     SCLogDebug("start min %"PRIu64, min);
     bool skipped = false;
+    bool is_unidir = AppLayerParserGetOptionFlags(f->protomap, f->alproto)
+            & APP_LAYER_PARSER_OPT_UNIDIR_TXS;
 
     while (1) {
         AppLayerGetTxIterTuple ires = IterFunc(ipproto, alproto, alstate, i, total_txs, &state);
@@ -929,26 +931,37 @@ void AppLayerParserTransactionsCleanup(Flow *f)
             goto next;
         }
         AppLayerTxData *txd = AppLayerParserGetTxData(ipproto, alproto, tx);
+        bool to_server_done = true;
+        bool to_client_done = true;
         if (txd && has_tx_detect_flags) {
             if (f->sgh_toserver != NULL) {
                 uint64_t detect_flags_ts = GetTxDetectFlags(txd, STREAM_TOSERVER);
                 if (!(detect_flags_ts & APP_LAYER_TX_INSPECTED_FLAG)) {
-                    SCLogDebug("%p/%"PRIu64" skipping: TS inspect not done: ts:%"PRIx64,
+                    SCLogDebug("%p/%"PRIu64": TS inspect not done: ts:%"PRIx64,
                             tx, i, detect_flags_ts);
-                    skipped = true;
-                    goto next;
+                    to_server_done = false;
                 }
             }
             if (f->sgh_toclient != NULL) {
                 uint64_t detect_flags_tc = GetTxDetectFlags(txd, STREAM_TOCLIENT);
                 if (!(detect_flags_tc & APP_LAYER_TX_INSPECTED_FLAG)) {
-                    SCLogDebug("%p/%"PRIu64" skipping: TC inspect not done: tc:%"PRIx64,
+                    SCLogDebug("%p/%"PRIu64": TC inspect not done: tc:%"PRIx64,
                             tx, i, detect_flags_tc);
-                    skipped = true;
-                    goto next;
+                    to_client_done = false;
                 }
             }
         }
+
+        /* For unidirectional transactions continue if one side is done, otherwise
+         * require both sides to be done. */
+        if (is_unidir && !(to_server_done || to_client_done)) {
+            skipped = true;
+            goto next;
+        } else if (!is_unidir && !(to_server_done && to_client_done)) {
+            skipped = true;
+            goto next;
+        }
+
         if (txd &&logger_expectation != 0) {
             LoggerId tx_logged = GetTxLogged(txd);
             if (tx_logged != logger_expectation) {
