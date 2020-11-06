@@ -99,7 +99,7 @@ jobs:
           git clone --depth 1 ${sv_repo} -b ${sv_branch} suricata-verify
           if [[ "${SV_PR}" != "" ]]; then
               cd suricata-verify
-              git fetch origin pull/${sv_pr}/head:prep
+              git fetch origin pull/${SV_PR}/head:prep
               git checkout prep
               cd ..
           fi
