@@ -41,7 +41,7 @@ jobs:
           PR_HREF: ${{ github.event.pull_request._links.self.href }}
         run: |
           if test "${PR_HREF}"; then
-              body=$(curl -s "${PR_HREF}" | jq -r .body)
+              body=$(curl -s "${PR_HREF}" | jq -r .body | tr -d '\r')
 
               echo "${body}" | while read line; do
                   case "${line}" in
