@@ -119,11 +119,9 @@ jobs:
       # Prebuild check for duplicat SIDs
       - name: Check for duplicate SIDs
         run: |
-          dups=$(sed -n 's/^alert.*sid:\([[:digit:]]*\);.*/\1/p' ./rules/*.rules|sort|uniq -d)
+          dups=$(sed -n 's/^alert.*sid:\([[:digit:]]*\);.*/\1/p' ./rules/*.rules|sort|uniq -d|tr '\n' ' ')
           if [[ "${dups}" != "" ]]; then
             echo "::error::Duplicate SIDs found:${dups}"
-            echo "Error: Duplicate SIDs found:"
-            echo "${dups}"
             exit 1
           fi
 
