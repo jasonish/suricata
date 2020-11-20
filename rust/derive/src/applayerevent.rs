@@ -71,7 +71,7 @@ pub fn derive_app_layer_event(input: TokenStream) -> TokenStream {
                 }
             }
 
-            extern "C" fn get_event_info(
+            unsafe extern "C" fn get_event_info(
                 event_name: *const std::os::raw::c_char,
                 event_id: *mut std::os::raw::c_int,
                 event_type: *mut crate::core::AppLayerEventType,
@@ -79,7 +79,7 @@ pub fn derive_app_layer_event(input: TokenStream) -> TokenStream {
                 crate::applayer::get_event_info::<#name>(event_name, event_id, event_type)
             }
 
-            extern "C" fn get_event_info_by_id(
+            unsafe extern "C" fn get_event_info_by_id(
                 event_id: std::os::raw::c_int,
                 event_name: *mut *const std::os::raw::c_char,
                 event_type: *mut crate::core::AppLayerEventType,

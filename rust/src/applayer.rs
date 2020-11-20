@@ -270,8 +270,8 @@ pub type StateGetTxCompletionStatusFn = extern "C" fn (u8) -> c_int;
 pub type StateGetProgressFn = extern "C" fn (*mut c_void, u8) -> c_int;
 pub type GetDetectStateFn   = extern "C" fn (*mut c_void) -> *mut DetectEngineState;
 pub type SetDetectStateFn   = extern "C" fn (*mut c_void, &mut DetectEngineState) -> c_int;
-pub type GetEventInfoFn     = extern "C" fn (*const c_char, *mut c_int, *mut AppLayerEventType) -> c_int;
-pub type GetEventInfoByIdFn = extern "C" fn (c_int, *mut *const c_char, *mut AppLayerEventType) -> i8;
+pub type GetEventInfoFn     = unsafe extern "C" fn (*const c_char, *mut c_int, *mut AppLayerEventType) -> c_int;
+pub type GetEventInfoByIdFn = unsafe extern "C" fn (c_int, *mut *const c_char, *mut AppLayerEventType) -> i8;
 pub type GetEventsFn        = extern "C" fn (*mut c_void) -> *mut AppLayerDecoderEvents;
 pub type LocalStorageNewFn  = extern "C" fn () -> *mut c_void;
 pub type LocalStorageFreeFn = extern "C" fn (*mut c_void);
@@ -418,12 +418,14 @@ pub trait AppLayerEvent {
 
     /// Return the ID value of the enum variant.
     fn as_i32(&self) -> i32;
-    extern "C" fn get_event_info(
+
+    unsafe extern "C" fn get_event_info(
         event_name: *const std::os::raw::c_char,
         event_id: *mut std::os::raw::c_int,
         event_type: *mut core::AppLayerEventType,
     ) -> std::os::raw::c_int;
-    extern "C" fn get_event_info_by_id(
+
+    unsafe extern "C" fn get_event_info_by_id(
         event_id: std::os::raw::c_int,
         event_name: *mut *const std::os::raw::c_char,
         event_type: *mut core::AppLayerEventType,
@@ -444,7 +446,7 @@ pub trait AppLayerEvent {
 ///
 /// get_event_info::<AppEvent>(...)
 #[inline(always)]
-pub fn get_event_info<T: AppLayerEvent>(
+pub unsafe fn get_event_info<T: AppLayerEvent>(
     event_name: *const std::os::raw::c_char,
     event_id: *mut std::os::raw::c_int,
     event_type: *mut core::AppLayerEventType,
@@ -453,30 +455,26 @@ pub fn get_event_info<T: AppLayerEvent>(
         return -1;
     }
 
-    unsafe {
-        let event = match CStr::from_ptr(event_name).to_str().map(T::from_string) {
-            Ok(Some(event)) => event.as_i32(),
-            _ => -1,
-        };
-        *event_type = core::APP_LAYER_EVENT_TYPE_TRANSACTION;
-        *event_id = event as std::os::raw::c_int;
-        return 0;
-    }
+    let event = match CStr::from_ptr(event_name).to_str().map(T::from_string) {
+        Ok(Some(event)) => event.as_i32(),
+        _ => -1,
+    };
+    *event_type = core::APP_LAYER_EVENT_TYPE_TRANSACTION;
+    *event_id = event as std::os::raw::c_int;
+    return 0;
 }
 
 /// Generic `get_info_info_by_id` implementation for enums implementing
 /// AppLayerEvent.
 #[inline(always)]
-pub fn get_event_info_by_id<T: AppLayerEvent>(
+pub unsafe fn get_event_info_by_id<T: AppLayerEvent>(
     event_id: std::os::raw::c_int,
     event_name: *mut *const std::os::raw::c_char,
     event_type: *mut core::AppLayerEventType,
 ) -> i8 {
     if let Some(e) = T::from_id(event_id as i32) {
-        unsafe {
-            *event_name = e.to_cstring().as_ptr() as *const std::os::raw::c_char;
-            *event_type = core::APP_LAYER_EVENT_TYPE_TRANSACTION;
-        }
+        *event_name = e.to_cstring().as_ptr() as *const std::os::raw::c_char;
+        *event_type = core::APP_LAYER_EVENT_TYPE_TRANSACTION;
         return 0;
     }
     return -1;
