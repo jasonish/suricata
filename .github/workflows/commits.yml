@@ -5,10 +5,92 @@ on:
 
 jobs:
 
+  build-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v1
+      - run: git fetch
+      - run: sudo apt update
+      - run: |
+          sudo apt -y install \
+            git
+      - id: set-matrix
+        run: |
+          rev=$(for rev in $(git rev-list --reverse origin/master...); do echo "{\"rev\":\"$rev\"}"; done | paste -s -d "," -)          
+          echo "::set-output name=matrix::{\"include\":[$rev]}"
+
+  new-check-commits:
+    runs-on: ubuntu-latest
+    container: ubuntu:18.04
+    needs: build-matrix
+    strategy:
+      matrix: ${{fromJson(needs.build-matrix.outputs.matrix)}}
+    steps:
+      - name: Install dependencies
+        run: |
+          apt update
+          apt -y install \
+                libpcre3 \
+                libpcre3-dev \
+                build-essential \
+                autoconf \
+                automake \
+                ccache \
+                curl \
+                git \
+                jq \
+                libtool \
+                libpcap-dev \
+                libnet1-dev \
+                libyaml-0-2 \
+                libyaml-dev \
+                libcap-ng-dev \
+                libcap-ng0 \
+                libmagic-dev \
+                libnetfilter-queue-dev \
+                libnetfilter-queue1 \
+                libnfnetlink-dev \
+                libnfnetlink0 \
+                libhiredis-dev \
+                libjansson-dev \
+                libevent-dev \
+                libevent-pthreads-2.1.6 \
+                libjansson-dev \
+                libpython2.7 \
+                libssl-dev \
+                make \
+                parallel \
+                pkg-config \
+                python3-yaml \
+                rustc \
+                software-properties-common \
+                zlib1g \
+                zlib1g-dev
+      - run: |
+          mkdir -p "$HOME/.cargo/bin"
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+      - name: Install cbindgen
+        run: |
+          cd $HOME/.cargo/bin
+          curl -OL https://github.com/eqrion/cbindgen/releases/download/v0.15.0/cbindgen
+          chmod 755 cbindgen
+      - uses: actions/checkout@v1
+      - run: git fetch
+      - run: git checkout ${{ matrix.rev }}
+      - run: git clone https://github.com/OISF/libhtp -b 0.5.x
+      - name: Build
+        run: |
+          ./autogen.sh
+          ./configure --enable-unittests
+          make -j2
+
   check-commits:
     name: Commit Check
     runs-on: ubuntu-latest
     container: ubuntu:18.04
+    needs: build-matrix
     steps:
       - name: Caching ~/.cargo
         uses: actions/cache@v1
