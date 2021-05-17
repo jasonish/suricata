@@ -102,6 +102,22 @@ exclude = [
     "TFTPState",
     "TFTPTransaction",
     "free",
+    "MimeDecParseStateGetStatus",
+    "MimeDecParseFullMsg",
+    "MimeDecParseLine",
+    "MimeDecParseComplete",
+    "MimeDecDeInitParser",
+    "MimeDecInitParser",
+    "MimeDecAddEntity",
+    "MimeDecFindFieldsForEach",
+    "MimeDecFindField",
+    "MimeDecFreeUrl",
+    "MimeDecAddField",
+    "MimeDecFindField",
+    "MimeDecFreeEntity",
+    "MimeDecFreeField",
+    "MimeDecGetConfig",
+    "MimeDecSetConfig",
 ]
 
 # Types of items that we'll generate. If empty, then all types of item are emitted.
