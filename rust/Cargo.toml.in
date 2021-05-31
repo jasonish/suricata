@@ -3,6 +3,9 @@ name = "suricata"
 version = "@PACKAGE_VERSION@"
 edition = "2021"
 rust-version = "1.63.0"
+description = "The Suricata network IDS and NSM engine Rust code"
+license = "GPL-2.0-only"
+repository = "https://github.com/OISF/suricata.git"
 
 [workspace]
 members = [".", "./derive"]
@@ -68,7 +71,7 @@ asn1-rs = { version = "~0.5.2" }
 # month olds, so it needs to be pinned even at the patch level.
 time = "=0.3.13"
 
-suricata-derive = { path = "./derive" }
+suricata-derive = { path = "./derive", version = "@PACKAGE_VERSION@" }
 
 [dev-dependencies]
 test-case = "~1.1.0"
