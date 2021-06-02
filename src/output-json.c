@@ -1055,6 +1055,12 @@ static int LogFileTypePrepare(
     }
 #endif
     else if (log_filetype == LOGFILE_TYPE_PLUGIN) {
+        if (json_ctx->file_ctx->threaded) {
+            /* Prepare for threaded log output. */
+            if (!SCLogOpenThreadedFile(NULL, NULL, json_ctx->file_ctx, 1)) {
+                return -1;
+            }
+        }
         ConfNode *plugin_conf = ConfNodeLookupChild(conf, json_ctx->plugin->name);
         void *init_data = NULL;
         if (json_ctx->plugin->Init(json_ctx->plugin->internal ? conf : plugin_conf,
