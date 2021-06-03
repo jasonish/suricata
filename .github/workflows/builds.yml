@@ -180,6 +180,7 @@ jobs:
         run: |
           yum -y install dnf-plugins-core
           yum config-manager --set-enabled powertools
+          yum -y update
           yum -y install \
                 autoconf \
                 automake \
