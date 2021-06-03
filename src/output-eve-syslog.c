@@ -25,17 +25,17 @@
  * File-like output for logging: syslog
  */
 
-#ifdef OS_WIN32
-void SyslogInitialize(void)
-{
-}
-#else /* !OS_WIN32 */
 #include "suricata-common.h" /* errno.h, string.h, etc. */
 #include "output.h" /* DEFAULT_LOG_* */
 #include "output-eve-syslog.h"
 #include "output-json-filetypes.h"
 #include "util-syslog.h"
 
+#ifdef OS_WIN32
+void SyslogInitialize(void)
+{
+}
+#else /* !OS_WIN32 */
 #define OUTPUT_NAME "syslog"
 
 typedef struct Context_ {
