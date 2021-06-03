@@ -232,9 +232,8 @@ jobs:
         run: |
           ./autogen.sh
           CFLAGS="${DEFAULT_CFLAGS}" ./configure
-      - run: make -j2 distcheck
-        env:
-          DISTCHECK_CONFIGURE_FLAGS: "--enable-unittests --enable-debug --enable-lua --enable-geoip --enable-profiling --enable-profiling-locks"
+      - run: DISTCHECK_CONFIGURE_FLAGS="--enable-unittests --enable-debug --enable-lua --enable-geoip --enable-profiling --enable-profiling-locks" make -j2 distcheck
+        name: make distcheck
       - run: test -e doc/userguide/suricata.1
       - name: Building Rust documentation
         run: make doc
