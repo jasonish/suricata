@@ -409,6 +409,27 @@ impl JsonBuilder {
         Ok(self)
     }
 
+    #[inline(always)]
+    pub fn set_string_old(&mut self, key: &str, val: &str) -> Result<&mut Self, JsonError> {
+        match self.current_state() {
+            State::ObjectNth => {
+                self.buf.push(',');
+            }
+            State::ObjectFirst => {
+                self.set_state(State::ObjectNth);
+            }
+            _ => {
+                debug_validate_fail!("invalid state");
+                return Err(JsonError::InvalidState);
+            }
+        }
+        self.buf.push('"');
+        self.buf.push_str(key);
+        self.buf.push_str("\":");
+        self.encode_string_old(val)?;
+        Ok(self)
+    }
+
     pub fn set_formatted(&mut self, formatted: &str) -> Result<&mut Self, JsonError> {
         match self.current_state() {
             State::ObjectNth => {
@@ -503,7 +524,7 @@ impl JsonBuilder {
     }
 
     /// Encode a string into the buffer, escaping as needed.
-    #[inline(always)]
+    //#[inline(always)]
     fn encode_string(&mut self, val: &str) -> Result<(), JsonError> {
         // reserve memory to avoid too many reallocations
         self.buf.reserve(val.len() * 2 + 2);
@@ -531,6 +552,61 @@ impl JsonBuilder {
             }
         }
         self.buf.push('"');
+        Ok(())
+    }
+
+    //#[inline(always)]
+    fn encode_string_old(&mut self, val: &str) -> Result<(), JsonError> {
+        let mut buf = vec![0; val.len() * 2 + 2];
+        let mut offset = 0;
+        let bytes = val.as_bytes();
+        buf[offset] = b'"';
+        offset += 1;
+        for &x in bytes.iter() {
+            if offset + 7 >= buf.capacity() {
+                let mut extend = vec![0; buf.capacity()];
+                buf.append(&mut extend);
+            }
+            let escape = ESCAPED[x as usize];
+            if escape == 0 {
+                buf[offset] = x;
+                offset += 1;
+            } else if escape == b'u' {
+                buf[offset] = b'\\';
+                offset += 1;
+                buf[offset] = b'u';
+                offset += 1;
+                buf[offset] = b'0';
+                offset += 1;
+                buf[offset] = b'0';
+                offset += 1;
+                buf[offset] = HEX[(x >> 4 & 0xf) as usize];
+                offset += 1;
+                buf[offset] = HEX[(x & 0xf) as usize];
+                offset += 1;
+            } else {
+                buf[offset] = b'\\';
+                offset += 1;
+                buf[offset] = escape;
+                offset += 1;
+            }
+        }
+        buf[offset] = b'"';
+        offset += 1;
+        match std::str::from_utf8(&buf[0..offset]) {
+            Ok(s) => {
+                self.buf.push_str(s);
+            }
+            Err(err) => {
+                let error = format!(
+                    "\"UTF8-ERROR: what=[escaped string] error={} output={:02x?} input={:02x?}\"",
+                    err,
+                    &buf[0..offset],
+                    val.as_bytes(),
+                );
+                self.buf.push_str(&error);
+            }
+        }
         Ok(())
     }
 }
@@ -1032,6 +1108,51 @@ mod test {
         jb.append_float(2.2).unwrap();
         jb.close().unwrap();
         assert_eq!(jb.buf, r#"[1.1,2.2]"#);
+    }
+
+    const SIZE: usize = 4000;
+    const COUNT: usize = 10000;
+    const STRING: &str = "\u{0000}";
+
+    fn do_bench_string_old() {
+        let size = SIZE;
+        let input: String = std::iter::repeat(STRING).take(size).collect();
+        let start = std::time::Instant::now();
+        let mut jb = JsonBuilder::new_object();
+        for i in 0..COUNT {
+            jb.reset();
+            jb.set_string_old("A", &input).unwrap();
+        }
+        println!("master: {:?}", start.elapsed());
+    }
+
+    fn do_bench_string() {
+        let size = SIZE;
+        let input: String = std::iter::repeat(STRING).take(size).collect();
+        let start = std::time::Instant::now();
+        let mut jb = JsonBuilder::new_object();
+        for i in 0..COUNT {
+            jb.reset();
+            jb.set_string("A", &input).unwrap();
+        }
+        println!("pr: {:?}", start.elapsed());
+    }
+
+    #[test]
+    fn bench_set_string_old() {
+        do_bench_string_old();
+        do_bench_string();
+        println!();
+        do_bench_string_old();
+        do_bench_string_old();
+        do_bench_string_old();
+        do_bench_string_old();
+
+        do_bench_string();
+        do_bench_string();
+        do_bench_string();
+        do_bench_string();
+
     }
 }
 
