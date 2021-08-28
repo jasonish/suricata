@@ -903,20 +903,8 @@ static inline bool IsReplyToCommand(const SMTPState *state, const uint8_t cmd)
             state->cmds[state->cmds_idx] == cmd);
 }
 
-static int SMTPProcessReply(SMTPState *state, Flow *f,
-                            AppLayerParserState *pstate,
-                            SMTPThreadCtx *td)
+static inline void SMTPSetParserState(SMTPState *state)
 {
-    SCEnter();
-
-    /* the reply code has to contain at least 3 bytes, to hold the 3 digit
-     * reply code */
-    if (state->current_line_len < 3) {
-        /* decoder event */
-        SMTPSetEvent(state, SMTP_DECODER_EVENT_INVALID_REPLY);
-        return -1;
-    }
-
     if (state->current_line_len >= 4) {
         if (state->parser_state & SMTP_PARSER_STATE_PARSING_MULTILINE_REPLY) {
             if (state->current_line[3] != '-') {
@@ -932,13 +920,15 @@ static int SMTPProcessReply(SMTPState *state, Flow *f,
             state->parser_state &= ~SMTP_PARSER_STATE_PARSING_MULTILINE_REPLY;
         }
     }
+}
 
+static inline int SMTPResetPMQ(SMTPState *state, SMTPThreadCtx *td)
+{
     /* I don't like this pmq reset here.  We'll devise a method later, that
      * should make the use of the mpm very efficient */
     PmqReset(td->pmq);
     int mpm_cnt = mpm_table[SMTP_MPM].Search(smtp_mpm_ctx, td->smtp_mpm_thread_ctx,
-                                             td->pmq, state->current_line,
-                                             3);
+                                             td->pmq, state->current_line, 3);
     if (mpm_cnt == 0) {
         /* set decoder event - reply code invalid */
         SMTPSetEvent(state, SMTP_DECODER_EVENT_INVALID_REPLY);
@@ -946,10 +936,11 @@ static int SMTPProcessReply(SMTPState *state, Flow *f,
                 state->current_line[0], state->current_line[1], state->current_line[2]);
         SCReturnInt(-1);
     }
-    enum SMTPCode reply_code = smtp_reply_map[td->pmq->rule_id_array[0]].enum_value;
-    SCLogDebug("REPLY: reply_code %u / %s", reply_code,
-            smtp_reply_map[reply_code].enum_name);
+    return 0;
+}
 
+static inline int SMTPMatchReply(SMTPState *state, enum SMTPCode reply_code)
+{
     if (state->cmds_idx == state->cmds_cnt) {
         if (!(state->parser_state & SMTP_PARSER_STATE_FIRST_REPLY_SEEN)) {
             /* the first server reply can be a multiline message. Let's
@@ -959,18 +950,22 @@ static int SMTPProcessReply(SMTPState *state, Flow *f,
             if (!(state->parser_state & SMTP_PARSER_STATE_PARSING_MULTILINE_REPLY))
                 state->parser_state |= SMTP_PARSER_STATE_FIRST_REPLY_SEEN;
             if (reply_code == SMTP_REPLY_220)
-                SCReturnInt(0);
+                return 0;
             else {
                 SMTPSetEvent(state, SMTP_DECODER_EVENT_INVALID_REPLY);
-                SCReturnInt(0);
+                return 0;
             }
         } else {
             /* decoder event - unable to match reply with request */
             SCLogDebug("unable to match reply with request");
-            SCReturnInt(0);
+            return 0;
         }
     }
+    return 1;
+}
 
+static inline void SMTPCmdSet(SMTPState *state, Flow *f, enum SMTPCode reply_code)
+{
     if (state->cmds_cnt == 0) {
         /* reply but not a command we have stored, fall through */
     } else if (IsReplyToCommand(state, SMTP_COMMAND_STARTTLS)) {
@@ -998,7 +993,10 @@ static int SMTPProcessReply(SMTPState *state, Flow *f,
     } else {
         /* we don't care for any other command for now */
     }
+}
 
+static inline void SMTPHandleMultiLineReply(SMTPState *state, enum SMTPCode reply_code)
+{
     /* if it is a multi-line reply, we need to move the index only once for all
      * the line of the reply.  We unset the multiline flag on the last
      * line of the multiline reply, following which we increment the index */
@@ -1011,12 +1009,45 @@ static int SMTPProcessReply(SMTPState *state, Flow *f,
             state->parser_state |= SMTP_PARSER_STATE_PIPELINING_SERVER;
         }
     }
+}
 
+static inline void SMTPResetCntIdx(SMTPState *state)
+{
     /* if we have matched all the buffered commands, reset the cnt and index */
     if (state->cmds_idx == state->cmds_cnt) {
         state->cmds_cnt = 0;
         state->cmds_idx = 0;
     }
+}
+
+static int SMTPProcessReply(SMTPState *state, Flow *f,
+                            AppLayerParserState *pstate,
+                            SMTPThreadCtx *td)
+{
+    SCEnter();
+
+    /* the reply code has to contain at least 3 bytes, to hold the 3 digit
+     * reply code */
+    if (state->current_line_len < 3) {
+        /* decoder event */
+        SMTPSetEvent(state, SMTP_DECODER_EVENT_INVALID_REPLY);
+        return -1;
+    }
+
+    SMTPSetParserState(state);
+    if (SMTPResetPMQ(state, td) == -1) {
+        return -1;
+    }
+    enum SMTPCode reply_code = smtp_reply_map[td->pmq->rule_id_array[0]].enum_value;
+    SCLogDebug("REPLY: reply_code %u / %s", reply_code, smtp_reply_map[reply_code].enum_name);
+
+    if (SMTPMatchReply(state, reply_code) == 0) {
+        SCReturnInt(0);
+    }
+
+    SMTPCmdSet(state, f, reply_code);
+    SMTPHandleMultiLineReply(state, reply_code);
+    SMTPResetCntIdx(state);
 
     return 0;
 }
@@ -1926,7 +1957,7 @@ static int SMTPParserTest01(void)
         smtp_state->cmds_cnt != 0 ||
         smtp_state->cmds_idx != 0 ||
         smtp_state->parser_state != SMTP_PARSER_STATE_FIRST_REPLY_SEEN) {
-        printf("smtp parser in inconsistent state\n");
+        printf("smtp parser in inconsistent state 1\n");
         goto end;
     }
 
@@ -1944,7 +1975,7 @@ static int SMTPParserTest01(void)
         smtp_state->cmds_idx != 0 ||
         smtp_state->cmds[0] != SMTP_COMMAND_OTHER_CMD ||
         smtp_state->parser_state != SMTP_PARSER_STATE_FIRST_REPLY_SEEN) {
-        printf("smtp parser in inconsistent state\n");
+        printf("smtp parser in inconsistent state 2\n");
         goto end;
     }
 
@@ -1961,7 +1992,7 @@ static int SMTPParserTest01(void)
         smtp_state->cmds_cnt != 0 ||
         smtp_state->cmds_idx != 0 ||
         smtp_state->parser_state != SMTP_PARSER_STATE_FIRST_REPLY_SEEN) {
-        printf("smtp parser in inconsistent state\n");
+        printf("smtp parser in inconsistent state 3\n");
         goto end;
     }
 
@@ -1979,7 +2010,7 @@ static int SMTPParserTest01(void)
         smtp_state->cmds_idx != 0 ||
         smtp_state->cmds[0] != SMTP_COMMAND_STARTTLS ||
         smtp_state->parser_state != SMTP_PARSER_STATE_FIRST_REPLY_SEEN) {
-        printf("smtp parser in inconsistent state\n");
+        printf("smtp parser in inconsistent state 4\n");
         goto end;
     }
 
@@ -1997,7 +2028,7 @@ static int SMTPParserTest01(void)
         smtp_state->cmds_idx != 0 ||
         smtp_state->parser_state != (SMTP_PARSER_STATE_FIRST_REPLY_SEEN |
                                      SMTP_PARSER_STATE_COMMAND_DATA_MODE)) {
-        printf("smtp parser in inconsistent state\n");
+        printf("smtp parser in inconsistent state 5\n");
         goto end;
     }
 
