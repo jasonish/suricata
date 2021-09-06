@@ -716,6 +716,7 @@ static int SMTPGetLine(SMTPState *state)
     }
 }
 
+// rs_smtp_set_cmd_buflen
 static inline int SMTPSetCmdBufferLen(uint16_t cmds_cnt, uint16_t *cmds_buffer_len,
         uint8_t **cmds)
 {
@@ -741,6 +742,30 @@ static inline int SMTPSetCmdBufferLen(uint16_t cmds_cnt, uint16_t *cmds_buffer_l
     return 0;
 }
 
+static inline int SMTPSetDecoderEvent(uint16_t *cmds_cnt, uint8_t **cmds)
+{
+    if (*cmds_cnt >= 1 &&
+        (((*cmds)[*cmds_cnt - 1] == SMTP_COMMAND_STARTTLS) ||
+         ((*cmds)[*cmds_cnt - 1] == SMTP_COMMAND_DATA))) {
+        return 0;
+    }
+    return -1;
+}
+
+static inline int SMTPSetCmdIntoBuffer(uint8_t **cmds, uint16_t *cmds_cnt, uint8_t cmd)
+{
+    /** \todo decoder event */
+    if ((int)(*cmds_cnt + 1) > (int)USHRT_MAX) {
+        SCLogDebug("command buffer overflow");
+        return -1;
+    }
+
+    (*cmds)[*cmds_cnt] = cmd;
+    *cmds_cnt += 1;
+
+    return 0;
+}
+
 static int SMTPInsertCommandIntoCommandBuffer(uint8_t command, SMTPState *state, Flow *f)
 {
     SCEnter();
@@ -749,23 +774,15 @@ static int SMTPInsertCommandIntoCommandBuffer(uint8_t command, SMTPState *state,
         return -1;
     }
 
-    if (state->cmds_cnt >= 1 &&
-        ((state->cmds[state->cmds_cnt - 1] == SMTP_COMMAND_STARTTLS) ||
-         (state->cmds[state->cmds_cnt - 1] == SMTP_COMMAND_DATA))) {
+    if (SMTPSetDecoderEvent(&state->cmds_cnt, &state->cmds) == 0) {
         /* decoder event */
         SMTPSetEvent(state, SMTP_DECODER_EVENT_INVALID_PIPELINED_SEQUENCE);
         /* we have to have EHLO, DATA, VRFY, EXPN, TURN, QUIT, NOOP,
          * STARTTLS as the last command in pipelined mode */
     }
-
-    /** \todo decoder event */
-    if ((int)(state->cmds_cnt + 1) > (int)USHRT_MAX) {
-        SCLogDebug("command buffer overflow");
+    if (SMTPSetCmdIntoBuffer(&state->cmds, &state->cmds_cnt, command) == -1) {
         return -1;
     }
-
-    state->cmds[state->cmds_cnt] = command;
-    state->cmds_cnt++;
 
     return 0;
 }
