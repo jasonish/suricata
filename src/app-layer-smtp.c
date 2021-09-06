@@ -554,7 +554,7 @@ int SMTPProcessDataChunk(const uint8_t *chunk, uint32_t len,
     SCReturnInt(ret);
 }
 
-
+//  rs_smtp_clear_parser
 static void SMTPClearParserDetails(uint8_t *current_line_lf_seen, uint8_t *current_line_db,
         uint8_t **db, int32_t *db_len, const uint8_t **current_line, int32_t *current_line_len)
 {
@@ -573,6 +573,7 @@ static void SMTPClearParserDetails(uint8_t *current_line_lf_seen, uint8_t *curre
     }
 }
 
+// rs_smtp_handle_frag_lines
 static int32_t SMTPHandleFragmentedLines(uint8_t *lf_idx, uint8_t *current_line_db, uint8_t **db,
         int32_t *input_len, const uint8_t **input, int32_t *db_len)
 {
@@ -613,7 +614,8 @@ static int32_t SMTPHandleFragmentedLines(uint8_t *lf_idx, uint8_t *current_line_
     return 0;
 }
 
-static int32_t SMTPHandleNoLFIdx(uint8_t *current_line_lf_seen, uint8_t *current_line_db,
+// rs_smtp_handle_lf_idx
+static int32_t SMTPHandleLFIdx(uint8_t *current_line_lf_seen, uint8_t *current_line_db,
         uint8_t **db, int32_t *db_len, const uint8_t **input, uint8_t *lf_idx,
         uint8_t *current_line_delimiter_len, const uint8_t **current_line,
         int32_t *current_line_len, int32_t *input_len)
@@ -649,7 +651,7 @@ static int32_t SMTPHandleNoLFIdx(uint8_t *current_line_lf_seen, uint8_t *current
         *current_line = *input;
         *current_line_len = lf_idx - *input;
 
-        if (*input != lf_idx && *(lf_idx - 1) == 0x0D) {
+        if (*input != lf_idx && *(lf_idx - 1) == 0x0D) {  // TODO *(lf_idx - 1) seems odd
             *current_line_len -= 1;
             *current_line_delimiter_len = 2;
         } else {
@@ -690,7 +692,7 @@ static int SMTPGetLine(SMTPState *state)
                 &state->input_len, &state->input, &state->ts_db_len) == -1) {
             return -1;
         } else {
-            return SMTPHandleNoLFIdx(&state->ts_current_line_lf_seen, &state->ts_current_line_db,
+            return SMTPHandleLFIdx(&state->ts_current_line_lf_seen, &state->ts_current_line_db,
                     &state->ts_db, &state->ts_db_len, &state->input, lf_idx,
                     &state->current_line_delimiter_len, &state->current_line,
                     &state->current_line_len, &state->input_len);
@@ -706,7 +708,7 @@ static int SMTPGetLine(SMTPState *state)
                 &state->input_len, &state->input, &state->tc_db_len) == -1) {
             return -1;
         } else {
-            return SMTPHandleNoLFIdx(&state->tc_current_line_lf_seen, &state->tc_current_line_db,
+            return SMTPHandleLFIdx(&state->tc_current_line_lf_seen, &state->tc_current_line_db,
                     &state->tc_db, &state->tc_db_len, &state->input, lf_idx,
                     &state->current_line_delimiter_len, &state->current_line,
                     &state->current_line_len, &state->input_len);
@@ -714,29 +716,39 @@ static int SMTPGetLine(SMTPState *state)
     }
 }
 
-static int SMTPInsertCommandIntoCommandBuffer(uint8_t command, SMTPState *state, Flow *f)
+static inline int SMTPSetCmdBufferLen(uint16_t cmds_cnt, uint16_t *cmds_buffer_len,
+        uint8_t **cmds)
 {
-    SCEnter();
     void *ptmp;
 
-    if (state->cmds_cnt >= state->cmds_buffer_len) {
+    if (cmds_cnt >= *cmds_buffer_len) {
         int increment = SMTP_COMMAND_BUFFER_STEPS;
-        if ((int)(state->cmds_buffer_len + SMTP_COMMAND_BUFFER_STEPS) > (int)USHRT_MAX) {
-            increment = USHRT_MAX - state->cmds_buffer_len;
+        if ((int)(*cmds_buffer_len + SMTP_COMMAND_BUFFER_STEPS) > (int)USHRT_MAX) {
+            increment = USHRT_MAX - *cmds_buffer_len;
         }
 
-        ptmp = SCRealloc(state->cmds,
-                         sizeof(uint8_t) * (state->cmds_buffer_len + increment));
+        ptmp = SCRealloc(*cmds, sizeof(uint8_t) * (*cmds_buffer_len + increment));
         if (ptmp == NULL) {
-            SCFree(state->cmds);
-            state->cmds = NULL;
+            SCFree(*cmds);
+            *cmds = NULL;
             SCLogDebug("SCRealloc failure");
             return -1;
         }
-        state->cmds = ptmp;
+        *cmds = ptmp;
 
-        state->cmds_buffer_len += increment;
+        *cmds_buffer_len += increment;
     }
+    return 0;
+}
+
+static int SMTPInsertCommandIntoCommandBuffer(uint8_t command, SMTPState *state, Flow *f)
+{
+    SCEnter();
+
+    if (SMTPSetCmdBufferLen(state->cmds_cnt, &state->cmds_buffer_len, &state->cmds) == -1) {
+        return -1;
+    }
+
     if (state->cmds_cnt >= 1 &&
         ((state->cmds[state->cmds_cnt - 1] == SMTP_COMMAND_STARTTLS) ||
          (state->cmds[state->cmds_cnt - 1] == SMTP_COMMAND_DATA))) {

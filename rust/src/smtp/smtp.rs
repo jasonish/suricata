@@ -45,11 +45,12 @@ pub extern "C" fn handle_fragmented_lines(input: *mut *const u8,
     match lf_idx {
         Some(_idx) => {
             if ts_cur_line_db == 0 {
-                its_db = Vec::with_capacity(buf_len);
+                its_db = Vec::new();
                 its_db.extend_from_slice(buf);
                 unsafe {
                     *ts_db_len = buf_len as i32;
                 }
+                // TODO never seem to assign its_db to anything here
             } else {
                 its_db = unsafe { build_slice!(ts_db, ts_db_len as usize).to_vec() };
                 its_db.extend_from_slice(&buf);
@@ -64,4 +65,98 @@ pub extern "C" fn handle_fragmented_lines(input: *mut *const u8,
         None => { return -1; }
     }
     lf_idx.unwrap() as i32
+}
+
+#[no_mangle]
+pub extern "C" fn rs_smtp_clear_parser(cur_line_lf_seen: *mut u8, cur_line_db: *mut u8,
+    db: *mut *mut *const u8, db_len: *mut i32, cur_line: *mut *mut *const u8, cur_line_len: *mut i32)
+{
+    unsafe {
+        if *cur_line_lf_seen == 1 {
+            *cur_line_lf_seen = 0;
+            if *cur_line_db == 1 {
+                *cur_line_db = 0;
+                // TODO free obj here asked Jason
+                **db = std::ptr::null();
+                *db_len = 0;
+                **cur_line = std::ptr::null();
+                *cur_line_len = 0;
+            }
+        }
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn rs_smtp_handle_frag_lines(lf_idx: *const u8, cur_line_db: *mut u8,
+    db: *mut *mut *const u8, input_len: *mut i32, input: *mut *mut *const u8, db_len: *mut i32) -> i32
+{
+    let mut its_db;
+    unsafe {
+        let buf_len = *input_len as usize;
+        let buf = *input;
+        let buf = build_slice!(buf, buf_len);
+        if lf_idx.is_null() {
+            if *cur_line_db == 0 {
+                its_db = Vec::new(); // Can't use with_capacity as realloc is done later
+                *cur_line_db = 1;
+                its_db.extend_from_slice(buf);
+                **db = *its_db.as_ptr();
+                *db_len = buf_len as i32;
+            } else {
+                let idb = *db;
+                let idb_len = *db_len;
+                its_db = build_slice!(idb, idb_len as usize).to_vec();
+                its_db.extend_from_slice(&buf);
+                *db = its_db.as_mut_ptr();
+                let slice = &buf[buf_len..];
+                **input = *slice.as_ptr();
+                *input_len = 0 as i32;
+                return -1;
+            }
+        }
+    }
+    0
+}
+
+#[no_mangle]
+pub extern "C" fn rs_smtp_handle_lf_idx(cur_line_lf_seen: *mut u8, cur_line_db: *mut u8,
+    db: *mut *mut *const u8, db_len: *mut i32, input: *mut *mut *const u8, lf_idx: *mut u8,
+    cur_line_delim_len: *mut u8, cur_line: *mut *mut *const u8, cur_line_len: *mut i32,
+    input_len: *mut i32) -> i32
+{
+    let mut its_db;
+    unsafe {
+        let buf = *input;
+        let buf_len = *input_len as usize;
+        let mut buf = build_slice!(buf, buf_len).to_vec();
+        *cur_line_lf_seen = 1;
+        if *cur_line_db == 1 {
+            let idb = *db;
+            let mut idb_len = *db_len;
+            its_db = build_slice!(idb, idb_len as usize).to_vec();
+            its_db.extend_from_slice(&buf);
+            if idb_len > 1 && *its_db[(idb_len - 2) as usize] == 0x0D {
+                idb_len -= 2;
+                *cur_line_delim_len = 2;
+            } else {
+                idb_len -= 1;
+                *cur_line_delim_len = 1;
+            }
+            *cur_line = idb;
+            *cur_line_len = idb_len;
+        } else {
+            *cur_line = buf.as_mut_ptr();
+            *cur_line_len = (*lf_idx - *buf[0]) as i32;
+            if *buf[0] != *lf_idx && *lf_idx - 1 == 0x0D { // TODO Maybe FIX
+                *cur_line_len -= 1;
+                *cur_line_delim_len = 2;
+            } else {
+                *cur_line_delim_len = 1;
+            }
+        }
+        *input_len -= (*lf_idx - *buf[0] + 1) as i32;
+        *input = buf[(*lf_idx + 1) as usize..].as_mut_ptr();
+    }
+
+    0
 }
