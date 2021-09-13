@@ -97,7 +97,7 @@ exclude = [
     "NTPTransaction",
     "SNMPState",
     "SNMPTransaction",
-    "SuricataContext",
+    "SuricataFfiContext",
     "SuricataFileContext",
     "TFTPState",
     "TFTPTransaction",

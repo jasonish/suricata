@@ -18,9 +18,9 @@
 #include "suricata-common.h"
 #include "rust-context.h"
 
-SuricataContext suricata_context;
+SuricataFfiContext suricata_ffi_context;
 
-SuricataContext *SCGetContext(void)
+SuricataFfiContext *SCGetContext(void)
 {
-    return &suricata_context;
+    return &suricata_ffi_context;
 }

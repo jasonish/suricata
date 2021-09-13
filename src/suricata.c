@@ -2656,24 +2656,24 @@ static void SuricataMainLoop(SCInstance *suri)
  */
 
 int InitGlobal(void) {
-    suricata_context.SCLogMessage = SCLogMessage;
-    suricata_context.DetectEngineStateFree = DetectEngineStateFree;
-    suricata_context.AppLayerDecoderEventsSetEventRaw = AppLayerDecoderEventsSetEventRaw;
-    suricata_context.AppLayerDecoderEventsFreeEvents = AppLayerDecoderEventsFreeEvents;
-    suricata_context.AppLayerParserTriggerRawStreamReassembly =
+    suricata_ffi_context.SCLogMessage = SCLogMessage;
+    suricata_ffi_context.DetectEngineStateFree = DetectEngineStateFree;
+    suricata_ffi_context.AppLayerDecoderEventsSetEventRaw = AppLayerDecoderEventsSetEventRaw;
+    suricata_ffi_context.AppLayerDecoderEventsFreeEvents = AppLayerDecoderEventsFreeEvents;
+    suricata_ffi_context.AppLayerParserTriggerRawStreamReassembly =
             AppLayerParserTriggerRawStreamReassembly;
 
-    suricata_context.FileOpenFileWithId = FileOpenFileWithId;
-    suricata_context.FileCloseFileById = FileCloseFileById;
-    suricata_context.FileAppendDataById = FileAppendDataById;
-    suricata_context.FileAppendGAPById = FileAppendGAPById;
-    suricata_context.FileContainerRecycle = FileContainerRecycle;
-    suricata_context.FilePrune = FilePrune;
-    suricata_context.FileSetTx = FileContainerSetTx;
+    suricata_ffi_context.FileOpenFileWithId = FileOpenFileWithId;
+    suricata_ffi_context.FileCloseFileById = FileCloseFileById;
+    suricata_ffi_context.FileAppendDataById = FileAppendDataById;
+    suricata_ffi_context.FileAppendGAPById = FileAppendGAPById;
+    suricata_ffi_context.FileContainerRecycle = FileContainerRecycle;
+    suricata_ffi_context.FilePrune = FilePrune;
+    suricata_ffi_context.FileSetTx = FileContainerSetTx;
 
-    suricata_context.AppLayerRegisterParser = AppLayerRegisterParser;
+    suricata_ffi_context.AppLayerRegisterParser = AppLayerRegisterParser;
 
-    rs_init(&suricata_context);
+    rs_init(&suricata_ffi_context);
 
     SC_ATOMIC_INIT(engine_stage);
 

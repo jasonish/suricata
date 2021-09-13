@@ -137,7 +137,7 @@ pub type SCFileSetTx = extern "C" fn (
 // cases working.
 #[allow(non_snake_case)]
 #[repr(C)]
-pub struct SuricataContext {
+pub struct SuricataFfiContext {
     pub SCLogMessage: SCLogMessageFunc,
     DetectEngineStateFree: DetectEngineStateFreeFunc,
     AppLayerDecoderEventsSetEventRaw: AppLayerDecoderEventsSetEventRawFunc,
@@ -162,13 +162,13 @@ pub struct SuricataFileContext {
 }
 
 extern {
-    pub fn SCGetContext() -> &'static mut SuricataContext;
+    pub fn SCGetContext() -> &'static mut SuricataFfiContext;
     pub fn SCLogGetLogLevel() -> i32;
 }
 
-pub static mut SC: Option<&'static SuricataContext> = None;
+pub static mut SC: Option<&'static SuricataFfiContext> = None;
 
-pub fn init_ffi(context: &'static mut SuricataContext)
+pub fn init_ffi(context: &'static mut SuricataFfiContext)
 {
     unsafe {
         SC = Some(context);
@@ -177,7 +177,7 @@ pub fn init_ffi(context: &'static mut SuricataContext)
 }
 
 #[no_mangle]
-pub extern "C" fn rs_init(context: &'static mut SuricataContext)
+pub extern "C" fn rs_init(context: &'static mut SuricataFfiContext)
 {
     init_ffi(context);
 }

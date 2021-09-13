@@ -27,7 +27,18 @@
 
 struct AppLayerParser;
 
-typedef struct SuricataContext_ {
+/**
+ * The SuricataFfiContext is a collection of function pointers the Rust side of
+ * Suricata needs to function correctly. This is mostly to allow Rust-native
+ * unit tests to run as the Rust side not linked with these C functions.
+ * Currently only the Rust side is linked into the C functions.
+ *
+ * This is a little added complexity we hope to resolve at some point.
+ *
+ * When does a C function need an entry here? When it may be called in the code
+ * path of a Rust unit test.
+ */
+typedef struct SuricataFfiContext_ {
     SCError (*SCLogMessage)(const SCLogLevel, const char *, const unsigned int,
             const char *, const SCError, const char *message);
     void (*DetectEngineStateFree)(DetectEngineState *);
@@ -51,9 +62,9 @@ typedef struct SuricataContext_ {
 
     int (*AppLayerRegisterParser)(const struct AppLayerParser *p, AppProto alproto);
 
-} SuricataContext;
+} SuricataFfiContext;
 
-extern SuricataContext suricata_context;
+extern SuricataFfiContext suricata_ffi_context;
 
 typedef struct SuricataFileContext_ {
 
@@ -61,6 +72,6 @@ typedef struct SuricataFileContext_ {
 
 } SuricataFileContext;
 
-SuricataContext *SCGetContext(void);
+SuricataFfiContext *SCGetContext(void);
 
 #endif /* !__RUST_CONTEXT_H__ */
