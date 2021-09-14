@@ -742,6 +742,7 @@ static inline int SMTPSetCmdBufferLen(uint16_t cmds_cnt, uint16_t *cmds_buffer_l
     return 0;
 }
 
+// rs_smtp_set_decoder_event
 static inline int SMTPSetDecoderEvent(uint16_t *cmds_cnt, uint8_t **cmds)
 {
     if (*cmds_cnt >= 1 &&
@@ -752,6 +753,7 @@ static inline int SMTPSetDecoderEvent(uint16_t *cmds_cnt, uint8_t **cmds)
     return -1;
 }
 
+// rs_smtp_set_cmd_into_buffer
 static inline int SMTPSetCmdIntoBuffer(uint8_t **cmds, uint16_t *cmds_cnt, uint8_t cmd)
 {
     /** \todo decoder event */
@@ -787,6 +789,7 @@ static int SMTPInsertCommandIntoCommandBuffer(uint8_t command, SMTPState *state,
     return 0;
 }
 
+// rs_smtp_process_cmd_bdat
 static int SMTPProcessCommandBDAT(SMTPState *state, Flow *f,
                                   AppLayerParserState *pstate)
 {
@@ -1081,6 +1084,7 @@ static int SMTPProcessReply(SMTPState *state, Flow *f,
     return 0;
 }
 
+// rs_smtp_parse_cmd_bdat
 static int SMTPParseCommandBDAT(SMTPState *state)
 {
     SCEnter();
@@ -1118,6 +1122,7 @@ static int SMTPParseCommandBDAT(SMTPState *state)
     return 0;
 }
 
+// rs_smtp_parse_cmd_w_param
 static int SMTPParseCommandWithParam(SMTPState *state, uint8_t prefix_len, uint8_t **target, uint16_t *target_len)
 {
     int i = prefix_len + 1;
@@ -1147,6 +1152,7 @@ static int SMTPParseCommandWithParam(SMTPState *state, uint8_t prefix_len, uint8
     (*target)[spc_i - i] = '\0';
     *target_len = spc_i - i;
 
+// revisions: rpass cfail
     return 0;
 }
 
@@ -1191,6 +1197,7 @@ static int SMTPParseCommandRCPTTO(SMTPState *state)
     return 0;
 }
 
+// rs_smtp_nonewtx
 /* consider 'rset' and 'quit' to be part of the existing state */
 static int NoNewTx(SMTPState *state)
 {
@@ -1214,6 +1221,7 @@ static void SMTPTrackStartTx(SMTPState *state, Flow *f)
             smtp_config.content_inspect_min_size);
 }
 
+// rs_smtp_nonewtx
 static int SMTPCreateNewTx(SMTPState *state, Flow *f, SMTPTransaction *tx)
 {
     if (state->curr_tx == NULL || (state->curr_tx->done && !NoNewTx(state))) {

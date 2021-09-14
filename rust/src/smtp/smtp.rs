@@ -17,6 +17,20 @@
 use crate::core::*;
 use std;
 
+/* we are in mode of parsing a command's data.  Used when we are parsing tls
+ * or accepting the rfc 2822 mail after DATA command */
+pub const SMTP_PARSER_STATE_COMMAND_DATA_MODE: u8 = 0x01;
+
+/* Various SMTP commands
+ * We currently have var-ified just STARTTLS and DATA, since we need to them
+ * for state transitions.  The rest are just indicate as OTHER_CMD.  Other
+ * commands would be introduced as and when needed */
+pub const SMTP_COMMAND_STARTTLS: u8 = 1;
+pub const SMTP_COMMAND_DATA: u8 = 2;
+pub const SMTP_COMMAND_BDAT: u8 = 3;
+pub const SMTP_COMMAND_DATA_MODE: u8 = 4;
+pub const SMTP_COMMAND_OTHER_CMD: u8 = 5;
+
 pub const SMTP_COMMAND_BUFFER_STEPS: u16 = 5;
 
 #[no_mangle]
@@ -164,6 +178,127 @@ pub unsafe extern "C" fn rs_smtp_set_cmd_buflen(cmds_cnt: u16, cmd_buflen: *mut 
         let mut tmp = Vec::with_capacity((*cmd_buflen + inc) as usize);
         *cmds = tmp.as_mut_ptr();
         *cmd_buflen += inc;
+    }
+    0
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn rs_smtp_set_decoder_event(cmds_cnt: *mut u16,
+    cmds: *mut *mut *const u8) -> i8
+{
+    let cmd_pos = (*cmds_cnt - 1) as usize;
+    let cmd_list = *cmds;
+    let buf = build_slice!(cmd_list, (cmd_pos + 1) as usize);
+    if *cmds_cnt >= 1 && ((*(*buf)[cmd_pos] == SMTP_COMMAND_STARTTLS as u8) ||
+        (*buf[cmd_pos] == SMTP_COMMAND_DATA)) {
+        return 0;
+    }
+    -1
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn rs_smtp_set_cmd_into_buffer(cmds: *mut *mut *const u8,
+    cmds_cnt: *mut u16, cmd: *const u8) -> i8
+{
+    let cmd_pos = *cmds_cnt as usize;
+    let cmd_list = *cmds;
+    let mut buf = build_slice!(cmd_list, cmd_pos).to_vec();
+    if *cmds_cnt + 1 > u16::MAX {
+        SCLogDebug!("Buffer Overflow");
+        return -1;
+    }
+    buf.push(cmd);
+    *cmds = buf[..].as_mut_ptr();
+    *cmds_cnt += 1;
+    0
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn rs_smtp_process_cmd_bdat(cur_line_len: i32 /* should be u32*/, cur_line_delim_len: u8,
+    bdat_chunk_idx: *mut u32, bdat_chunk_len: u32, parser_state: *mut u8) -> i8
+{
+    *bdat_chunk_idx += cur_line_len as u32 + cur_line_delim_len as u32;
+    if *bdat_chunk_idx > bdat_chunk_len {
+        *parser_state &= !SMTP_PARSER_STATE_COMMAND_DATA_MODE;
+        return -1;
+    } else if *bdat_chunk_idx == bdat_chunk_len {
+        *parser_state &= !SMTP_PARSER_STATE_COMMAND_DATA_MODE;
+    }
+    0
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn rs_smtp_parse_cmd_bdat(cur_line_len: i32, cur_line: *mut *mut *const u8,
+    bdat_chunk_len: *mut u32) -> i8
+{
+    let buf = *cur_line;
+    let buf = build_slice!(buf, cur_line_len as usize).to_vec();
+    let buf: Vec<u8> = buf.iter().map(|v| *v as u8).collect();
+    let i = buf.iter().position(|&x| char::from(x) != ' ').unwrap();
+    if i == 4 || i == cur_line_len as usize {
+        // decoder event
+        return -1;
+    }
+    //let bufs = CStr::from_ptr(**cur_line);
+    let s = match std::str::from_utf8(&buf) {
+        Ok(v) => v,
+        Err(e) => {
+            SCLogError!("Invalid UTF-8 sequence: {}", e);
+            return -1;
+        },
+    };
+    match s.split_whitespace().collect::<Vec<_>>()[0].parse::<u32>() {
+        Ok(val) => {
+            *bdat_chunk_len = val;
+        }
+        _ => {
+            // decoder event
+            return -1;
+        }
+    }
+    0
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn rs_smtp_parse_cmd_w_param(cur_line_len: i32, cur_line: *mut *mut *const u8,
+    pref: u8, target: *mut *mut *const u8, target_len: *mut u16) -> i8
+{
+    let buf = *cur_line;
+    let buf = build_slice!(buf, cur_line_len as usize).to_vec();
+    let buf: Vec<u8> = buf.iter().map(|v| *v as u8).collect();
+    let i = buf[(pref + 1) as usize..].iter().position(|&x| char::from(x) != ' ').unwrap();
+    /* rfc1870: with the size extension the mail from can be followed by an option.
+    We use the space separator to detect it. */
+    let spc_i = buf[i as usize..].iter().position(|&x| char::from(x) == ' ').unwrap();
+    let mut fin_target = Vec::new();
+    fin_target.extend_from_slice(&buf[..spc_i - i + 1]);
+//    fin_target.push('\0'); TODO figure out how to add a null char
+    let mut fin_target: Vec<*const u8> = fin_target.iter().map(|v| v as *const u8).collect();
+    *target = fin_target.as_mut_ptr();
+    *target_len = (spc_i - i) as u16;
+    0
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn rs_smtp_nonewtx(parser_state: u8, cur_line: *mut *mut *const u8,
+    cur_line_len: i32) -> i8
+{
+    let buf = *cur_line;
+    let buf = build_slice!(buf, cur_line_len as usize).to_vec();
+    let buf: Vec<u8> = buf.iter().map(|v| *v as u8).collect();
+    let s = match std::str::from_utf8(&buf) {
+        Ok(v) => v,
+        Err(e) => {
+            SCLogError!("Invalid UTF-8 sequence: {}", e);
+            return -1;
+        },
+    };
+    if parser_state & SMTP_PARSER_STATE_COMMAND_DATA_MODE == 0 {
+        if cur_line_len >= 4 && s.to_lowercase().eq("rset") {
+            return 1;
+        } else if cur_line_len >= 4 && s.to_lowercase().eq("quit") {
+            return 1;
+        }
     }
     0
 }
