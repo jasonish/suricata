@@ -241,6 +241,8 @@ SMTPConfig smtp_config = { 0, { 0, 0, 0, 0, 0 }, 0, 0, 0, 0, STREAMING_BUFFER_CO
 
 static SMTPString *SMTPStringAlloc(void);
 
+void RustCallbackSMTPSetEvent(uint8_t, void (*fun)(void *, uint8_t));
+
 /**
  * \brief Configure SMTP Mime Decoder by parsing out mime section of YAML
  * config file
@@ -346,6 +348,12 @@ static void SMTPConfigure(void) {
     }
 
     SCReturn;
+}
+
+void RustCallbackSMTPSetEvent(void *s, uint8_t e)
+{
+    SMTPState *s = (SMTPState *)s;
+    SMTPSetEvent(s, e);
 }
 
 static void SMTPSetEvent(SMTPState *s, uint8_t e)
@@ -1158,19 +1166,11 @@ static int SMTPParseCommandWithParam(SMTPState *state, uint8_t prefix_len, uint8
 
 static int SMTPParseCommandHELO(SMTPState *state)
 {
-    if (state->helo) {
-        SMTPSetEvent(state, SMTP_DECODER_EVENT_DUPLICATE_FIELDS);
-        return 0;
-    }
     return SMTPParseCommandWithParam(state, 4, &state->helo, &state->helo_len);
 }
 
 static int SMTPParseCommandMAILFROM(SMTPState *state)
 {
-    if (state->curr_tx->mail_from) {
-        SMTPSetEvent(state, SMTP_DECODER_EVENT_DUPLICATE_FIELDS);
-        return 0;
-    }
     return SMTPParseCommandWithParam(state, 9,
                                      &state->curr_tx->mail_from,
                                      &state->curr_tx->mail_from_len);
@@ -1181,6 +1181,7 @@ static int SMTPParseCommandRCPTTO(SMTPState *state)
     uint8_t *rcptto;
     uint16_t rcptto_len;
 
+    // use rs_smtp_parse_cmd_w_param
     if (SMTPParseCommandWithParam(state, 7, &rcptto, &rcptto_len) == 0) {
         SMTPString *rcptto_str = SMTPStringAlloc();
         if (rcptto_str) {
@@ -1297,30 +1298,37 @@ static int SMTPHandleDecodeMime(SMTPState *state, SMTPTransaction *tx, Flow *f)
     return 0;
 }
 
+static inline int SMTPHandleDataCmd(SMTPState *state, SMTPTransaction *tx, Flow *f)
+{
+    state->current_command = SMTP_COMMAND_DATA;
+    if (smtp_config.raw_extraction) {
+        if (SMTPHandleRawExtraction(state, tx) == -1) {
+            return -1;
+        }
+    } else if (smtp_config.decode_mime) {
+        int ret = SMTPHandleDecodeMime(state, tx, f);
+        if (ret != 0) {
+            return ret;
+        }
+    }
+    /* Enter immediately data mode without waiting for server reply */
+    if (state->parser_state & SMTP_PARSER_STATE_PIPELINING_SERVER) {
+        state->parser_state |= SMTP_PARSER_STATE_COMMAND_DATA_MODE;
+    }
+    return 0;
+}
+
 static int SMTPParseCommandDataMode(SMTPState *state, SMTPTransaction *tx, Flow *f)
 {
     int r = 0;
-
     if (state->current_line_len >= 8 &&
         SCMemcmpLowercase("starttls", state->current_line, 8) == 0) {
         state->current_command = SMTP_COMMAND_STARTTLS;
     } else if (state->current_line_len >= 4 &&
                SCMemcmpLowercase("data", state->current_line, 4) == 0) {
-        state->current_command = SMTP_COMMAND_DATA;
-        if (smtp_config.raw_extraction) {
-            if (SMTPHandleRawExtraction(state, tx) == -1) {
-                return -1;
-            }
-        } else if (smtp_config.decode_mime) {
-            int ret = SMTPHandleDecodeMime(state, tx, f);
-            if (ret != 0) {
-                return ret;
-            }
-        }
-        /* Enter immediately data mode without waiting for server reply */
-        if (state->parser_state & SMTP_PARSER_STATE_PIPELINING_SERVER) {
-            state->parser_state |= SMTP_PARSER_STATE_COMMAND_DATA_MODE;
-        }
+        int retval = SMTPHandleDataCmd(state, tx, f);   // Not moving to Rust bc MIME
+        if (retval != 0)
+            return retval;
     } else if (state->current_line_len >= 4 &&
                SCMemcmpLowercase("bdat", state->current_line, 4) == 0) {
         r = SMTPParseCommandBDAT(state);
@@ -1332,6 +1340,9 @@ static int SMTPParseCommandDataMode(SMTPState *state, SMTPTransaction *tx, Flow 
     } else if (state->current_line_len >= 4 &&
                ((SCMemcmpLowercase("helo", state->current_line, 4) == 0) ||
                 SCMemcmpLowercase("ehlo", state->current_line, 4) == 0))  {
+        if (state->helo) {
+            SMTPSetEvent(state, SMTP_DECODER_EVENT_DUPLICATE_FIELDS);
+        }
         r = SMTPParseCommandHELO(state);
         if (r == -1) {
             SCReturnInt(-1);
@@ -1339,6 +1350,9 @@ static int SMTPParseCommandDataMode(SMTPState *state, SMTPTransaction *tx, Flow 
         state->current_command = SMTP_COMMAND_OTHER_CMD;
     } else if (state->current_line_len >= 9 &&
                SCMemcmpLowercase("mail from", state->current_line, 9) == 0) {
+        if (state->curr_tx->mail_from) {
+            SMTPSetEvent(state, SMTP_DECODER_EVENT_DUPLICATE_FIELDS);
+        }
         r = SMTPParseCommandMAILFROM(state);
         if (r == -1) {
             SCReturnInt(-1);
@@ -1346,7 +1360,7 @@ static int SMTPParseCommandDataMode(SMTPState *state, SMTPTransaction *tx, Flow 
         state->current_command = SMTP_COMMAND_OTHER_CMD;
     } else if (state->current_line_len >= 7 &&
                SCMemcmpLowercase("rcpt to", state->current_line, 7) == 0) {
-        r = SMTPParseCommandRCPTTO(state);
+        r = SMTPParseCommandRCPTTO(state);  // Not moving to Rust bc Tx -> MIME
         if (r == -1) {
             SCReturnInt(-1);
         }
@@ -1359,7 +1373,6 @@ static int SMTPParseCommandDataMode(SMTPState *state, SMTPTransaction *tx, Flow 
     } else {
         state->current_command = SMTP_COMMAND_OTHER_CMD;
     }
-
     /* Every command is inserted into a command buffer, to be matched
      * against reply(ies) sent by the server */
     if (SMTPInsertCommandIntoCommandBuffer(state->current_command,
