@@ -15,6 +15,7 @@
  * 02110-1301, USA.
  */
 use crate::core::*;
+use core::ffi::c_void;
 use std;
 
 /* we are in mode of parsing a command's data.  Used when we are parsing tls
@@ -30,8 +31,17 @@ pub const SMTP_COMMAND_DATA: u8 = 2;
 pub const SMTP_COMMAND_BDAT: u8 = 3;
 pub const SMTP_COMMAND_DATA_MODE: u8 = 4;
 pub const SMTP_COMMAND_OTHER_CMD: u8 = 5;
+pub const SMTP_COMMAND_RSET: u8 = 6;
 
 pub const SMTP_COMMAND_BUFFER_STEPS: u16 = 5;
+
+pub const SMTP_DECODER_EVENT_INVALID_PIPELINED_SEQUENCE: u8 = 4;
+
+#[allow(non_snake_case)]
+pub extern fn RustCallbackSMTPSetEvent(_state: *const c_void, _event: u8) {}
+
+#[allow(non_snake_case)]
+pub extern fn RustCallbackSMTPFree(_obj: *const c_void) {}
 
 #[no_mangle]
 pub extern "C" fn set_min_inspect_depth(flow: *const std::os::raw::c_void, ctnt_min_size: u32,
@@ -80,16 +90,16 @@ pub unsafe extern "C" fn handle_fragmented_lines(input: *mut *const u8,
 
 #[no_mangle]
 pub unsafe extern "C" fn rs_smtp_clear_parser(cur_line_lf_seen: *mut u8, cur_line_db: *mut u8,
-    db: *mut *mut *const u8, db_len: *mut i32, cur_line: *mut *mut *const u8, cur_line_len: *mut i32)
+    db: *mut *mut u8, db_len: *mut i32, cur_line: *mut *const u8, cur_line_len: *mut i32)
 {
     if *cur_line_lf_seen == 1 {
         *cur_line_lf_seen = 0;
         if *cur_line_db == 1 {
             *cur_line_db = 0;
-            // TODO free obj here asked Jason
-            **db = std::ptr::null();
+            RustCallbackSMTPFree(*db as *mut c_void);
+            *db = std::ptr::null_mut();
             *db_len = 0;
-            **cur_line = std::ptr::null();
+            *cur_line = std::ptr::null();
             *cur_line_len = 0;
         }
     }
@@ -298,6 +308,80 @@ pub unsafe extern "C" fn rs_smtp_nonewtx(parser_state: u8, cur_line: *mut *mut *
             return 1;
         } else if cur_line_len >= 4 && s.to_lowercase().eq("quit") {
             return 1;
+        }
+    }
+    0
+}
+
+
+#[no_mangle]
+pub unsafe extern "C" fn rs_smtp_parse_cmd_data_mode(cur_line: *mut *mut *const u8,
+    cur_line_len: i32, cur_cmd: *mut u8, parser_state: *mut u8, bdat_chunk_idx: *mut u32,
+    bdat_chunk_len: *mut u32, pref: u8, target: *mut *mut *const u8, target_len: *mut u16,
+    helo: *mut *const u8, mail_from: *mut *const u8, state: *const c_void) -> i8
+{
+    let buf = *cur_line;
+    let buf = build_slice!(buf, cur_line_len as usize).to_vec();
+    let buf: Vec<u8> = buf.iter().map(|v| *v as u8).collect();
+    let cmd = match std::str::from_utf8(&buf) {
+        Ok(v) => v,
+        Err(e) => {
+            SCLogError!("Invalid UTF-8 sequence: {}", e);
+            return -1;
+        },
+    };
+
+    if cur_line_len < buf.len() as i32 {
+        return -1;
+    }
+    match cmd {
+        "starttls" => {
+            *cur_cmd = SMTP_COMMAND_STARTTLS;
+        }
+        "bdat" => {
+            let r = rs_smtp_parse_cmd_bdat(cur_line_len, cur_line, bdat_chunk_len);
+            if r == -1 {
+                return -1;
+            }
+            *cur_cmd = SMTP_COMMAND_BDAT;
+            *parser_state = *parser_state | SMTP_PARSER_STATE_COMMAND_DATA_MODE;
+        }
+        "helo" | "ehlo" => {
+            if !helo.is_null() {
+                RustCallbackSMTPSetEvent(state, SMTP_DECODER_EVENT_INVALID_PIPELINED_SEQUENCE);
+            }
+            let r = rs_smtp_parse_cmd_w_param(cur_line_len, cur_line, pref, target, target_len);
+            if r == -1 {
+                return -1;
+            }
+            *cur_cmd = SMTP_COMMAND_OTHER_CMD;
+        }
+        "mail from" => {
+            if !mail_from.is_null() {
+                RustCallbackSMTPSetEvent(state, SMTP_DECODER_EVENT_INVALID_PIPELINED_SEQUENCE);
+            }
+            let r = rs_smtp_parse_cmd_w_param(cur_line_len, cur_line, pref, target, target_len);
+            if r == -1 {
+                return -1;
+            }
+            *cur_cmd = SMTP_COMMAND_OTHER_CMD;
+        }
+//        "rcpt to" => {
+//            let rcptto_s = String::new();
+//            let r = rs_smtp_parse_cmd_w_param(/*args here rcpt_to goes here*/);
+//            if r == 0 {
+//                *rcpt_to_list = rcptto_s.to_bytes().as_mut_ptr();
+//            } else {
+//                return -1;
+//            }
+//            *cur_cmd = SMTP_COMMAND_OTHER_CMD;
+//        }
+        "rset" => {
+            *bdat_chunk_idx = 0;
+            *cur_cmd = SMTP_COMMAND_RSET;
+        }
+        _ => {
+            *cur_cmd = SMTP_COMMAND_OTHER_CMD;
         }
     }
     0

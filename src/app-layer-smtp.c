@@ -240,8 +240,9 @@ SCEnumCharMap smtp_reply_map[ ] = {
 SMTPConfig smtp_config = { 0, { 0, 0, 0, 0, 0 }, 0, 0, 0, 0, STREAMING_BUFFER_CONFIG_INITIALIZER};
 
 static SMTPString *SMTPStringAlloc(void);
-
-void RustCallbackSMTPSetEvent(uint8_t, void (*fun)(void *, uint8_t));
+void RustCallbackSMTPSetEvent(void *, uint8_t);
+void SMTPSetEvent(SMTPState *, uint8_t);
+void RustCallbackSMTPFree(void *);
 
 /**
  * \brief Configure SMTP Mime Decoder by parsing out mime section of YAML
@@ -350,13 +351,13 @@ static void SMTPConfigure(void) {
     SCReturn;
 }
 
-void RustCallbackSMTPSetEvent(void *s, uint8_t e)
+void RustCallbackSMTPSetEvent(void *state, uint8_t e)
 {
-    SMTPState *s = (SMTPState *)s;
-    SMTPSetEvent(s, e);
+    SMTPState *smtp_state = (SMTPState *)state;
+    SMTPSetEvent(smtp_state, e);
 }
 
-static void SMTPSetEvent(SMTPState *s, uint8_t e)
+void SMTPSetEvent(SMTPState *s, uint8_t e)
 {
     SCLogDebug("setting event %u", e);
 
@@ -562,23 +563,9 @@ int SMTPProcessDataChunk(const uint8_t *chunk, uint32_t len,
     SCReturnInt(ret);
 }
 
-//  rs_smtp_clear_parser
-static void SMTPClearParserDetails(uint8_t *current_line_lf_seen, uint8_t *current_line_db,
-        uint8_t **db, int32_t *db_len, const uint8_t **current_line, int32_t *current_line_len)
-{
-    if (*current_line_lf_seen == 1) {
-        /* we have seen the lf for the previous line.  Clear the parser
-         * details to parse new line */
-        *current_line_lf_seen = 0;
-        if (*current_line_db == 1) {
-            *current_line_db = 0;
-            SCFree(*db);
-            *db = NULL;
-            *db_len = 0;
-            *current_line = NULL;
-            *current_line_len = 0;
-        }
-    }
+void RustCallbackSMTPFree(void *obj) { // More like Suricata's fn
+    // TODO check if I need to first typecast the obj
+    SCFree(obj);
 }
 
 // rs_smtp_handle_frag_lines
@@ -693,7 +680,7 @@ static int SMTPGetLine(SMTPState *state)
 
     /* toserver */
     if (state->direction == 0) {
-        SMTPClearParserDetails(&state->ts_current_line_lf_seen, &state->ts_current_line_db,
+        rs_smtp_clear_parser(&state->ts_current_line_lf_seen, &state->ts_current_line_db,
                 &state->ts_db, &state->ts_db_len, &state->current_line, &state->current_line_len);
         uint8_t *lf_idx = memchr(state->input, 0x0a, state->input_len);
         if (SMTPHandleFragmentedLines(lf_idx, &state->ts_current_line_db, &state->ts_db,
@@ -707,7 +694,7 @@ static int SMTPGetLine(SMTPState *state)
         }
         /* toclient */
     } else {
-        SMTPClearParserDetails(&state->tc_current_line_lf_seen, &state->tc_current_line_db,
+        rs_smtp_clear_parser(&state->tc_current_line_lf_seen, &state->tc_current_line_db,
                 &state->tc_db, &state->tc_db_len, &state->current_line, &state->current_line_len);
 
         uint8_t *lf_idx = memchr(state->input, 0x0a, state->input_len);
