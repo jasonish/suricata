@@ -107,7 +107,7 @@ pub unsafe extern "C" fn rs_smtp_clear_parser(cur_line_lf_seen: *mut u8, cur_lin
 
 #[no_mangle]
 pub unsafe extern "C" fn rs_smtp_handle_frag_lines(lf_idx: *const u8, cur_line_db: *mut u8,
-    db: *mut *mut *const u8, input_len: *mut i32, input: *mut *mut *const u8, db_len: *mut i32) -> i32
+    db: *mut *mut u8, input_len: *mut i32, input: *mut *const u8, db_len: *mut i32) -> i32
 {
     let mut its_db;
     let buf_len = *input_len as usize;
@@ -118,19 +118,20 @@ pub unsafe extern "C" fn rs_smtp_handle_frag_lines(lf_idx: *const u8, cur_line_d
             its_db = Vec::new(); // Can't use with_capacity as realloc is done later
             *cur_line_db = 1;
             its_db.extend_from_slice(buf);
-            **db = *its_db.as_ptr();
+            *db = its_db.as_mut_ptr();
             *db_len = buf_len as i32;
         } else {
             let idb = *db;
             let idb_len = *db_len;
-            its_db = build_slice!(idb, idb_len as usize).to_vec();
+            let sl_its_db = build_slice!(idb, idb_len as usize);
+            its_db = sl_its_db.to_vec().clone();
             its_db.extend_from_slice(&buf);
             *db = its_db.as_mut_ptr();
-            let slice = &buf[buf_len..];
-            **input = *slice.as_ptr();
-            *input_len = 0 as i32;
-            return -1;
         }
+        let slice = &buf[buf_len..];
+        *input = slice.as_ptr();
+        *input_len = 0 as i32;
+        return -1;
     }
     0
 }

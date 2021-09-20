@@ -563,50 +563,8 @@ int SMTPProcessDataChunk(const uint8_t *chunk, uint32_t len,
     SCReturnInt(ret);
 }
 
-void RustCallbackSMTPFree(void *obj) { // More like Suricata's fn
-    // TODO check if I need to first typecast the obj
+void RustCallbackSMTPFree(void *obj) {
     SCFree(obj);
-}
-
-// rs_smtp_handle_frag_lines
-static int32_t SMTPHandleFragmentedLines(uint8_t *lf_idx, uint8_t *current_line_db, uint8_t **db,
-        int32_t *input_len, const uint8_t **input, int32_t *db_len)
-{
-    void *ptmp;
-    if (lf_idx == NULL) {
-        /* fragmented lines.  Decoder event for special cases.  Not all
-         * fragmented lines should be treated as a possible evasion
-         * attempt.  With multi payload smtp chunks we can have valid
-         * cases of fragmentation.  But within the same segment chunk
-         * if we see fragmentation then it's definitely something you
-         * should alert about */
-        if (*current_line_db == 0) {
-            *db = SCMalloc(*input_len);
-            if (*db == NULL) {
-                return -1;
-            }
-            *current_line_db = 1;
-            memcpy(*db, *input, *input_len);
-            *db_len = *input_len;
-        } else {
-            ptmp = SCRealloc(*db, (*db_len + *input_len));
-            if (ptmp == NULL) {
-                SCFree(*db);
-                *db = NULL;
-                *db_len = 0;
-                return -1;
-            }
-            *db = ptmp;
-
-            memcpy(*db + *db_len, *input, *input_len);
-            *db_len += *input_len;
-        } /* else */
-        *input += *input_len;
-        *input_len = 0;
-
-        return -1;
-    }
-    return 0;
 }
 
 // rs_smtp_handle_lf_idx
@@ -683,9 +641,11 @@ static int SMTPGetLine(SMTPState *state)
         rs_smtp_clear_parser(&state->ts_current_line_lf_seen, &state->ts_current_line_db,
                 &state->ts_db, &state->ts_db_len, &state->current_line, &state->current_line_len);
         uint8_t *lf_idx = memchr(state->input, 0x0a, state->input_len);
-        if (SMTPHandleFragmentedLines(lf_idx, &state->ts_current_line_db, &state->ts_db,
-                &state->input_len, &state->input, &state->ts_db_len) == -1) {
-            return -1;
+        if (lf_idx == NULL) {
+            if (rs_smtp_handle_frag_lines(lf_idx, &state->ts_current_line_db, &state->ts_db,
+                    &state->input_len, &state->input, &state->ts_db_len) == -1) {
+                return -1;
+            }
         } else {
             return SMTPHandleLFIdx(&state->ts_current_line_lf_seen, &state->ts_current_line_db,
                     &state->ts_db, &state->ts_db_len, &state->input, lf_idx,
@@ -699,9 +659,11 @@ static int SMTPGetLine(SMTPState *state)
 
         uint8_t *lf_idx = memchr(state->input, 0x0a, state->input_len);
 
-        if (SMTPHandleFragmentedLines(lf_idx, &state->tc_current_line_db, &state->tc_db,
-                &state->input_len, &state->input, &state->tc_db_len) == -1) {
-            return -1;
+        if (lf_idx == NULL) {
+            if (rs_smtp_handle_frag_lines(lf_idx, &state->tc_current_line_db, &state->tc_db,
+                    &state->input_len, &state->input, &state->tc_db_len) == -1) {
+                return -1;
+            }
         } else {
             return SMTPHandleLFIdx(&state->tc_current_line_lf_seen, &state->tc_current_line_db,
                     &state->tc_db, &state->tc_db_len, &state->input, lf_idx,
@@ -709,6 +671,7 @@ static int SMTPGetLine(SMTPState *state)
                     &state->current_line_len, &state->input_len);
         } /* else - if (lf_idx == NULL) */
     }
+    return 0;
 }
 
 // rs_smtp_set_cmd_buflen
