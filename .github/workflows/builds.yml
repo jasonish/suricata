@@ -13,8 +13,8 @@ env:
   DEFAULT_SU_BRANCH: master-1.1.x
   DEFAULT_SU_PR:
 
-  DEFAULT_SV_REPO: https://github.com/OISF/suricata-verify
-  DEFAULT_SV_BRANCH: master
+  DEFAULT_SV_REPO: https://github.com/jasonish/suricata-verify
+  DEFAULT_SV_BRANCH: almalinux-build/v2
   DEFAULT_SV_PR:
 
   DEFAULT_CFLAGS: "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-function"
