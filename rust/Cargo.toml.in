@@ -2,6 +2,9 @@
 name = "suricata"
 version = "@PACKAGE_VERSION@"
 edition = "2018"
+description = "The Suricata network IDS and NSM engine Rust code"
+license = "GPL-2.0-only"
+repository = "https://github.com/OISF/suricata.git"
 
 [lib]
 crate-type = ["staticlib", "rlib"]
