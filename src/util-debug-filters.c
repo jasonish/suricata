@@ -1007,3 +1007,4 @@ void SCLogReleaseFDFilter(SCLogFDFilter *fdf)
     return;
 }
 
+

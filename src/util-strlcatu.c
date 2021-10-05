@@ -72,3 +72,4 @@ size_t strlcat(dst, src, siz)
     return(dlen + (s - src)); /* count does not include NUL */
 }
 #endif
+

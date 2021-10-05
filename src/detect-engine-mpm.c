@@ -1853,3 +1853,4 @@ int DetectSetFastPatternAndItsId(DetectEngineCtx *de_ctx)
 
     return 0;
 }
+

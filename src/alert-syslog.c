@@ -396,3 +396,4 @@ void AlertSyslogRegister (void)
         AlertSyslogThreadInit, AlertSyslogThreadDeinit, NULL);
 #endif /* !OS_WIN32 */
 }
+

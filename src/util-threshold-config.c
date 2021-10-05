@@ -2760,3 +2760,4 @@ void SCThresholdConfRegisterTests(void)
 /**
  * @}
  */
+

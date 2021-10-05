@@ -538,3 +538,4 @@ static void DetectRpcRegisterTests(void)
     UtRegisterTest("DetectRpcTestSig01", DetectRpcTestSig01);
 }
 #endif /* UNITTESTS */
+

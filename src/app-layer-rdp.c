@@ -36,3 +36,4 @@ void RegisterRdpParsers(void) {
     SCLogDebug("Registering rdp parser");
     rs_rdp_register_parser();
 }
+

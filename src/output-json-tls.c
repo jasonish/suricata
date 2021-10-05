@@ -599,3 +599,4 @@ void JsonTlsLogRegister (void)
         JsonTlsLogger, TLS_HANDSHAKE_DONE, TLS_HANDSHAKE_DONE,
         JsonTlsLogThreadInit, JsonTlsLogThreadDeinit, NULL);
 }
+

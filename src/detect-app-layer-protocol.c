@@ -581,3 +581,4 @@ static void DetectAppLayerProtocolRegisterTests(void)
                    DetectAppLayerProtocolTest14);
 }
 #endif /* UNITTESTS */
+

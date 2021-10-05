@@ -1140,3 +1140,4 @@ static Flow *FlowGetUsedFlow(ThreadVars *tv, DecodeThreadVars *dtv, const struct
     STATSADDUI64(counter_flow_get_used_failed, 1);
     return NULL;
 }
+

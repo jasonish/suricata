@@ -1851,3 +1851,4 @@ uint32_t NapatechSetupTraffic(uint32_t first_stream, uint32_t last_stream)
 }
 
 #endif // HAVE_NAPATECH
+

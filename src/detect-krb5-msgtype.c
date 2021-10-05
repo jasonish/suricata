@@ -256,3 +256,4 @@ static void DetectKrb5MsgTypeRegisterTests(void)
                    DetectKrb5MsgTypeSignatureTest01);
 }
 #endif /* UNITTESTS */
+

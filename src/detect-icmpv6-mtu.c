@@ -187,3 +187,4 @@ static bool PrefilterIcmpv6mtuIsPrefilterable(const Signature *s)
 #ifdef UNITTESTS
 #include "tests/detect-icmpv6-mtu.c"
 #endif
+

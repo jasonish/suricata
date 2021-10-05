@@ -1378,3 +1378,4 @@ static void DetectBytejumpRegisterTests(void)
     UtRegisterTest("DetectByteJumpTestPacket08", DetectByteJumpTestPacket08);
 }
 #endif /* UNITTESTS */
+

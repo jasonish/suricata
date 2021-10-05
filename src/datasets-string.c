@@ -104,3 +104,4 @@ void StringFree(void *s)
     StringType *str = s;
     SCFree(str->ptr);
 }
+

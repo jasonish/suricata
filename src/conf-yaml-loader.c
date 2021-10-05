@@ -1000,3 +1000,4 @@ ConfYamlRegisterTests(void)
     UtRegisterTest("ConfYamlNull", ConfYamlNull);
 #endif /* UNITTESTS */
 }
+

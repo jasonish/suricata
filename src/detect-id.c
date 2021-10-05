@@ -405,3 +405,4 @@ void DetectIdRegisterTests(void)
 
 }
 #endif /* UNITTESTS */
+

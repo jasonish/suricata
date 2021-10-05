@@ -293,3 +293,4 @@ void DecodeNSHRegisterTests(void)
     UtRegisterTest("DecodeNSHTestUnknownPayload", DecodeNSHTestUnknownPayload);
 #endif /* UNITTESTS */
 }
+

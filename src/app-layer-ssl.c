@@ -5520,3 +5520,4 @@ void SSLParserRegisterTests(void)
 
     return;
 }
+

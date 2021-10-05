@@ -1571,3 +1571,4 @@ void StatsRegisterTests(void)
     UtRegisterTest("StatsTestCounterValues11", StatsTestCounterValues11);
 #endif
 }
+

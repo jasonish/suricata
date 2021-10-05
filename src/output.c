@@ -1119,3 +1119,4 @@ void OutputRegisterLoggers(void)
     /* DCERPC JSON logger. */
     JsonDCERPCLogRegister();
 }
+

@@ -1065,3 +1065,4 @@ static void DetectCsumRegisterTests(void)
             DetectCsumICMPV6Test01);
 }
 #endif /* UNITTESTS */
+

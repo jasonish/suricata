@@ -160,3 +160,4 @@ static int DetectPktvarSetup (DetectEngineCtx *de_ctx, Signature *s, const char 
     SigMatchAppendSMToList(s, sm, DETECT_SM_LIST_MATCH);
     return 0;
 }
+

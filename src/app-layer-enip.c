@@ -693,3 +693,4 @@ void ENIPParserRegisterTests(void)
       UtRegisterTest("ALDecodeENIPTest", ALDecodeENIPTest);
 #endif /* UNITTESTS */
 }
+

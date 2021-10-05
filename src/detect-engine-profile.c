@@ -124,3 +124,4 @@ void RulesDumpMatchArray(const DetectEngineThreadCtx *det_ctx,
     jb_free(js);
 }
 #endif /* PROFILING */
+

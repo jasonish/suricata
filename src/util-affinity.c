@@ -320,3 +320,4 @@ int AffinityGetNextCPU(ThreadsAffinityType *taf)
 #endif /* OS_WIN32 and __OpenBSD__ */
     return ncpu;
 }
+

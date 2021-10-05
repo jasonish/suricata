@@ -72,3 +72,4 @@ int Base64Encode(const unsigned char *in,  unsigned long inlen,
    *outlen = p - out;
    return SC_BASE64_OK;
 }
+

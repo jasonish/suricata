@@ -659,3 +659,4 @@ DecodeErfDagThreadDeinit(ThreadVars *tv, void *data)
 }
 
 #endif /* HAVE_DAG */
+

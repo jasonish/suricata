@@ -116,3 +116,4 @@ int SCKernelVersionIsAtLeast(int major, int minor)
 }
 
 #endif /* OS_WIN32 */
+

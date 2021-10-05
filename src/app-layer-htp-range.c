@@ -615,3 +615,4 @@ void HttpRangeFreeBlock(HttpRangeContainerBlock *b)
         SCFree(b);
     }
 }
+

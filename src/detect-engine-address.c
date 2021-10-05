@@ -5236,3 +5236,4 @@ void DetectAddressTests(void)
     UtRegisterTest("AddressConfVarsTest06 ", AddressConfVarsTest06);
 #endif /* UNITTESTS */
 }
+

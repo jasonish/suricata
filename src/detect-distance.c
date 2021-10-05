@@ -246,3 +246,4 @@ static void DetectDistanceRegisterTests(void)
     UtRegisterTest("DetectDistanceTestPacket01", DetectDistanceTestPacket01);
 }
 #endif /* UNITTESTS */
+

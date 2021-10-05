@@ -293,3 +293,4 @@ void LogStatsLogRegister (void)
         LogStatsLogInitCtx, LogStatsLogger, LogStatsLogThreadInit,
         LogStatsLogThreadDeinit, NULL);
 }
+

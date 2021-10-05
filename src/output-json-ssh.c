@@ -91,3 +91,4 @@ void JsonSshLogRegister (void)
             OutputSshLogInitSub, ALPROTO_SSH, JsonSshLogger, SSHTxLogCondition, JsonLogThreadInit,
             JsonLogThreadDeinit, NULL);
 }
+

@@ -46,3 +46,4 @@ void RegisterHttpHeadersAcceptEnc(void)
 {
     DetectHttpHeadersRegisterStub();
 }
+

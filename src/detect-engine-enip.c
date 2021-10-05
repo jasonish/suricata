@@ -393,3 +393,4 @@ void DetectEngineInspectENIPRegisterTests(void)
 #endif /* UNITTESTS */
     return;
 }
+

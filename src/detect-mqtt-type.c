@@ -273,3 +273,4 @@ void MQTTTypeRegisterTests(void)
     UtRegisterTest("MQTTTypeTestParse03", MQTTTypeTestParse03);
 #endif /* UNITTESTS */
 }
+

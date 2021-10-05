@@ -1383,3 +1383,4 @@ void FlowBitsRegisterTests(void)
     UtRegisterTest("FlowBitsTestSig11", FlowBitsTestSig11);
 }
 #endif /* UNITTESTS */
+

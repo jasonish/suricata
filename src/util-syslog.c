@@ -77,3 +77,4 @@ SCEnumCharMap *SCSyslogGetLogLevelMap(void)
     return sc_syslog_level_map;
 }
 
+

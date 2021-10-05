@@ -2510,3 +2510,4 @@ void DefragRegisterTests(void)
     UtRegisterTest("DefragTestJeremyLinux", DefragTestJeremyLinux);
 #endif /* UNITTESTS */
 }
+

@@ -266,3 +266,4 @@ void MQTTProtocolVersionRegisterTests(void)
     UtRegisterTest("MQTTProtocolVersionTestParse04", MQTTProtocolVersionTestParse04);
 #endif /* UNITTESTS */
 }
+

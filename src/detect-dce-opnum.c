@@ -2425,3 +2425,4 @@ static void DetectDceOpnumRegisterTests(void)
 #endif
 }
 #endif /* UNITTESTS */
+

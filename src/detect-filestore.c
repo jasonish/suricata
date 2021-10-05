@@ -524,3 +524,4 @@ void DetectFilestoreRegisterTests(void)
     UtRegisterTest("DetectFilestoreTest01", DetectFilestoreTest01);
 }
 #endif /* UNITTESTS */
+

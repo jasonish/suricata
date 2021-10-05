@@ -1177,3 +1177,4 @@ void UtilMiscRegisterTests(void)
 
     return;
 }
+

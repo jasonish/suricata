@@ -113,3 +113,4 @@ void SyslogInitialize(void)
     }
 }
 #endif /* !OS_WIN32 */
+

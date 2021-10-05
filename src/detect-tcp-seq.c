@@ -300,3 +300,4 @@ static void DetectSeqRegisterTests(void)
     UtRegisterTest("DetectSeqSigTest02", DetectSeqSigTest02);
 }
 #endif /* UNITTESTS */
+

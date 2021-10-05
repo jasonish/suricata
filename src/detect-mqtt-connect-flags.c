@@ -398,3 +398,4 @@ void MQTTConnectFlagsRegisterTests(void)
     UtRegisterTest("MQTTConnectFlagsTestParse05", MQTTConnectFlagsTestParse05);
 #endif /* UNITTESTS */
 }
+

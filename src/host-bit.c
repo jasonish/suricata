@@ -521,3 +521,4 @@ void HostBitRegisterTests(void)
     UtRegisterTest("HostBitTest11", HostBitTest11);
 #endif /* UNITTESTS */
 }
+

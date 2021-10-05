@@ -156,3 +156,4 @@ int RejectSendIPv6ICMP(ThreadVars *tv, Packet *p, void *data)
     }
     SCReturnInt(0);
 }
+

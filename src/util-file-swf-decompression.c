@@ -189,3 +189,4 @@ int FileSwfLzmaDecompression(DetectEngineThreadCtx *det_ctx,
     LzmaDec_Free(&strm, &suri_lzma_Alloc);
     return ret;
 }
+

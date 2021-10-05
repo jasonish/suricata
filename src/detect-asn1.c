@@ -459,3 +459,4 @@ static void DetectAsn1RegisterTests(void)
     UtRegisterTest("DetectAsn1TestReal04", DetectAsn1TestReal04);
 }
 #endif /* UNITTESTS */
+

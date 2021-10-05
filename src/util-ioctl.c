@@ -770,3 +770,4 @@ int GetIfaceRSSQueuesNum(const char *pcap_dev)
     return 0;
 #endif
 }
+

@@ -98,3 +98,4 @@ void DecodeNullRegisterTests(void)
 /**
  * @}
  */
+

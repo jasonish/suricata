@@ -197,3 +197,4 @@ void JsonSmtpLogRegister (void) {
         "eve-log.smtp", OutputSmtpLogInitSub, ALPROTO_SMTP, JsonSmtpLogger,
         JsonSmtpLogThreadInit, JsonSmtpLogThreadDeinit, NULL);
 }
+

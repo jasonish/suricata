@@ -137,3 +137,4 @@ void SCFreeAlignedFunc(void *ptr)
     free(ptr);
 #endif
 }
+

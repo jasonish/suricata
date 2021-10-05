@@ -835,3 +835,4 @@ static void DetectDceIfaceRegisterTests(void)
     UtRegisterTest("DetectDceIfaceTestParse2", DetectDceIfaceTestParse2);
 }
 #endif /* UNITTESTS */
+

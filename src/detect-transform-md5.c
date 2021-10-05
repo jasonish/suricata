@@ -113,3 +113,4 @@ static void DetectTransformToMd5RegisterTests(void)
             DetectTransformToMd5Test01);
 }
 #endif
+

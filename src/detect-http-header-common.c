@@ -114,3 +114,4 @@ HttpHeaderBuffer *HttpHeaderGetBufferSpace(DetectEngineThreadCtx *det_ctx, Flow 
     buf->len = 0;
     return buf;
 }
+

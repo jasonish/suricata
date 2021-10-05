@@ -1158,3 +1158,4 @@ TmEcode NapatechDecodeThreadDeinit(ThreadVars *tv, void *data)
 }
 
 #endif /* HAVE_NAPATECH */
+

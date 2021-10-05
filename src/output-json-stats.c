@@ -457,3 +457,4 @@ void JsonStatsLogRegister(void) {
         "eve-log.stats", OutputStatsLogInitSub, JsonStatsLogger,
         JsonStatsLogThreadInit, JsonStatsLogThreadDeinit, NULL);
 }
+

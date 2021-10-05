@@ -773,3 +773,4 @@ static int DetectTlsStorePostMatch (DetectEngineThreadCtx *det_ctx,
     ssl_state->server_connp.cert_log_flag |= SSL_TLS_LOG_PEM;
     SCReturnInt(1);
 }
+

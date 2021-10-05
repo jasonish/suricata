@@ -168,3 +168,4 @@ bstr *SCHTPGenerateNormalizedUri(htp_tx_t *tx, htp_uri_t *uri, int uri_include_a
 
     return r;
 }
+

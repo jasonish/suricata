@@ -1777,3 +1777,4 @@ void OutputJsonDNP3SetItem(JsonBuilder *js, DNP3Object *object,
     }
 
 }
+

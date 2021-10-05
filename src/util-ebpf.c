@@ -1080,3 +1080,4 @@ int EBPFUpdateFlow(Flow *f, Packet *p, void *data)
 #endif /* HAVE_PACKET_XDP */
 
 #endif
+

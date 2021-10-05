@@ -311,3 +311,4 @@ void MQTTConnackSessionPresentRegisterTests(void)
     UtRegisterTest("MQTTConnackSessionPresentTestParse04", MQTTConnackSessionPresentTestParse04);
 #endif /* UNITTESTS */
 }
+

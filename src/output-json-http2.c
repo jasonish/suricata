@@ -186,3 +186,4 @@ void JsonHttp2LogRegister (void)
         HTTP2StateClosed, HTTP2StateClosed,
         JsonHttp2LogThreadInit, JsonHttp2LogThreadDeinit, NULL);
 }
+

@@ -148,3 +148,4 @@ void DetectSipMethodRegister(void)
 
     SCLogDebug("registering " BUFFER_NAME " rule option");
 }
+

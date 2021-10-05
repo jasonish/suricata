@@ -247,3 +247,4 @@ int ROHashInitFinalize(ROHashTable *table)
     table->locked = 1;
     return 1;
 }
+

@@ -325,3 +325,4 @@ static void MarkRegisterTests(void)
     UtRegisterTest("MarkTestParse04", MarkTestParse04);
 }
 #endif /* UNITTESTS */
+

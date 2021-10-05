@@ -4089,3 +4089,4 @@ void SCRadixRegisterTests(void)
 
     return;
 }
+

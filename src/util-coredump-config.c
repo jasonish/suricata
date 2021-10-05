@@ -234,3 +234,4 @@ int32_t CoredumpLoadConfig (void)
 }
 
 #endif /* OS_WIN32 */
+

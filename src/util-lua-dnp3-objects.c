@@ -3541,3 +3541,4 @@ void DNP3PushPoint(lua_State *luastate, DNP3Object *object,
 }
 
 #endif /* HAVE_LUA */
+

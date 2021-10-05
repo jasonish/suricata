@@ -172,3 +172,4 @@ static void DetectTransformUrlDecodeRegisterTests(void)
             DetectTransformUrlDecodeTest02);
 }
 #endif
+

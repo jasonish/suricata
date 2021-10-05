@@ -275,3 +275,4 @@ void MQTTQosRegisterTests(void)
     UtRegisterTest("MQTTQosTestParse03", MQTTQosTestParse03);
 #endif /* UNITTESTS */
 }
+

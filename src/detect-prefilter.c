@@ -103,3 +103,4 @@ static int DetectPrefilterSetup (DetectEngineCtx *de_ctx, Signature *s, const ch
 
     SCReturnInt(0);
 }
+

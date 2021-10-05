@@ -86,3 +86,4 @@ int UtilSignalIsHandler(int sig, void (*handler)(int))
     return (action.sa_handler == handler);
 }
 #endif
+

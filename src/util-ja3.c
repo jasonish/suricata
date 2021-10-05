@@ -261,3 +261,4 @@ int Ja3IsDisabled(const char *type)
 
     return 0;
 }
+

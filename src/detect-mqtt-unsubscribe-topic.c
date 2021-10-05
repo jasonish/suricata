@@ -247,3 +247,4 @@ static int DetectMQTTUnsubscribeTopicSetup(DetectEngineCtx *de_ctx, Signature *s
         return -1;
     return 0;
 }
+

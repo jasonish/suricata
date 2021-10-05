@@ -137,3 +137,4 @@ void DetectFileSha256RegisterTests(void)
     UtRegisterTest("SHA256MatchTest01", SHA256MatchTest01);
 }
 #endif
+

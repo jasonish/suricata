@@ -312,3 +312,4 @@ static void DetectMetadataRegisterTests(void)
     UtRegisterTest("DetectMetadataParseTest02", DetectMetadataParseTest02);
 }
 #endif /* UNITTESTS */
+

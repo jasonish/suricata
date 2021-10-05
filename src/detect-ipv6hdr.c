@@ -128,3 +128,4 @@ static InspectionBuffer *GetData(DetectEngineThreadCtx *det_ctx,
 #ifdef UNITTESTS
 #include "tests/detect-ipv6hdr.c"
 #endif
+

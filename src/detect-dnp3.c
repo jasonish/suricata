@@ -1060,3 +1060,4 @@ void DetectDNP3DataRegisterTests(void)
     UtRegisterTest("DetectDNP3DataTest02", DetectDNP3DataTest02);
 }
 #endif
+

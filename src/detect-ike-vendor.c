@@ -208,3 +208,4 @@ static int DetectIkeVendorSetup(DetectEngineCtx *de_ctx, Signature *s, const cha
         return -1;
     return 0;
 }
+

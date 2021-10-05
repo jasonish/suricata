@@ -218,3 +218,4 @@ static void DetectTlsSerialSetupCallback(const DetectEngineCtx *de_ctx,
 #ifdef UNITTESTS
 #include "tests/detect-tls-cert-serial.c"
 #endif
+

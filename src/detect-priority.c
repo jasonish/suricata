@@ -177,3 +177,4 @@ static void PriorityRegisterTests(void)
     UtRegisterTest("DetectPriorityTest02", DetectPriorityTest02);
 }
 #endif /* UNITTESTS */
+

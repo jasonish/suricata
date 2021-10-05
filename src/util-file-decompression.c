@@ -199,3 +199,4 @@ int FileSwfDecompression(const uint8_t *buffer, uint32_t buffer_len,
 error:
     return 0;
 }
+

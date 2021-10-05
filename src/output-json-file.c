@@ -345,3 +345,4 @@ void JsonFileLogRegister (void)
         "eve-log.files", OutputFileLogInitSub, JsonFileLogger,
         JsonFileLogThreadInit, JsonFileLogThreadDeinit, NULL);
 }
+

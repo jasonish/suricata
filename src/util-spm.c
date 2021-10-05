@@ -2746,3 +2746,4 @@ void UtilSpmSearchRegistertests(void)
 #endif
 #endif
 }
+

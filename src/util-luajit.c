@@ -153,3 +153,4 @@ void LuajitReturnState(lua_State *s)
 }
 
 #endif /* HAVE_LUAJIT */
+

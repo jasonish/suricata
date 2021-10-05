@@ -652,3 +652,4 @@ void TmModuleDetectLoaderRegister (void)
 
     SC_ATOMIC_INIT(detect_loader_cnt);
 }
+

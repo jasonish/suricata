@@ -214,3 +214,4 @@ SCCapturePlugin *SCPluginFindCaptureByName(const char *name)
     return plugin;
 }
 #endif
+

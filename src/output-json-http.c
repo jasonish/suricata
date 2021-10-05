@@ -679,3 +679,4 @@ void JsonHttpLogRegister (void)
             OutputHttpLogInitSub, ALPROTO_HTTP1, JsonHttpLogger, JsonHttpLogThreadInit,
             JsonHttpLogThreadDeinit, NULL);
 }
+

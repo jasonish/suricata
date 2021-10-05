@@ -851,3 +851,4 @@ static void DetectAppLayerEventRegisterTests(void)
     UtRegisterTest("DetectAppLayerEventTest06", DetectAppLayerEventTest06);
 }
 #endif /* UNITTESTS */
+

@@ -359,3 +359,4 @@ void AlertFastLogRegisterTests(void)
 #endif /* UNITTESTS */
 
 }
+

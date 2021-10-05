@@ -68,3 +68,4 @@ size_t strlcpy(dst, src, siz)
     return(s - src - 1); /* count does not include NUL */
 }
 #endif
+

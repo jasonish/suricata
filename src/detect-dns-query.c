@@ -934,3 +934,4 @@ static void DetectDnsQueryRegisterTests(void)
             DetectDnsQueryIsdataatParseTest);
 }
 #endif
+

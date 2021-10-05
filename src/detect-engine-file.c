@@ -243,3 +243,4 @@ int DetectFileInspectGeneric(DetectEngineCtx *de_ctx, DetectEngineThreadCtx *det
 
     SCReturnInt(r);
 }
+

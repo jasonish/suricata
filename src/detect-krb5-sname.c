@@ -210,3 +210,4 @@ void DetectKrb5SNameRegister(void)
 
     g_krb5_sname_buffer_id = DetectBufferTypeGetByName("krb5_sname");
 }
+

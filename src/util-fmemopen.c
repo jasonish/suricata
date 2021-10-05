@@ -196,3 +196,4 @@ FILE *SCFmemopen(void *buf, size_t size, const char *mode)
 #endif /* OS_WIN32 */
 
 #endif /* USE_FMEM_WRAPPER */
+

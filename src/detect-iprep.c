@@ -929,3 +929,4 @@ void IPRepRegisterTests(void)
     UtRegisterTest("DetectIPRepTest09", DetectIPRepTest09);
 }
 #endif /* UNITTESTS */
+

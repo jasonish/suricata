@@ -458,3 +458,4 @@ static void DetectEnipCommandRegisterTests(void)
             DetectEnipCommandSignatureTest01);
 }
 #endif /* UNITTESTS */
+

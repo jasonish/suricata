@@ -1624,3 +1624,4 @@ void UtilActionRegisterTests(void)
     UtRegisterTest("UtilActionTest24", UtilActionTest24);
 #endif
 }
+

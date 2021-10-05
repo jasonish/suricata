@@ -153,3 +153,4 @@ void RFBParserRegisterTests(void)
 }
 
 #endif
+

@@ -189,3 +189,4 @@ void DecodeEthernetRegisterTests(void)
 /**
  * @}
  */
+

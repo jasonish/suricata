@@ -136,3 +136,4 @@ void DetectFileMd5RegisterTests(void)
     UtRegisterTest("MD5MatchTest01", MD5MatchTest01);
 }
 #endif
+

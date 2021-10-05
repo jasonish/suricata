@@ -366,3 +366,4 @@ void DetectTosRegisterTests(void)
     return;
 }
 #endif
+

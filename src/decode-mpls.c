@@ -398,3 +398,4 @@ void DecodeMPLSRegisterTests(void)
                    DecodeMPLSTestUnknownPayloadType);
 #endif /* UNITTESTS */
 }
+

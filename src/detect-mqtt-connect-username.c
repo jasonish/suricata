@@ -92,3 +92,4 @@ void DetectMQTTConnectUsernameRegister(void)
 
     SCLogDebug("registering " BUFFER_NAME " rule option");
 }
+

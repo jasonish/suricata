@@ -604,3 +604,4 @@ void MagicRegisterTests(void)
 #endif /* HAVE_MAGIC */
 }
 
+

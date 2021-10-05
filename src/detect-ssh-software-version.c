@@ -571,3 +571,4 @@ static void DetectSshSoftwareVersionRegisterTests(void)
                    DetectSshSoftwareVersionTestDetect03);
 }
 #endif /* UNITTESTS */
+

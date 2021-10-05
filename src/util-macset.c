@@ -447,3 +447,4 @@ void MacSetRegisterTests(void)
 
     return;
 }
+

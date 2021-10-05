@@ -187,3 +187,4 @@ void JsonIKELogRegister(void)
             OutputIKELogInitSub, ALPROTO_IKE, JsonIKELogger, JsonIKELogThreadInit,
             JsonIKELogThreadDeinit, NULL);
 }
+

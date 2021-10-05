@@ -224,3 +224,4 @@ static void DetectTlsJa3HashSetupCallback(const DetectEngineCtx *de_ctx,
 #ifdef UNITTESTS
 #include "tests/detect-tls-ja3-hash.c"
 #endif
+

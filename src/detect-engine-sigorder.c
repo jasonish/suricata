@@ -2168,3 +2168,4 @@ void SCSigRegisterSignatureOrderingTests(void)
     UtRegisterTest("SCSigOrderingTest13", SCSigOrderingTest13);
 #endif
 }
+

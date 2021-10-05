@@ -47,3 +47,4 @@ void RegisterHttpHeadersContentLen(void)
 {
     DetectHttpHeadersRegisterStub();
 }
+

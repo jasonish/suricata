@@ -196,3 +196,4 @@ void JsonMQTTLogRegister(void)
         OutputMQTTLogInitSub, ALPROTO_MQTT, JsonMQTTLogger,
         JsonMQTTLogThreadInit, JsonMQTTLogThreadDeinit, NULL);
 }
+

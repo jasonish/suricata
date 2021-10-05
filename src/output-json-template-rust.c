@@ -180,3 +180,4 @@ void JsonTemplateRustLogRegister(void)
 
     SCLogNotice("Template JSON logger registered.");
 }
+

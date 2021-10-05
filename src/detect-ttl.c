@@ -382,3 +382,4 @@ static bool PrefilterTtlIsPrefilterable(const Signature *s)
 #ifdef UNITTESTS
 #include "tests/detect-ttl.c"
 #endif
+

@@ -138,3 +138,4 @@ int SCPidfileTestRunning(const char *pid_filename)
     }
     return 0;
 }
+

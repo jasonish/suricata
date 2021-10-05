@@ -650,3 +650,4 @@ void JsonDnsLogRegister (void)
             JsonDnsLogInitCtxSub, ALPROTO_DNS, JsonDnsLogger, LogDnsLogThreadInit,
             LogDnsLogThreadDeinit, NULL);
 }
+

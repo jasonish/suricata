@@ -387,3 +387,4 @@ void VarNameStoreFree(uint32_t de_ctx_version)
     }
     SCMutexUnlock(&g_varnamestore_staging_m);
 }
+

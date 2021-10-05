@@ -2122,3 +2122,4 @@ static void DetectIPProtoRegisterTests(void)
     UtRegisterTest("DetectIPProtoTestSig3", DetectIPProtoTestSig3);
 }
 #endif /* UNITTESTS */
+

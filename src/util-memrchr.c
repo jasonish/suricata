@@ -66,3 +66,4 @@ void MemrchrRegisterTests(void)
     UtRegisterTest("MemrchrTest01", MemrchrTest01);
 #endif
 }
+

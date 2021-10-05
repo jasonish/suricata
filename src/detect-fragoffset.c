@@ -460,3 +460,4 @@ void DetectFragOffsetRegisterTests (void)
     UtRegisterTest("DetectFragOffsetMatchTest01", DetectFragOffsetMatchTest01);
 }
 #endif /* UNITTESTS */
+

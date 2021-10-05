@@ -194,3 +194,4 @@ void JsonFTPLogRegister(void)
 
     SCLogDebug("FTP JSON logger registered.");
 }
+

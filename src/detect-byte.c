@@ -51,3 +51,4 @@ bool DetectByteRetrieveSMVar(const char *arg, const Signature *s, DetectByteInde
     }
     return false;
 }
+

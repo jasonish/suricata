@@ -3170,3 +3170,4 @@ static void DetectContentRegisterTests(void)
     UtRegisterTest("DetectLongContentTest3", DetectLongContentTest3);
 }
 #endif /* UNITTESTS */
+

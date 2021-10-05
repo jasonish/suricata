@@ -308,3 +308,4 @@ ReceiveErfFileThreadExitStats(ThreadVars *tv, void *data)
 
     SCLogInfo("Packets: %"PRIu32"; Bytes: %"PRIu64, etv->pkts, etv->bytes);
 }
+

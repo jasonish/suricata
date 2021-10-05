@@ -595,3 +595,4 @@ void DetectProtoTests(void)
 #endif /* UNITTESTS */
 }
 
+

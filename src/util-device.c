@@ -651,3 +651,4 @@ TmEcode LiveDeviceGetBypassedStats(json_t *cmd, json_t *answer, void *data)
     SCReturnInt(TM_ECODE_FAILED);
 }
 #endif
+

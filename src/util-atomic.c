@@ -72,3 +72,4 @@ void SCAtomicRegisterTests(void)
 
     return;
 }
+

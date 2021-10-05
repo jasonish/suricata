@@ -504,3 +504,4 @@ void DetectStreamSizeRegisterTests(void)
     UtRegisterTest("DetectStreamSizeParseTest04", DetectStreamSizeParseTest04);
 }
 #endif /* UNITTESTS */
+

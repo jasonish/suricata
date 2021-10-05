@@ -118,3 +118,4 @@ void JsonNFSLogRegister(void)
 
     SCLogDebug("NFS JSON logger registered.");
 }
+

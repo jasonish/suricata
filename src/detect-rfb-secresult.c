@@ -305,3 +305,4 @@ void RfbSecresultRegisterTests(void)
     UtRegisterTest("RfbSecresultTestParse02", RfbSecresultTestParse02);
 }
 #endif /* UNITTESTS */
+

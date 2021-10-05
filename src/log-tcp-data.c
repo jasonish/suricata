@@ -327,3 +327,4 @@ static void LogTcpDataLogDeInitCtx(OutputCtx *output_ctx)
     SCFree(tcpdatalog_ctx);
     SCFree(output_ctx);
 }
+

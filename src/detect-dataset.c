@@ -437,3 +437,4 @@ void DetectDatasetFree (DetectEngineCtx *de_ctx, void *ptr)
 
     SCFree(fd);
 }
+

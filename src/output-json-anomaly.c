@@ -463,3 +463,4 @@ void JsonAnomalyLogRegister (void)
         JsonAnomalyTxLogger, JsonAnomalyLogThreadInit,
         JsonAnomalyLogThreadDeinit, NULL);
 }
+

@@ -377,3 +377,4 @@ void DetectFileHashFree(DetectEngineCtx *de_ctx, void *ptr)
         SCFree(filehash);
     }
 }
+

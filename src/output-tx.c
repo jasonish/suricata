@@ -461,3 +461,4 @@ void OutputTxShutdown(void)
         list[alproto] = NULL;
     }
 }
+

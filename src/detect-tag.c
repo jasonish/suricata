@@ -462,3 +462,4 @@ void DetectTagRegisterTests(void)
     DetectEngineTagRegisterTests();
 }
 #endif /* UNITTESTS */
+

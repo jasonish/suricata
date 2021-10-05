@@ -227,3 +227,4 @@ static void DetectTransformCompressWhitespaceRegisterTests(void)
             "DetectTransformCompressWhitespaceTest04", DetectTransformCompressWhitespaceTest04);
 }
 #endif
+

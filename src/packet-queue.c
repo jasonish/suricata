@@ -230,3 +230,4 @@ void PacketQueueFree(PacketQueue *pq)
     SCMutexDestroy(&pq->mutex_q);
     SCFree(pq);
 }
+

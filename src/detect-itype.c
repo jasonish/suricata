@@ -613,3 +613,4 @@ void DetectITypeRegisterTests(void)
     UtRegisterTest("DetectITypeMatchTest01", DetectITypeMatchTest01);
 }
 #endif /* UNITTESTS */
+

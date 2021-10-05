@@ -250,3 +250,4 @@ void HtpBodyPrune(HtpState *state, HtpBody *body, int direction)
 
     SCReturn;
 }
+

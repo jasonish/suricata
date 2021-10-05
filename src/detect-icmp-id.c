@@ -550,3 +550,4 @@ static void DetectIcmpIdRegisterTests (void)
     UtRegisterTest("DetectIcmpIdMatchTest02", DetectIcmpIdMatchTest02);
 }
 #endif /* UNITTESTS */
+

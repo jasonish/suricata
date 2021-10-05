@@ -587,3 +587,4 @@ void TemplateParserRegisterTests(void)
 #ifdef UNITTESTS
 #endif
 }
+

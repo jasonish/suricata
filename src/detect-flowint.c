@@ -1339,3 +1339,4 @@ void DetectFlowintRegisterTests(void)
                    DetectFlowintTestPacket03Real);
 }
 #endif /* UNITTESTS */
+

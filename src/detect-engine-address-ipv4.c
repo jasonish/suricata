@@ -1279,3 +1279,4 @@ void DetectAddressIPv4Tests(void)
     UtRegisterTest("DetectAddressIPv4CutNot09", DetectAddressIPv4CutNot09);
 #endif
 }
+

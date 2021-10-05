@@ -242,3 +242,4 @@ static void DetectBypassRegisterTests(void)
     UtRegisterTest("DetectBypassTestSig01", DetectBypassTestSig01);
 }
 #endif /* UNITTESTS */
+

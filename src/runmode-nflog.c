@@ -245,3 +245,4 @@ int RunModeIdsNflogWorkers(void)
 
     SCReturnInt(0);
 }
+

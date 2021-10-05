@@ -1088,3 +1088,4 @@ static void DsizeRegisterTests(void)
     UtRegisterTest("DetectDsizeIcmpv6Test01", DetectDsizeIcmpv6Test01);
 }
 #endif /* UNITTESTS */
+

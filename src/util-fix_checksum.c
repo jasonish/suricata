@@ -58,3 +58,4 @@ FixChecksum(uint16_t sum, uint16_t old, uint16_t new)
 
     return l;
 }
+

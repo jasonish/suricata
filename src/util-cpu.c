@@ -229,3 +229,4 @@ uint64_t UtilCpuGetTicks(void)
 #endif
     return val;
 }
+

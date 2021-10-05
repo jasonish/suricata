@@ -170,3 +170,4 @@ void DetectIkeSpiRegister(void)
     g_buffer_responder_id = DetectBufferTypeGetByName(BUFFER_NAME_RESPONDER);
     SCLogDebug("registering " BUFFER_NAME_RESPONDER " rule option");
 }
+

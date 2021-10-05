@@ -487,3 +487,4 @@ void AlertDebugLogRegister(void)
         AlertDebugLogInitCtx, AlertDebugLogLogger, AlertDebugLogCondition,
         AlertDebugLogThreadInit, AlertDebugLogThreadDeinit, NULL);
 }
+

@@ -93,3 +93,4 @@ static int DetectRawbytesSetup(DetectEngineCtx *de_ctx, Signature *s, const char
 
     SCReturnInt(0);
 }
+

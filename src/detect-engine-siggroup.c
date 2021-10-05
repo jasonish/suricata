@@ -1210,3 +1210,4 @@ void SigGroupHeadRegisterTests(void)
     UtRegisterTest("SigGroupHeadTest10", SigGroupHeadTest10);
 #endif
 }
+

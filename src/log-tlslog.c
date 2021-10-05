@@ -540,3 +540,4 @@ void LogTlsLogRegister(void)
         TLS_HANDSHAKE_DONE, LogTlsLogThreadInit, LogTlsLogThreadDeinit,
         LogTlsLogExitPrintStats);
 }
+

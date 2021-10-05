@@ -442,3 +442,4 @@ static void DetectIcmpSeqRegisterTests (void)
     UtRegisterTest("DetectIcmpSeqMatchTest01", DetectIcmpSeqMatchTest01);
 }
 #endif /* UNITTESTS */
+

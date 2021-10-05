@@ -100,3 +100,4 @@ void DetectDnsOpcodeRegister(void)
 
     dns_opcode_list_id = DetectBufferTypeGetByName("dns.opcode");
 }
+

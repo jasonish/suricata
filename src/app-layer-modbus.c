@@ -1624,3 +1624,4 @@ void ModbusParserRegisterTests(void) {
                    ModbusParserTest19);
 #endif /* UNITTESTS */
 }
+

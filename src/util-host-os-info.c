@@ -1631,3 +1631,4 @@ void SCHInfoRegisterTests(void)
 #endif /* UNITTESTS */
 
 }
+

@@ -1286,3 +1286,4 @@ void HTPFileParserRegisterTests(void)
     AppLayerHtpFileRegisterTests();
 #endif /* UNITTESTS */
 }
+

@@ -749,3 +749,4 @@ void DetectUrilenRegisterTests(void)
     UtRegisterTest("DetectUrilenSigTest01", DetectUrilenSigTest01);
 }
 #endif /* UNITTESTS */
+

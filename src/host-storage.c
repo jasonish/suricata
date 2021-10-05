@@ -340,3 +340,4 @@ void RegisterHostStorageTests(void)
     UtRegisterTest("HostStorageTest03", HostStorageTest03);
 #endif
 }
+

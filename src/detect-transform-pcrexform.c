@@ -148,3 +148,4 @@ static void DetectTransformPcrexform(InspectionBuffer *buffer, void *options)
 #ifdef UNITTESTS
 #include "tests/detect-transform-pcrexform.c"
 #endif
+

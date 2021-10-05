@@ -82,3 +82,4 @@ const char * SCMapEnumValueToName(int enum_value, SCEnumCharMap *table)
 
     return NULL;
 }
+

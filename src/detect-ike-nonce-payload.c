@@ -117,3 +117,4 @@ void DetectIkeNonceRegister(void)
     g_buffer_nonce_id = DetectBufferTypeGetByName(BUFFER_NAME_NONCE);
     SCLogDebug("registering " BUFFER_NAME_NONCE " rule option");
 }
+

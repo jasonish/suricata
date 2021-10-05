@@ -151,3 +151,4 @@ void ThreadMacrosRegisterTests(void)
 //    UtRegisterTest("ThreadMacrosTest05RWLocks", ThreadMacrosTest05RWLocks);
 #endif /* UNIT TESTS */
 }
+

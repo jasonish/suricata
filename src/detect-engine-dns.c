@@ -62,3 +62,4 @@ int DetectEngineInspectDnsResponse(DetectEngineCtx *de_ctx, DetectEngineThreadCt
     return DetectEngineInspectGenericList(
             de_ctx, det_ctx, s, engine->smd, f, flags, alstate, txv, tx_id);
 }
+

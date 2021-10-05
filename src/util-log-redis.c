@@ -601,3 +601,4 @@ void SCLogFileCloseRedis(LogFileCtx *log_ctx)
 }
 
 #endif //#ifdef HAVE_LIBHIREDIS
+

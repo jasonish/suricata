@@ -385,3 +385,4 @@ const char * SCErrorToString(SCError err)
 
     return "UNKNOWN_ERROR";
 }
+

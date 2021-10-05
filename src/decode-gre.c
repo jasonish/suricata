@@ -399,3 +399,4 @@ void DecodeGRERegisterTests(void)
 /**
  * @}
  */
+

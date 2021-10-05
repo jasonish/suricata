@@ -1514,3 +1514,4 @@ void DetectEngineTagRegisterTests(void)
 #endif /* UNITTESTS */
 }
 
+

@@ -240,3 +240,4 @@ void RegisterFlowBypassInfo(void)
     g_bypass_info_id = FlowStorageRegister("bypass_counters", sizeof(void *),
                                               NULL, FlowBypassFree);
 }
+

@@ -905,3 +905,4 @@ int LogFileWrite(LogFileCtx *file_ctx, MemBuffer *buffer)
 
     return 0;
 }
+

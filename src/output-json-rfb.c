@@ -97,3 +97,4 @@ void JsonRFBLogRegister(void)
             OutputRFBLogInitSub, ALPROTO_RFB, JsonRFBLogger, JsonLogThreadInit, JsonLogThreadDeinit,
             NULL);
 }
+

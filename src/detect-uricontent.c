@@ -1778,3 +1778,4 @@ static void DetectUricontentRegisterTests(void)
             DetectUricontentIsdataatParseTest);
 }
 #endif /* UNITTESTS */
+

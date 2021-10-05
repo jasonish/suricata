@@ -114,3 +114,4 @@ static void DetectTransformToSha256RegisterTests(void)
             DetectTransformToSha256Test01);
 }
 #endif
+

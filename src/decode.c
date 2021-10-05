@@ -782,3 +782,4 @@ void DecodeGlobalConfig(void)
 /**
  * @}
  */
+

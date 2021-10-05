@@ -630,3 +630,4 @@ void DetectTlsValidityFree(DetectEngineCtx *de_ctx, void *de_ptr)
 #ifdef UNITTESTS
 #include "tests/detect-tls-cert-validity.c"
 #endif
+

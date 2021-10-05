@@ -108,3 +108,4 @@ void JsonMetadataLogRegister (void)
             OutputJsonLogInitSub, JsonMetadataLogger, JsonMetadataLogCondition, JsonLogThreadInit,
             JsonLogThreadDeinit, NULL);
 }
+

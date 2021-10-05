@@ -1243,3 +1243,4 @@ static void FileEndSha256(File *ff)
         ff->flags |= FILE_SHA256;
     }
 }
+

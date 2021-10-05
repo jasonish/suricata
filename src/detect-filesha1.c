@@ -122,3 +122,4 @@ static void DetectFileSha1RegisterTests(void)
     UtRegisterTest("SHA1MatchTest01", SHA1MatchTest01);
 }
 #endif
+

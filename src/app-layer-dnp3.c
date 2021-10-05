@@ -2689,3 +2689,4 @@ void DNP3ParserRegisterTests(void)
     UtRegisterTest("DNP3ParserIncorrectUserData", DNP3ParserIncorrectUserData);
 #endif
 }
+

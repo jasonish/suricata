@@ -682,3 +682,4 @@ SCProfilingRuleInitCounters(DetectEngineCtx *de_ctx)
 
 #endif /* PROFILING */
 
+

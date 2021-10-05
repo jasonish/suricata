@@ -335,3 +335,4 @@ static void DetectAckRegisterTests(void)
     UtRegisterTest("DetectAckSigTest01", DetectAckSigTest01);
 }
 #endif /* UNITTESTS */
+

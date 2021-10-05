@@ -163,3 +163,4 @@ static void DetectTargetRegisterTests(void)
                    DetectTargetSignatureTest01);
 }
 #endif /* UNITTESTS */
+

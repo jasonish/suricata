@@ -100,3 +100,4 @@ static int DetectNocaseSetup (DetectEngineCtx *de_ctx, Signature *s, const char 
  end:
     SCReturnInt(ret);
 }
+

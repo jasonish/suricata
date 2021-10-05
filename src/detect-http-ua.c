@@ -211,3 +211,4 @@ static InspectionBuffer *GetData2(DetectEngineThreadCtx *det_ctx,
 /**
  * @}
  */
+

@@ -290,3 +290,4 @@ void RunUnittests(int list_unittests, const char *regex_arg)
     FatalError(SC_ERR_FATAL, "Unittests are not build-in");
 #endif /* UNITTESTS */
 }
+

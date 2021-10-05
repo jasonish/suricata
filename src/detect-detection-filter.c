@@ -653,3 +653,4 @@ static void DetectDetectionFilterRegisterTests(void)
                    DetectDetectionFilterTestSig3);
 }
 #endif /* UNITTESTS */
+

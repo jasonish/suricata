@@ -3789,3 +3789,4 @@ void StreamTcpReassembleRegisterTests(void)
     StreamTcpReassembleRawRegisterTests();
 #endif /* UNITTESTS */
 }
+

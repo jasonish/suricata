@@ -499,3 +499,4 @@ void DetectFilesizeRegisterTests(void)
     UtRegisterTest("DetectFilesizeSetpTest01", DetectFilesizeSetpTest01);
 }
 #endif /* UNITTESTS */
+

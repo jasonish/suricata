@@ -238,3 +238,4 @@ void SpmHSRegister(void)
 }
 
 #endif /* BUILD_HYPERSCAN */
+

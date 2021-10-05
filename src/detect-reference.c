@@ -306,3 +306,4 @@ static void ReferenceRegisterTests(void)
     UtRegisterTest("DetectReferenceParseTest03", DetectReferenceParseTest03);
 }
 #endif /* UNITTESTS */
+

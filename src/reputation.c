@@ -679,3 +679,4 @@ void SRepDestroy(DetectEngineCtx *de_ctx) {
 #ifdef UNITTESTS
 #include "tests/reputation.c"
 #endif
+

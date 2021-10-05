@@ -820,3 +820,4 @@ int THashRemoveFromHash (THashTableContext *ctx, void *data)
     SCLogDebug("data not found");
     return -1;
 }
+

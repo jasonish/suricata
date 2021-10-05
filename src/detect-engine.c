@@ -4520,3 +4520,4 @@ void DetectEngineRegisterTests()
 #endif
     return;
 }
+

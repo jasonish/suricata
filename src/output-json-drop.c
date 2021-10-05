@@ -365,3 +365,4 @@ void JsonDropLogRegister (void)
         JsonDropLogCondition, JsonDropLogThreadInit, JsonDropLogThreadDeinit,
         NULL);
 }
+

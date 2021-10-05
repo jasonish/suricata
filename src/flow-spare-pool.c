@@ -280,3 +280,4 @@ void FlowSparePoolDestroy(void)
     flow_spare_pool = NULL;
     SCMutexUnlock(&flow_spare_pool_m);
 }
+

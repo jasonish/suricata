@@ -583,3 +583,4 @@ void MpmRegisterTests(void)
 
 #endif
 }
+

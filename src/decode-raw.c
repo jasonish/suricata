@@ -241,3 +241,4 @@ void DecodeRawRegisterTests(void)
 /**
  * @}
  */
+

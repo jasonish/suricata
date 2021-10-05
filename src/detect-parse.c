@@ -4283,3 +4283,4 @@ void SigParseRegisterTests(void)
             SigParseBidirWithSameSrcAndDest02);
 #endif /* UNITTESTS */
 }
+

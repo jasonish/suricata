@@ -569,3 +569,4 @@ void DetectFilenameRegisterTests(void)
     UtRegisterTest("DetectFilenameTestParse03", DetectFilenameTestParse03);
 }
 #endif /* UNITTESTS */
+

@@ -344,3 +344,4 @@ void DetectModbusRegisterTests(void)
     UtRegisterTest("DetectModbusTestFunction", DetectModbusTestFunction);
 }
 #endif /* UNITTESTS */
+

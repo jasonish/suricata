@@ -368,3 +368,4 @@ void MQTTFlagsRegisterTests(void)
     UtRegisterTest("MQTTFlagsTestParse05", MQTTFlagsTestParse05);
 #endif /* UNITTESTS */
 }
+

@@ -48,3 +48,4 @@ void RegisterHttpHeadersLocation(void)
 {
     DetectHttpHeadersRegisterStub();
 }
+

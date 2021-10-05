@@ -825,3 +825,4 @@ void SCClassConfRegisterTests(void)
     UtRegisterTest("SCClassConfTest06", SCClassConfTest06);
 }
 #endif /* UNITTESTS */
+

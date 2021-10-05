@@ -275,3 +275,4 @@ static void DetectRfbSectypeFree(DetectEngineCtx *de_ctx, void *ptr)
 {
     SCFree(ptr);
 }
+

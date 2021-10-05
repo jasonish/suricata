@@ -74,3 +74,4 @@ int SCBPFCompile(int snaplen_arg, int linktype_arg, struct bpf_program *program,
 }
 
 #endif /* Not __OpenBSD__ */
+

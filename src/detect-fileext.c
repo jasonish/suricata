@@ -307,3 +307,4 @@ void DetectFileextRegisterTests(void)
     UtRegisterTest("DetectFileextTestParse03", DetectFileextTestParse03);
 }
 #endif /* UNITTESTS */
+

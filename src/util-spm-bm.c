@@ -510,3 +510,4 @@ void SpmBMRegister(void)
     spm_table[SPM_BM].DestroyCtx = BMDestroyCtx;
     spm_table[SPM_BM].Scan = BMScan;
 }
+

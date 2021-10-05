@@ -258,3 +258,4 @@ static void DetectKrb5ErrCodeRegisterTests(void)
                    DetectKrb5ErrCodeSignatureTest01);
 }
 #endif /* UNITTESTS */
+

@@ -1256,3 +1256,4 @@ int DatasetRemoveSerialized(Dataset *set, const char *string)
     }
     return -1;
 }
+

@@ -1718,3 +1718,4 @@ static void DetectBytetestRegisterTests(void)
     UtRegisterTest("DetectByteTestTestPacket06", DetectByteTestTestPacket06);
 }
 #endif /* UNITTESTS */
+

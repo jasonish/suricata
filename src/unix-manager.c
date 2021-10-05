@@ -1267,3 +1267,4 @@ void TmModuleUnixManagerRegister (void)
     tmm_modules[TMM_UNIXMANAGER].flags = TM_FLAG_COMMAND_TM;
 #endif /* BUILD_UNIX_SOCKET */
 }
+

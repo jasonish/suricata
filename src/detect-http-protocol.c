@@ -142,3 +142,4 @@ void DetectHttpProtocolRegister(void)
 
     g_buffer_id = DetectBufferTypeGetByName(BUFFER_NAME);
 }
+

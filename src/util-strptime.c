@@ -597,3 +597,4 @@ find_string(const u_char *bp, int *tgt, const char * const *n1,
 	return NULL;
 }
 #endif /* HAVE_STRPTIME */
+

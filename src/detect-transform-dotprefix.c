@@ -183,3 +183,4 @@ static void DetectTransformDotPrefixRegisterTests(void)
     UtRegisterTest("DetectTransformDotPrefixTest03", DetectTransformDotPrefixTest03);
 }
 #endif
+

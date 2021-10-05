@@ -569,3 +569,4 @@ static void DetectFtpbounceRegisterTests(void)
                    DetectFtpbounceTestALMatch03);
 }
 #endif /* UNITTESTS */
+

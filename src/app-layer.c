@@ -2652,3 +2652,4 @@ void AppLayerUnittestsRegister(void)
 }
 
 #endif /* UNITTESTS */
+

@@ -53,3 +53,4 @@ void KRB5ParserRegisterTests(void)
 #ifdef UNITTESTS
 #endif
 }
+

@@ -708,3 +708,4 @@ int PrefilterMpmFiledataRegister(DetectEngineCtx *de_ctx,
 #ifdef UNITTESTS
 #include "tests/detect-file-data.c"
 #endif
+

@@ -326,3 +326,4 @@ void OutputFileShutdown(void)
 
     list = NULL;
 }
+

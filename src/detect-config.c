@@ -332,3 +332,4 @@ void DetectConfigRegisterTests(void)
     UtRegisterTest("DetectConfigTest01", DetectConfigTest01);
 }
 #endif /* UNITTESTS */
+

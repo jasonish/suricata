@@ -608,3 +608,4 @@ void DetectICodeRegisterTests(void)
     UtRegisterTest("DetectICodeMatchTest01", DetectICodeMatchTest01);
 }
 #endif /* UNITTESTS */
+

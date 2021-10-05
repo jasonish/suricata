@@ -238,3 +238,4 @@ void OutputPacketShutdown(void)
     /* reset list pointer */
     list = NULL;
 }
+

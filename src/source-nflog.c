@@ -555,3 +555,4 @@ TmEcode DecodeNFLOGThreadDeinit(ThreadVars *tv, void *data)
 }
 
 #endif /* NFLOG */
+

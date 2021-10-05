@@ -286,3 +286,4 @@ void DecodeVXLANRegisterTests(void)
                    DecodeVXLANtest02);
 #endif /* UNITTESTS */
 }
+

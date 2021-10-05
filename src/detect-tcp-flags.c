@@ -1426,3 +1426,4 @@ static void FlagsRegisterTests(void)
     UtRegisterTest("FlagsTestParse17", FlagsTestParse17);
 }
 #endif /* UNITTESTS */
+

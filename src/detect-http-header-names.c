@@ -255,3 +255,4 @@ void DetectHttpHeaderNamesRegister(void)
             KEYWORD_NAME, g_keyword_thread_id,
             BUFFER_NAME, g_buffer_id);
 }
+

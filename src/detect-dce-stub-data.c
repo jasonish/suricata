@@ -1932,3 +1932,4 @@ static void DetectDceStubDataRegisterTests(void)
                    DetectDceStubDataTestParse06);
 }
 #endif
+

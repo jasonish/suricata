@@ -218,3 +218,4 @@ int LuaRegisterSshFunctions(lua_State *luastate)
 }
 
 #endif /* HAVE_LUA */
+

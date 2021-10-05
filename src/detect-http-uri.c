@@ -343,3 +343,4 @@ static InspectionBuffer *GetRawData(DetectEngineThreadCtx *det_ctx,
 /**
  * @}
  */
+

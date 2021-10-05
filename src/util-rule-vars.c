@@ -530,3 +530,4 @@ void SCRuleVarsRegisterTests(void)
 
     return;
 }
+

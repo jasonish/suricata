@@ -152,3 +152,4 @@ void JsonDHCPLogRegister(void)
         JsonDHCPLogger, JsonDHCPLogThreadInit,
         JsonDHCPLogThreadDeinit, NULL);
 }
+

@@ -363,3 +363,4 @@ void DetectVarProcessListInternal(DetectVarList *fs, Flow *f, Packet *p)
         fs = next;
     } while (fs != NULL);
 }
+

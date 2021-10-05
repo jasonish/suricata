@@ -114,3 +114,4 @@ static void DetectTransformToSha1RegisterTests(void)
             DetectTransformToSha1Test01);
 }
 #endif
+

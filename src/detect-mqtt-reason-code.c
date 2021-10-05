@@ -311,3 +311,4 @@ void MQTTReasonCodeRegisterTests(void)
     UtRegisterTest("MQTTReasonCodeTestParse04", MQTTReasonCodeTestParse04);
 #endif /* UNITTESTS */
 }
+

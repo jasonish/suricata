@@ -403,3 +403,4 @@ static bool PrefilterTemplate2IsPrefilterable(const Signature *s)
 #include "tests/detect-template2.c"
 #endif
 
+

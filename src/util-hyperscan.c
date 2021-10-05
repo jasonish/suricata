@@ -58,3 +58,4 @@ char *HSRenderPattern(const uint8_t *pat, uint16_t pat_len)
 }
 
 #endif /* BUILD_HYPERSCAN */
+

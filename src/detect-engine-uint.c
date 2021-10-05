@@ -426,3 +426,4 @@ DetectU8Data *DetectU8Parse (const char *u8str)
 
     return u8d;
 }
+

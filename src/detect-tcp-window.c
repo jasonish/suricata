@@ -343,3 +343,4 @@ void DetectWindowRegisterTests(void)
     UtRegisterTest("DetectWindowTestPacket01", DetectWindowTestPacket01);
 }
 #endif /* UNITTESTS */
+

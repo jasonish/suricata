@@ -160,3 +160,4 @@ void StreamTcpInlineSegmentReplacePacket(const TcpStream *stream,
 #ifdef UNITTESTS
 #include "tests/stream-tcp-inline.c"
 #endif
+

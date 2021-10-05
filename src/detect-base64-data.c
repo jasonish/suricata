@@ -260,3 +260,4 @@ static void DetectBase64DataRegisterTests(void)
     UtRegisterTest("DetectBase64DataSetupTest04", DetectBase64DataSetupTest04);
 }
 #endif /* UNITTESTS */
+

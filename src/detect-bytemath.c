@@ -1350,3 +1350,4 @@ static void DetectByteMathRegisterTests(void)
     UtRegisterTest("DetectByteMathContext01", DetectByteMathContext01);
 }
 #endif /* UNITTESTS */
+

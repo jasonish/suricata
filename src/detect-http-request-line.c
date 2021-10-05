@@ -338,3 +338,4 @@ static void DetectHttpRequestLineRegisterTests(void)
 /**
  * @}
  */
+

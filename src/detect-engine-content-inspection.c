@@ -695,3 +695,4 @@ final_match:
 #ifdef UNITTESTS
 #include "tests/detect-engine-content-inspection.c"
 #endif
+

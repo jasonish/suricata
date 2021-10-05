@@ -62,3 +62,4 @@ void MQTTParserRegisterTests(void)
 #ifdef UNITTESTS
 #endif
 }
+

@@ -1449,3 +1449,4 @@ SCProfilingRegisterTests(void)
 }
 
 #endif /* PROFILING */
+

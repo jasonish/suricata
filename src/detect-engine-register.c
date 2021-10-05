@@ -681,3 +681,4 @@ void SigTableRegisterTests(void)
     }
 }
 #endif
+

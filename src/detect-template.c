@@ -217,3 +217,4 @@ static void DetectTemplateFree(DetectEngineCtx *de_ctx, void *ptr)
 #ifdef UNITTESTS
 #include "tests/detect-template.c"
 #endif
+

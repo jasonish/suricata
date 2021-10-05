@@ -4821,3 +4821,4 @@ static void DetectByteExtractRegisterTests(void)
                    DetectByteExtractTestParseNoBase);
 }
 #endif /* UNITTESTS */
+

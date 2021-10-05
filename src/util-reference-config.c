@@ -791,3 +791,4 @@ void SCRConfRegisterTests(void)
 
     return;
 }
+

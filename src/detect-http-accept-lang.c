@@ -46,3 +46,4 @@ void RegisterHttpHeadersAcceptLang(void)
 {
     DetectHttpHeadersRegisterStub();
 }
+

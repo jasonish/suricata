@@ -118,3 +118,4 @@ void DetectSipStatCodeRegister (void)
 
     SCLogDebug("registering " BUFFER_NAME " rule option");
 }
+

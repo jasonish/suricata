@@ -69,3 +69,4 @@ void TemplateRustParserRegisterTests(void)
 #ifdef UNITTESTS
 #endif
 }
+

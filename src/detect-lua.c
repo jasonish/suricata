@@ -2932,3 +2932,4 @@ void DetectLuaRegisterTests(void)
 }
 #endif
 #endif /* HAVE_LUAJIT */
+

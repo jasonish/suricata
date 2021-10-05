@@ -342,3 +342,4 @@ static void DetectSslStateFree(DetectEngineCtx *de_ctx, void *ptr)
 #ifdef UNITTESTS
 #include "tests/detect-ssl-state.c"
 #endif
+

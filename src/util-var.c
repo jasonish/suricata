@@ -172,3 +172,4 @@ void CleanVariableResolveList(ResolvedVariablesList *var_list)
         SCFree(p_item);
     }
 }
+

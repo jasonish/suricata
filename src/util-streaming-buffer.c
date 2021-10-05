@@ -1574,3 +1574,4 @@ void StreamingBufferRegisterTests(void)
     UtRegisterTest("StreamingBufferTest10", StreamingBufferTest10);
 #endif
 }
+

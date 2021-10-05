@@ -311,3 +311,4 @@ static void DetectClasstypeRegisterTests(void)
     UtRegisterTest("DetectClasstypeTest03", DetectClasstypeTest03);
 }
 #endif /* UNITTESTS */
+

@@ -1009,3 +1009,4 @@ void SourceWinDivertRegisterTests()
 }
 
 #endif /* WINDIVERT */
+

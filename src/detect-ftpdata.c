@@ -259,3 +259,4 @@ static void DetectFtpdataRegisterTests(void)
                    DetectFtpdataSignatureTest01);
 }
 #endif /* UNITTESTS */
+

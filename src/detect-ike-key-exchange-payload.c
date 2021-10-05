@@ -118,3 +118,4 @@ void DetectIkeKeyExchangeRegister(void)
     g_buffer_key_exchange_id = DetectBufferTypeGetByName(BUFFER_NAME_KEY_EXCHANGE);
     SCLogDebug("registering " BUFFER_NAME_KEY_EXCHANGE " rule option");
 }
+

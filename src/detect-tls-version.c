@@ -274,3 +274,4 @@ static void DetectTlsVersionFree(DetectEngineCtx *de_ctx, void *ptr)
 #ifdef UNITTESTS
 #include "tests/detect-tls-version.c"
 #endif
+

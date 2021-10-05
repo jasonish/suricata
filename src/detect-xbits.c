@@ -556,3 +556,4 @@ static void XBitsRegisterTests(void)
     UtRegisterTest("XBitsTestSig02", XBitsTestSig02);
 }
 #endif /* UNITTESTS */
+

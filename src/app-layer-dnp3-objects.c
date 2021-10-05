@@ -9702,3 +9702,4 @@ int DNP3DecodeObject(int group, int variation, const uint8_t **buf,
 }
 
 /* END GENERATED CODE */
+

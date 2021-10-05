@@ -1104,3 +1104,4 @@ static void DetectFastPatternRegisterTests(void)
     UtRegisterTest("DetectFastPatternPrefilter", DetectFastPatternPrefilter);
 }
 #endif
+

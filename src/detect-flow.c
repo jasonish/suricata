@@ -1112,3 +1112,4 @@ static void DetectFlowRegisterTests(void)
     UtRegisterTest("DetectFlowSigTest01", DetectFlowSigTest01);
 }
 #endif /* UNITTESTS */
+

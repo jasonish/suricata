@@ -139,3 +139,4 @@ static InspectionBuffer *GetData(DetectEngineThreadCtx *det_ctx,
 #ifdef UNITTESTS
 #include "tests/detect-tls-sni.c"
 #endif
+

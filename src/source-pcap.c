@@ -722,3 +722,4 @@ static void SourcePcapRegisterTests(void)
     SourcePcapRegisterStatsTests();
 }
 #endif /* UNITTESTS */
+
