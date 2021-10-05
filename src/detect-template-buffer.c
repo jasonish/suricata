@@ -147,3 +147,4 @@ static InspectionBuffer *GetData(DetectEngineThreadCtx *det_ctx,
 #include "tests/detect-template-buffer.c"
 #endif
 
+

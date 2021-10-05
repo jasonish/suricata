@@ -91,3 +91,4 @@ void JsonDCERPCLogRegister(void)
     SCLogDebug("DCERPC JSON logger registered.");
 }
 
+

@@ -347,3 +347,4 @@ void JsonDNP3LogRegister(void)
         JsonDNP3LogThreadDeinit, NULL);
 }
 
+

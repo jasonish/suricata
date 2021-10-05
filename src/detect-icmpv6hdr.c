@@ -132,3 +132,4 @@ static InspectionBuffer *GetData(DetectEngineThreadCtx *det_ctx,
 #include "tests/detect-icmpv6hdr.c"
 #endif
 
+

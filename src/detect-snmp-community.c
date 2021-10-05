@@ -115,3 +115,4 @@ static InspectionBuffer *GetData(DetectEngineThreadCtx *det_ctx,
 #include "tests/detect-snmp-community.c"
 #endif /* UNITTESTS */
 
+

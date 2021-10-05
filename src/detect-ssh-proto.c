@@ -121,3 +121,4 @@ void DetectSshProtocolRegister(void)
     g_buffer_id = DetectBufferTypeGetByName(BUFFER_NAME);
 }
 
+

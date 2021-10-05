@@ -209,3 +209,4 @@ void DetectSshHasshServerRegister(void)
     DetectBufferTypeRegisterValidateCallback(BUFFER_NAME, DetectSshHasshServerHashValidateCallback);
 }
 
+

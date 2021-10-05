@@ -301,3 +301,4 @@ static void DetectSeqRegisterTests(void)
 }
 #endif /* UNITTESTS */
 
+

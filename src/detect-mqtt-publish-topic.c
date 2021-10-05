@@ -93,3 +93,4 @@ void DetectMQTTPublishTopicRegister(void)
     SCLogDebug("registering " BUFFER_NAME " rule option");
 }
 
+

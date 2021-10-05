@@ -681,3 +681,4 @@ static void DetectBase64DecodeRegisterTests(void)
 }
 #endif /* UNITTESTS */
 
+

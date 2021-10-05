@@ -188,3 +188,4 @@ static bool PrefilterIcmpv6mtuIsPrefilterable(const Signature *s)
 #include "tests/detect-icmpv6-mtu.c"
 #endif
 
+

@@ -370,3 +370,4 @@ static void DetectL3protoRegisterTests(void)
     UtRegisterTest("DetectL3protoTestSig3", DetectL3protoTestSig3);
 }
 #endif /* UNITTESTS */
+

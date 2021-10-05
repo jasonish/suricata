@@ -459,3 +459,4 @@ static void DetectEnipCommandRegisterTests(void)
 }
 #endif /* UNITTESTS */
 
+

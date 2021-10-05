@@ -1001,3 +1001,4 @@ ConfYamlRegisterTests(void)
 #endif /* UNITTESTS */
 }
 
+

@@ -299,3 +299,4 @@ static void DetectSNMPVersionFree(DetectEngineCtx *de_ctx, void *ptr)
 #include "tests/detect-snmp-version.c"
 #endif /* UNITTESTS */
 
+

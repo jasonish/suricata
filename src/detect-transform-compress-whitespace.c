@@ -228,3 +228,4 @@ static void DetectTransformCompressWhitespaceRegisterTests(void)
 }
 #endif
 
+

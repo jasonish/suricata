@@ -335,3 +335,4 @@ void DetectSslVersionFree(DetectEngineCtx *de_ctx, void *ptr)
 #include "tests/detect-ssl-version.c"
 #endif
 
+

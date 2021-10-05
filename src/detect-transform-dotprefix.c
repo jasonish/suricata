@@ -184,3 +184,4 @@ static void DetectTransformDotPrefixRegisterTests(void)
 }
 #endif
 
+

@@ -94,3 +94,4 @@ void JsonKRB5LogRegister(void)
     SCLogDebug("KRB5 JSON logger registered.");
 }
 
+

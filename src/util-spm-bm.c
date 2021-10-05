@@ -511,3 +511,4 @@ void SpmBMRegister(void)
     spm_table[SPM_BM].Scan = BMScan;
 }
 
+

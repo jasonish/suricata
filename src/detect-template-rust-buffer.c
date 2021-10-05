@@ -211,3 +211,4 @@ static void DetectTemplateRustBufferRegisterTests(void)
 }
 #endif /* UNITTESTS */
 
+

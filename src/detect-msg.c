@@ -195,3 +195,4 @@ void DetectMsgRegisterTests(void)
     UtRegisterTest("DetectMsgParseTest03", DetectMsgParseTest03);
 }
 #endif /* UNITTESTS */
+

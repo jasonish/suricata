@@ -346,3 +346,4 @@ void JsonFileLogRegister (void)
         JsonFileLogThreadInit, JsonFileLogThreadDeinit, NULL);
 }
 
+

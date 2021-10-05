@@ -142,3 +142,4 @@ TmEcode JsonLogThreadDeinit(ThreadVars *t, void *data)
     return TM_ECODE_OK;
 }
 
+

@@ -344,3 +344,4 @@ void DetectWindowRegisterTests(void)
 }
 #endif /* UNITTESTS */
 
+

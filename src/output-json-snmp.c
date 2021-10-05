@@ -93,3 +93,4 @@ void JsonSNMPLogRegister(void)
     SCLogDebug("SNMP JSON logger registered.");
 }
 
+

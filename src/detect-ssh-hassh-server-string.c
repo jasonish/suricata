@@ -142,3 +142,4 @@ void DetectSshHasshServerStringRegister(void)
 
     g_ssh_hassh_server_string_buffer_id = DetectBufferTypeGetByName(BUFFER_NAME);
 }
+

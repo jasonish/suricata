@@ -298,3 +298,4 @@ void JsonNetFlowLogRegister(void)
             OutputJsonLogInitSub, JsonNetFlowLogger, JsonLogThreadInit, JsonLogThreadDeinit, NULL);
 }
 
+

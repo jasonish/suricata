@@ -103,3 +103,4 @@ void JsonSMBLogRegister(void)
     SCLogDebug("SMB JSON logger registered.");
 }
 
+

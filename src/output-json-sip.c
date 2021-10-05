@@ -102,3 +102,4 @@ void JsonSIPLogRegister(void)
     SCLogDebug("SIP JSON logger registered.");
 }
 
+

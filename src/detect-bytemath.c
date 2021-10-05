@@ -1351,3 +1351,4 @@ static void DetectByteMathRegisterTests(void)
 }
 #endif /* UNITTESTS */
 
+

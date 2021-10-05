@@ -175,3 +175,4 @@ uint8_t *Bs2BmNocase(const uint8_t *haystack, uint32_t haystack_len, const uint8
     return NULL;
 }
 
+

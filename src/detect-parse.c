@@ -4284,3 +4284,4 @@ void SigParseRegisterTests(void)
 #endif /* UNITTESTS */
 }
 
+

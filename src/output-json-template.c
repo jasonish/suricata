@@ -189,3 +189,4 @@ void JsonTemplateLogRegister(void)
     SCLogNotice("Template JSON logger registered.");
 }
 
+

@@ -261,3 +261,4 @@ static void DetectBase64DataRegisterTests(void)
 }
 #endif /* UNITTESTS */
 
+

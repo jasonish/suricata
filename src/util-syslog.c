@@ -78,3 +78,4 @@ SCEnumCharMap *SCSyslogGetLogLevelMap(void)
 }
 
 
+

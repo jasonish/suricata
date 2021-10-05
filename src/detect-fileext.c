@@ -308,3 +308,4 @@ void DetectFileextRegisterTests(void)
 }
 #endif /* UNITTESTS */
 
+

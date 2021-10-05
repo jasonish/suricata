@@ -645,3 +645,4 @@ void DetectFilemagicRegisterTests(void)
 #endif /* HAVE_MAGIC */
 
 
+

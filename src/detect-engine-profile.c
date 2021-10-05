@@ -125,3 +125,4 @@ void RulesDumpMatchArray(const DetectEngineThreadCtx *det_ctx,
 }
 #endif /* PROFILING */
 
+

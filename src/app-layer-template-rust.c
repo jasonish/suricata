@@ -70,3 +70,4 @@ void TemplateRustParserRegisterTests(void)
 #endif
 }
 
+

@@ -312,3 +312,4 @@ static void DetectClasstypeRegisterTests(void)
 }
 #endif /* UNITTESTS */
 
+

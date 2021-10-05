@@ -64,3 +64,4 @@ void Sha256StrFree(void *s)
     // no dynamic data
 }
 
+

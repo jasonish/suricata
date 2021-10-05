@@ -570,3 +570,4 @@ void DetectFilenameRegisterTests(void)
 }
 #endif /* UNITTESTS */
 
+

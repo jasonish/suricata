@@ -138,3 +138,4 @@ void DetectFileSha256RegisterTests(void)
 }
 #endif
 
+

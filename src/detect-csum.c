@@ -1066,3 +1066,4 @@ static void DetectCsumRegisterTests(void)
 }
 #endif /* UNITTESTS */
 
+

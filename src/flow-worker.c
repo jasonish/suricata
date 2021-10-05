@@ -640,3 +640,4 @@ void TmModuleFlowWorkerRegister (void)
     tmm_modules[TMM_FLOWWORKER].flags = TM_FLAG_STREAM_TM|TM_FLAG_DETECT_TM;
 }
 
+

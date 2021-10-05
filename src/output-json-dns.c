@@ -651,3 +651,4 @@ void JsonDnsLogRegister (void)
             LogDnsLogThreadDeinit, NULL);
 }
 
+

@@ -79,3 +79,4 @@ void JsonRdpLogRegister(void)
     SCLogDebug("rdp json logger registered.");
 }
 
+

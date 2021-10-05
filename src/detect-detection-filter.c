@@ -654,3 +654,4 @@ static void DetectDetectionFilterRegisterTests(void)
 }
 #endif /* UNITTESTS */
 
+

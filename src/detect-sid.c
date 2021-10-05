@@ -146,3 +146,4 @@ static void DetectSidRegisterTests(void)
     UtRegisterTest("SidTestParse04", SidTestParse04);
 }
 #endif /* UNITTESTS */
+

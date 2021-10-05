@@ -119,3 +119,4 @@ int SigStringAppend(SigFileLoaderStat *sig_stats, const char *sig_file,
     return 1;
 }
 
+

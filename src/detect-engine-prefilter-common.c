@@ -424,3 +424,4 @@ int PrefilterSetupPacketHeader(DetectEngineCtx *de_ctx,
     return PrefilterSetupPacketHeaderCommon(de_ctx, sgh, sm_type, Set, Compare, Match, false);
 }
 
+

@@ -394,3 +394,4 @@ int SCServiceChangeParams(int argc, char **argv)
 
 #endif /* OS_WIN32 */
 
+

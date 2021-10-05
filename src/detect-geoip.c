@@ -552,3 +552,4 @@ static void DetectGeoipRegisterTests(void)
 }
 #endif /* UNITTESTS */
 #endif /* HAVE_GEOIP */
+

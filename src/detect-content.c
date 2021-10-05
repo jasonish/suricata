@@ -3171,3 +3171,4 @@ static void DetectContentRegisterTests(void)
 }
 #endif /* UNITTESTS */
 
+

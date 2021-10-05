@@ -239,3 +239,4 @@ void DetectWithinRegisterTests(void)
     UtRegisterTest("DetectWithinTestVarSetup", DetectWithinTestVarSetup);
 }
 #endif /* UNITTESTS */
+

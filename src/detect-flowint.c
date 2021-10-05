@@ -1340,3 +1340,4 @@ void DetectFlowintRegisterTests(void)
 }
 #endif /* UNITTESTS */
 
+

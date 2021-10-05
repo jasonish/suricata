@@ -935,3 +935,4 @@ static void DetectDnsQueryRegisterTests(void)
 }
 #endif
 
+

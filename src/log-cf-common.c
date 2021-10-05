@@ -273,3 +273,4 @@ void LogCustomFormatRegister(void)
 #endif /* UNITTESTS */
 }
 
+

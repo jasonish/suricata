@@ -93,3 +93,4 @@ void JsonTFTPLogRegister(void)
     SCLogDebug("TFTP JSON logger registered.");
 }
 
+

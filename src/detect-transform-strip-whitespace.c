@@ -204,3 +204,4 @@ static void DetectTransformStripWhitespaceRegisterTests(void)
 }
 #endif
 
+

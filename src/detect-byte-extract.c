@@ -4822,3 +4822,4 @@ static void DetectByteExtractRegisterTests(void)
 }
 #endif /* UNITTESTS */
 
+

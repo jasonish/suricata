@@ -231,3 +231,4 @@ static void DetectSNMPPduTypeFree(DetectEngineCtx *de_ctx, void *ptr)
 #include "tests/detect-snmp-pdu_type.c"
 #endif /* UNITTESTS */
 
+

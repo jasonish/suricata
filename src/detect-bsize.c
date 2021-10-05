@@ -324,3 +324,4 @@ void DetectBsizeFree(DetectEngineCtx *de_ctx, void *ptr)
 #include "tests/detect-bsize.c"
 #endif
 
+

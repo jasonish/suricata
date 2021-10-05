@@ -5237,3 +5237,4 @@ void DetectAddressTests(void)
 #endif /* UNITTESTS */
 }
 
+

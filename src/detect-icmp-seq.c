@@ -443,3 +443,4 @@ static void DetectIcmpSeqRegisterTests (void)
 }
 #endif /* UNITTESTS */
 
+

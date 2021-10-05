@@ -399,3 +399,4 @@ void MQTTConnectFlagsRegisterTests(void)
 #endif /* UNITTESTS */
 }
 
+

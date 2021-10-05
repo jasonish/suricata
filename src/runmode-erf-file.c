@@ -240,3 +240,4 @@ int RunModeErfFileAutoFp(void)
     SCReturnInt(0);
 }
 
+

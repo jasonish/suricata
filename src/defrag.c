@@ -2511,3 +2511,4 @@ void DefragRegisterTests(void)
 #endif /* UNITTESTS */
 }
 
+

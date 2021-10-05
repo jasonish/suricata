@@ -1625,3 +1625,4 @@ void ModbusParserRegisterTests(void) {
 #endif /* UNITTESTS */
 }
 
+

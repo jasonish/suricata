@@ -193,3 +193,4 @@ static void DetectSameipRegisterTests(void)
     UtRegisterTest("DetectSameipSigTest01", DetectSameipSigTest01);
 }
 #endif /* UNITTESTS */
+

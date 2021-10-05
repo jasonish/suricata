@@ -863,3 +863,4 @@ void DetectReplaceRegisterTests(void)
     UtRegisterTest("DetectReplaceParseTest07", DetectReplaceParseTest07);
 }
 #endif /* UNITTESTS */
+

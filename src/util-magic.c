@@ -605,3 +605,4 @@ void MagicRegisterTests(void)
 }
 
 
+

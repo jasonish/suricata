@@ -190,3 +190,4 @@ int FileSwfLzmaDecompression(DetectEngineThreadCtx *det_ctx,
     return ret;
 }
 
+

@@ -438,3 +438,4 @@ void OutputEmailInitConf(ConfNode *conf, OutputJsonEmailCtx *email_ctx)
     return;
 }
 
+

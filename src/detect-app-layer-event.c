@@ -852,3 +852,4 @@ static void DetectAppLayerEventRegisterTests(void)
 }
 #endif /* UNITTESTS */
 
+

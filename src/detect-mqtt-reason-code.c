@@ -312,3 +312,4 @@ void MQTTReasonCodeRegisterTests(void)
 #endif /* UNITTESTS */
 }
 
+

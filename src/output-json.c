@@ -1271,3 +1271,4 @@ static void OutputJsonDeInitCtx(OutputCtx *output_ctx)
     SCFree(output_ctx);
 }
 
+

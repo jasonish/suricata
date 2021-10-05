@@ -3627,3 +3627,4 @@ static void DetectPcreRegisterTests(void)
 }
 #endif /* UNITTESTS */
 
+

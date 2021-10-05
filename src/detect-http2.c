@@ -980,3 +980,4 @@ static bool DetectHttp2HeaderValidateCallback(const Signature *s, const char **s
 #include "tests/detect-http2.c"
 #endif
 
+

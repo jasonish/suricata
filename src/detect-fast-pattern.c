@@ -1105,3 +1105,4 @@ static void DetectFastPatternRegisterTests(void)
 }
 #endif
 
+

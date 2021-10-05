@@ -522,3 +522,4 @@ void HostBitRegisterTests(void)
 #endif /* UNITTESTS */
 }
 
+

@@ -24,3 +24,4 @@ SuricataContext *SCGetContext(void)
 {
     return &suricata_context;
 }
+

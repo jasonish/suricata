@@ -197,3 +197,4 @@ bool SCProtoNameValid(uint16_t proto)
     return (proto <= 255 && known_proto[proto] != NULL);
 }
 
+

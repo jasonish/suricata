@@ -3770,3 +3770,4 @@ void AppLayerProtoDetectUnittestsRegister(void)
 
 #endif /* UNITTESTS */
 
+

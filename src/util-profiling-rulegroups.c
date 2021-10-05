@@ -390,3 +390,4 @@ SCProfilingSghInitCounters(DetectEngineCtx *de_ctx)
 
 #endif /* PROFILING */
 
+

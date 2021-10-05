@@ -247,3 +247,4 @@ static void DetectDistanceRegisterTests(void)
 }
 #endif /* UNITTESTS */
 
+

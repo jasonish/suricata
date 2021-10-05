@@ -588,3 +588,4 @@ static void DetectSshVersionRegisterTests(void)
 }
 #endif /* UNITTESTS */
 
+

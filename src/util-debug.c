@@ -1726,3 +1726,4 @@ void SCLogRegisterTests()
    return;
 }
 
+

@@ -159,3 +159,4 @@ void JsonModbusLogRegister(void)
     SCLogDebug("modbus json logger registered.");
 }
 
+

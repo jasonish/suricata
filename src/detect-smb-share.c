@@ -157,3 +157,4 @@ void DetectSmbShareRegister(void)
     g_smb_share_buffer_id = DetectBufferTypeGetByName(BUFFER_NAME);
 }
 
+

@@ -2123,3 +2123,4 @@ static void DetectIPProtoRegisterTests(void)
 }
 #endif /* UNITTESTS */
 
+
