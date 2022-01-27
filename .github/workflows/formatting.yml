@@ -10,13 +10,16 @@ on:
 
 permissions: read-all
 
+env:
+  DEBIAN_FRONTEND: "noninteractive"
+
 jobs:
 
   # Checking for correct formatting of branch for C code changes
   check-formatting:
     name: Formatting Check (clang 9)
-    runs-on: ubuntu-18.04
-    container: ubuntu:18.04
+    runs-on: ubuntu-20.04
+    container: ubuntu:20.04
     continue-on-error: true
     steps:
 
