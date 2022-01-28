@@ -54,17 +54,17 @@ jobs:
           if test "${PR_HREF}"; then
               body=$(curl -s "${PR_HREF}" | jq -r .body | tr -d '\r')
 
-              libhtp_repo=$(echo "${body}" | awk -F ':' '/^libhtp-repo/ { gsub(/ /, ""); print $2 }')
-              libhtp_branch=$(echo "${body}" | awk -F ':' '/^libhtp-branch/ { gsub(/ /, ""); print $2 }')
-              libhtp_pr=$(echo "${body}" | awk -F ':' '/^libhtp-pr/ { gsub(/ /, ""); print $2 }')
+              libhtp_repo=$(echo "${body}" | sed -n -e 's/^libhtp-repo:\s*//p')
+              libhtp_branch=$(echo "${body}" | sed -n -e 's/^libhtp-branch:\s*//p')
+              libhtp_pr=$(echo "${body}" | sed -n -e 's/^libhtp-pr:\s*//p')
 
-              su_repo=$(echo "${body}" | awk -F ':' '/^suricata-update-repo/ { gsub(/ /, ""); print $2 }')
-              su_branch=$(echo "${body}" | awk -F ':' '/^suricata-update-branch/ { gsub(/ /, ""); print $2 }')
-              su_pr=$(echo "${body}" | awk -F ':' '/^suricata-update-pr/ { gsub(/ /, ""); print $2 }')
+              su_repo=$(echo "${body}" | sed -n -e 's/^suricata-update-repo:\s*//p')
+              su_branch=$(echo "${body}" | sed -n -e 's/^suricata-update-branch:\s*//p')
+              su_pr=$(echo "${body}" | sed -n -e 's/^suricata-update-pr:\s*//p')
 
-              sv_repo=$(echo "${body}" | awk -F ':' '/^suricata-verify-repo/ { gsub(/ /, ""); print $2 }')
-              sv_branch=$(echo "${body}" | awk -F ':' '/^suricata-verify-branch/ { gsub(/ /, ""); print $2 }')
-              sv_pr=$(echo "${body}" | awk -F ':' '/^suricata-verify-pr/ { gsub(/ /, ""); print $2 }')
+              sv_repo=$(echo "${body}" | sed -n -e 's/^suricata-verify-repo:\s*//p')
+              sv_branch=$(echo "${body}" | sed -n -e 's/^suricata-verify-branch:\s*//p')
+              sv_pr=$(echo "${body}" | sed -n -e 's/^suricata-verify-pr:\s*//p')
           fi
           echo "libhtp_repo=${libhtp_repo:-${DEFAULT_LIBHTP_REPO}}" >> $GITHUB_ENV
           echo "libhtp_branch=${libhtp_branch:-${DEFAULT_LIBHTP_BRANCH}}" >> $GITHUB_ENV
