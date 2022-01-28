@@ -73,6 +73,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
       - run: git fetch
       - run: git clone https://github.com/OISF/libhtp -b 0.5.x
       - name: Building all commits
