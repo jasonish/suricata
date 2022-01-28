@@ -70,7 +70,9 @@ jobs:
           cd $HOME/.cargo/bin
           curl -OL https://github.com/eqrion/cbindgen/releases/download/v0.15.0/cbindgen
           chmod 755 cbindgen
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
       - run: git fetch
       - run: git clone https://github.com/OISF/libhtp -b 0.5.x
       - name: Building all commits
