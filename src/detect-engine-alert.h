@@ -24,7 +24,6 @@
 #ifndef __DETECT_ENGINE_ALERT_H__
 #define __DETECT_ENGINE_ALERT_H__
 
-#include "suricata-common.h"
 #include "decode.h"
 #include "detect.h"
 
