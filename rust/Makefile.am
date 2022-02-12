@@ -1,7 +1,7 @@
 EXTRA_DIST =	src derive \
 		.cargo/config.in \
 		cbindgen.toml \
-		dist/rust-bindings.h
+		include/rust-bindings.h
 
 if HAVE_CARGO_VENDOR
 EXTRA_DIST +=	vendor
@@ -53,7 +53,7 @@ endif
 		cp -a $(RUST_SURICATA_LIBDIR)/libsuricata.a \
 			$(RUST_SURICATA_LIBDIR)/${RUST_SURICATA_LIBNAME}; \
 	fi
-	$(MAKE) gen/rust-bindings.h
+	$(MAKE) target/include/rust-bindings.h
 
 install-library:
 	$(MKDIR_P) "$(DESTDIR)$(libdir)"
@@ -64,9 +64,6 @@ uninstall-local:
 
 clean-local:
 	rm -rf target
-if HAVE_CBINDGEN
-	rm -rf gen dist
-endif
 
 distclean-local:
 	rm -f Cargo.lock
@@ -86,22 +83,31 @@ else
 vendor:
 endif
 
+# These targets for cbindgen are used during development, to make sure that
+# each call to make rebuilds the includes if the library has been updated, just
+# to make sure they are current with the code.
+#
+# See commit e6668560e0740888b6d8a4128f092a455918ce7f for more info.
 if HAVE_CBINDGEN
-gen/rust-bindings.h: $(RUST_SURICATA_LIB)
+target/include/rust-bindings.h: $(RUST_SURICATA_LIB)
 	rm -f gen/rust-bindings.h
 	cbindgen --config $(abs_top_srcdir)/rust/cbindgen.toml \
-		--quiet --output $(abs_top_builddir)/rust/gen/rust-bindings.h
+		--quiet --output $(abs_top_builddir)/rust/$@
 else
-gen/rust-bindings.h:
+target/include/rust-bindings.h:
+endif
+
+# These targets for cbindgen are used during make dist, they are the same as
+# above but don't depend on the library, as building the library is not usually
+# part of a "make dist", and they will be current for the code that is included
+# in the distribution.
+if HAVE_CBINDGEN
+include/rust-bindings.h:
+	cbindgen --config $(abs_top_srcdir)/rust/cbindgen.toml \
+		--quiet --output $(abs_top_builddir)/rust/$@
+else
+include/rust-bindings.h:
 endif
 
 doc:
 	CARGO_HOME=$(CARGO_HOME) $(CARGO) doc --all-features --no-deps
-
-if HAVE_CBINDGEN
-dist/rust-bindings.h:
-	cbindgen --config $(abs_top_srcdir)/rust/cbindgen.toml \
-		--quiet --output $(abs_top_builddir)/rust/dist/rust-bindings.h
-else
-dist/rust-bindings.h:
-endif
