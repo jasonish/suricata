@@ -27,9 +27,9 @@ EXTRA_DIST = \
 if HAVE_SPHINXBUILD
 if HAVE_MSCGEN
 
-if HAVE_PDFLATEX
-EXTRA_DIST += devguide.pdf
-endif
+#if HAVE_PDFLATEX
+#EXTRA_DIST += devguide.pdf
+#endif
 
 SPHINX_BUILD = sphinx-build -q
 
