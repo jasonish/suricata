@@ -30,6 +30,7 @@
 #include "util-path.h"
 #include "util-debug.h"
 #include "util-unittest.h"
+#include "suricata-config.h"
 
 #define YAML_VERSION_MAJOR 1
 #define YAML_VERSION_MINOR 1

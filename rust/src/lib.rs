@@ -135,3 +135,6 @@ pub mod quic;
 pub mod plugin;
 pub mod util;
 pub mod ffi;
+
+// Re-export of suricata-config. This brings suricata_config into the main library.
+pub use suricata_config as config;

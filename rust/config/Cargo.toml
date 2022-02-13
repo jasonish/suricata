@@ -1,0 +1,7 @@
+[package]
+name = "suricata-config"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+yaml-rust = "0.4.5"
