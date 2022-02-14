@@ -3,5 +3,8 @@ name = "suricata-config"
 version = "@PACKAGE_VERSION@"
 edition = "2018"
 
+[lib]
+path = "@e_rustdir@/config/src/lib.rs"
+
 [dependencies]
 yaml-rust = "0.4.5"
