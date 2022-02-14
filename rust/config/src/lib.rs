@@ -202,27 +202,27 @@ mod test {
         assert!(node.is_string());
     }
 
-    #[test]
-    fn test_include() {
-        let config = load_from_file("test.yaml").unwrap();
-        let sensor_name = &config["included-sensor-name"];
-        assert!(sensor_name.is_string());
-        if let Node::String(s) = sensor_name {
-            assert_eq!(s.value, "suricata");
-        } else {
-            unreachable!();
-        }
-    }
-
-    #[test]
-    fn test_include_tag() {
-        let config = load_from_file("test.yaml").unwrap();
-        let sensor_name = &config["nested-include"]["child"]["included-sensor-name"];
-        assert!(sensor_name.is_string());
-        if let Node::String(s) = sensor_name {
-            assert_eq!(s.value, "suricata");
-        } else {
-            unreachable!();
-        }
-    }
+    // #[test]
+    // fn test_include() {
+    //     let config = load_from_file("test.yaml").unwrap();
+    //     let sensor_name = &config["included-sensor-name"];
+    //     assert!(sensor_name.is_string());
+    //     if let Node::String(s) = sensor_name {
+    //         assert_eq!(s.value, "suricata");
+    //     } else {
+    //         unreachable!();
+    //     }
+    // }
+    //
+    // #[test]
+    // fn test_include_tag() {
+    //     let config = load_from_file("test.yaml").unwrap();
+    //     let sensor_name = &config["nested-include"]["child"]["included-sensor-name"];
+    //     assert!(sensor_name.is_string());
+    //     if let Node::String(s) = sensor_name {
+    //         assert_eq!(s.value, "suricata");
+    //     } else {
+    //         unreachable!();
+    //     }
+    // }
 }
