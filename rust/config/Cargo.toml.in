@@ -1,0 +1,6 @@
+[package]
+name = "suricata-config"
+version = "@PACKAGE_VERSION@"
+edition = "2018"
+
+[dependencies]
