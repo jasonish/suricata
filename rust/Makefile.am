@@ -98,7 +98,7 @@ target/include/rust-bindings.h: $(RUST_SURICATA_LIB)
 	cbindgen --config $(abs_top_srcdir)/rust/cbindgen.toml \
 		--quiet --output $(abs_top_builddir)/rust/$@
 target/include/suricata-config.h: $(RUST_SURICATA_LIB)
-	cbindgen --config $(abs_top_srcdir)/rust/cbindgen.toml \
+	cbindgen --config $(abs_top_srcdir)/rust/config/cbindgen.toml \
 		--quiet --output $(abs_top_builddir)/rust/$@ config
 else
 target/include/rust-bindings.h:
@@ -114,7 +114,7 @@ include/rust-bindings.h:
 	cbindgen --config $(abs_top_srcdir)/rust/cbindgen.toml \
 		--quiet --output $(abs_top_builddir)/rust/$@
 include/suricata-config.h:
-	cbindgen --config $(abs_top_srcdir)/rust/cbindgen.toml \
+	cbindgen --config $(abs_top_srcdir)/rust/config/cbindgen.toml \
 		--quiet --output $(abs_top_builddir)/rust/$@ config
 else
 include/rust-bindings.h:

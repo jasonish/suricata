@@ -1,0 +1,3 @@
+mapping: &anchor
+  foo: bar
+an-alias: *anchor

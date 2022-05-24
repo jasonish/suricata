@@ -1,24 +1,10 @@
-%YAML 1.1
+%YAML 1.2
 ---
 
-#vars:
-#  address-groups:
-#    HOME_NET: "[192.168.0.0/16,10.0.0.0/8,172.16.0.0/12]"
-#
-#
-#nested:
-#  some: value
-#
-#simple-list:
-#  - one
-#  - two
-#simple: value
-#
-#list-of-maps:
-#  - one:
-#      aaa: AAA
-#      bbb: BBB
-#
+vars:
+  address-groups:
+    HOME_NET: "[192.168.0.0/16,10.0.0.0/8,172.16.0.0/12]"
+
 outputs:
   - fast:
       enabled: yes
@@ -44,3 +30,16 @@ include: test-include.yaml
 nested-include:
   child: !include test-include.yaml
 
+boolean-true: true
+boolean-false: true
+boolean-yes: yes
+boolean-no: no
+boolean-mixed: TrUE
+
+simple-anchor: &simple-anchor value
+simple-alias: *simple-anchor
+
+an-anchor: &some-anchor
+  key: value
+
+an-alias: *some-anchor

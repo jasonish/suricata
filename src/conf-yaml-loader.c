@@ -445,6 +445,18 @@ ConfYamlLoadFile(const char *filename)
     int ret;
     ConfNode *root = ConfGetRootNode();
 
+    // Example using Rust to load the file. This is not integrated in yet.
+    char errbuf[CONFIG_LOADER_ERR_SIZE];
+    uint8_t errcode = 0;
+    const ConfValue *_root = SuricataConfigFromFilename(filename, errbuf, &errcode);
+    if (_root == NULL) {
+        if (errcode == CONFIG_LOADER_ERR_NOT_A_FILE) {
+            SCLogError(SC_ERR_FATAL, "%s. Please specify the filename in your -c option", errbuf);
+        } else {
+            SCLogError(SC_ERR_FATAL, "%s", errbuf);
+        }
+    }
+
     if (yaml_parser_initialize(&parser) != 1) {
         SCLogError(SC_ERR_FATAL, "failed to initialize yaml parser.");
         return -1;

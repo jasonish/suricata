@@ -1,2 +1,4 @@
-[export.rename]
-"Node" = "RustConfNode"
+language = "C"
+
+[enum]
+rename_variants = "QualifiedScreamingSnakeCase"
