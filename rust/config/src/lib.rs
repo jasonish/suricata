@@ -17,4 +17,5 @@
 mod file;
 pub mod loader;
 
+pub use crate::loader::LoaderError;
 pub use yaml_rust::Yaml;

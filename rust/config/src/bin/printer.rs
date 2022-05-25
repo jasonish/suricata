@@ -15,12 +15,27 @@
 // 02110-1301, USA.
 
 use suricata_config::loader::load_from_file;
+use suricata_config::loader::LoaderError;
 use suricata_config::Yaml;
 
 fn main() {
     let filename = std::env::args().nth(1).unwrap();
-    let doc = &load_from_file(filename).unwrap()[0];
-    print_node(doc, vec![]);
+    match load_from_file(&filename) {
+        Ok(docs) => {
+            for doc in docs {
+                print_node(&doc, vec![]);
+            }
+        }
+        Err(err) => match err {
+            LoaderError::YamlScanError { filename, source } => {
+                println!("yaml parse error in file {:?}: {}", filename, source);
+                std::process::exit(1);
+            }
+            _ => {
+                panic!("Failed to load file: {:?}", err);
+            }
+        },
+    }
 }
 
 fn print_node(node: &Yaml, prefix: Vec<String>) {

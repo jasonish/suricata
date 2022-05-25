@@ -17,54 +17,34 @@
 use crate::file::FileCharIterator;
 use linked_hash_map::LinkedHashMap;
 use std::collections::BTreeMap;
-use std::fmt::Formatter;
 use std::mem;
 use std::path::Path;
 use std::path::PathBuf;
+use thiserror::Error;
 use yaml_rust::parser::MarkedEventReceiver;
 use yaml_rust::scanner::TScalarStyle;
 use yaml_rust::scanner::TokenType;
 use yaml_rust::Event;
-use yaml_rust::ScanError;
 use yaml_rust::Yaml;
 
 pub type Hash = LinkedHashMap<Yaml, Yaml>;
 
-#[derive(Debug)]
-pub struct YamlScanError {
-    pub filename: Option<String>,
-    pub source: yaml_rust::ScanError,
-}
-
-#[derive(Debug)]
-pub struct IoError {
-    pub error: String,
-    pub source: std::io::Error,
-}
-
-#[derive(Debug)]
-pub enum Error {
-    IoError(IoError),
-    YamlScanError(YamlScanError),
-
-    /// The provided filename was not a file.
+#[derive(Error, Debug)]
+pub enum LoaderError {
+    #[error("failed to open {filename:?}: {source:?}")]
+    FileOpen {
+        filename: String,
+        source: std::io::Error,
+    },
+    #[error("yaml parse")]
+    YamlScanError {
+        filename: Option<String>,
+        source: yaml_rust::ScanError,
+    },
+    #[error("not a file: {0}")]
     NotAFile(String),
-}
-
-impl std::fmt::Display for Error {
-    fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-        match self {
-            Self::YamlScanError(_) => {
-                write!(f, "scan error")
-            }
-            Self::IoError(err) => {
-                write!(f, "{}: {}", err.error, err.source)
-            }
-            Self::NotAFile(filename) => {
-                write!(f, "{} is not a file but a directory", filename)
-            }
-        }
-    }
+    #[error("invalid include content: {0}")]
+    InvalidInclude(&'static str),
 }
 
 // copied from yaml-rust
@@ -89,6 +69,11 @@ struct SuricataYamlLoader {
 
     // The current filename being parsed.
     filename: Option<PathBuf>,
+
+    // Set to true if the next event should be an include filename.
+    include: bool,
+
+    error: Option<LoaderError>,
 }
 
 impl SuricataYamlLoader {
@@ -99,6 +84,8 @@ impl SuricataYamlLoader {
             key_stack: Vec::new(),
             anchor_map: BTreeMap::new(),
             filename: None,
+            include: false,
+            error: None,
         }
     }
 
@@ -137,10 +124,78 @@ impl SuricataYamlLoader {
             }
         }
     }
+
+    fn is_key(&self) -> bool {
+        let parent = self.doc_stack.last().unwrap();
+        if let (Yaml::Hash(_), _) = *parent {
+            let cur_key = self.key_stack.last().unwrap();
+            if cur_key.is_badvalue() {
+                return true;
+            }
+        }
+        false
+    }
+
+    fn load_include(&mut self, filename: &str, merge: bool) {
+        let filename = self.resolve_include_filename(filename);
+        match load_from_file(filename) {
+            Err(err) => self.error = Some(err),
+            Ok(docs) => {
+                for doc in docs {
+                    if merge {
+                        match doc {
+                            Yaml::Hash(hash) => {
+                                for (k, v) in hash {
+                                    self.insert_new_node((k, 0));
+                                    self.insert_new_node((v, 0));
+                                }
+                            }
+                            _ => {
+                                self.error = Some(LoaderError::InvalidInclude(
+                                    "hash required for include at key",
+                                ))
+                            }
+                        }
+                    } else {
+                        self.insert_new_node((doc, 0));
+                    }
+                }
+            }
+        }
+    }
+
+    fn resolve_include_filename(&self, include: &str) -> PathBuf {
+        let mut filename = if let Some(filename) = &self.filename {
+            filename.parent().unwrap().to_path_buf()
+        } else {
+            PathBuf::new()
+        };
+        filename.push(include);
+        filename
+    }
 }
 
 impl MarkedEventReceiver for SuricataYamlLoader {
     fn on_event(&mut self, ev: yaml_rust::Event, _: yaml_rust::scanner::Marker) {
+        // If an error has occurred, do nothing. Unfortutantely we have to do
+        // this until the scanner has an error or end of file.
+        if self.error.is_some() {
+            return;
+        }
+        if self.include {
+            match ev {
+                Event::Scalar(v, _, _, _) => {
+                    self.load_include(&v, true);
+                }
+                _ => {
+                    self.error = Some(LoaderError::InvalidInclude(
+                        "include found with non-scalar value",
+                    ));
+                }
+            }
+            self.include = false;
+            return;
+        }
         match ev {
             Event::DocumentStart => {
                 // do nothing
@@ -170,6 +225,14 @@ impl MarkedEventReceiver for SuricataYamlLoader {
                 self.insert_new_node(node);
             }
             Event::Scalar(v, style, aid, tag) => {
+                if self.is_key() && v == "include" {
+                    self.include = true;
+                    return;
+                }
+                if is_include(&tag) {
+                    self.load_include(&v, false);
+                    return;
+                }
                 let node = if style != TScalarStyle::Plain {
                     Yaml::String(v)
                 } else if let Some(TokenType::Tag(ref handle, ref suffix)) = tag {
@@ -219,36 +282,50 @@ impl MarkedEventReceiver for SuricataYamlLoader {
     }
 }
 
-pub fn load_from_str(source: &str) -> Result<Vec<Yaml>, ScanError> {
+fn is_include(token: &Option<TokenType>) -> bool {
+    if let Some(TokenType::Tag(prefix, value)) = token {
+        if prefix.starts_with('!') && value == "include" {
+            return true;
+        }
+    }
+    false
+}
+
+pub fn load_from_str(source: &str) -> Result<Vec<Yaml>, LoaderError> {
     let mut loader = SuricataYamlLoader::new();
     let mut parser = yaml_rust::parser::Parser::new(source.chars());
-    parser.load(&mut loader, true)?;
+    parser
+        .load(&mut loader, true)
+        .map_err(|err| LoaderError::YamlScanError {
+            filename: None,
+            source: err,
+        })?;
     Ok(loader.docs)
 }
 
-pub fn load_from_file<P: AsRef<Path>>(filename: P) -> Result<Vec<Yaml>, Error> {
-    let file = std::fs::File::open(&filename).map_err(|err| {
-        Error::IoError(IoError {
-            error: format!("failed to open {}", filename.as_ref().display()),
-            source: err,
-        })
+pub fn load_from_file<P: AsRef<Path>>(filename: P) -> Result<Vec<Yaml>, LoaderError> {
+    let file = std::fs::File::open(&filename).map_err(|err| LoaderError::FileOpen {
+        filename: filename.as_ref().display().to_string(),
+        source: err,
     })?;
 
-    // Prevent attempts to read from a directory. This is the match the behaviour of the C code.
+    // Prevent attempts to read from a directory. This is to match the behaviour of the C code.
     if let Ok(metadata) = file.metadata() {
         if metadata.is_dir() {
-            return Err(Error::NotAFile(filename.as_ref().display().to_string()));
+            return Err(LoaderError::NotAFile(
+                filename.as_ref().display().to_string(),
+            ));
         }
     }
 
     let mut loader = SuricataYamlLoader::new();
     loader.set_filename(&filename);
     let mut parser = yaml_rust::parser::Parser::new(FileCharIterator::new(file));
-    parser.load(&mut loader, false).map_err(|err| {
-        Error::YamlScanError(YamlScanError {
+    parser
+        .load(&mut loader, false)
+        .map_err(|err| LoaderError::YamlScanError {
             filename: Some(filename.as_ref().to_str().unwrap().to_string()),
             source: err,
-        })
-    })?;
+        })?;
     Ok(loader.docs)
 }
