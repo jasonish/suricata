@@ -46,3 +46,5 @@ an-anchor: &some-anchor
   key: value
 
 an-alias: *some-anchor
+
+number: 999

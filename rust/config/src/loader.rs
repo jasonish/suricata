@@ -15,6 +15,7 @@
 // 02110-1301, USA.
 
 use crate::file::FileCharIterator;
+use crate::{ConfValue, StringValue};
 use linked_hash_map::LinkedHashMap;
 use std::collections::BTreeMap;
 use std::mem;
@@ -22,8 +23,8 @@ use std::path::Path;
 use std::path::PathBuf;
 use thiserror::Error;
 use yaml_rust::parser::MarkedEventReceiver;
-use yaml_rust::scanner::TScalarStyle;
 use yaml_rust::scanner::TokenType;
+use yaml_rust::scanner::{Marker, TScalarStyle};
 use yaml_rust::Event;
 use yaml_rust::Yaml;
 
@@ -51,7 +52,7 @@ pub enum LoaderError {
 //
 // parse f64 as Core schema
 // See: https://github.com/chyh1990/yaml-rust/issues/51
-fn parse_f64(v: &str) -> Option<f64> {
+pub fn parse_f64(v: &str) -> Option<f64> {
     match v {
         ".inf" | ".Inf" | ".INF" | "+.inf" | "+.Inf" | "+.INF" => Some(f64::INFINITY),
         "-.inf" | "-.Inf" | "-.INF" => Some(f64::NEG_INFINITY),
@@ -60,23 +61,22 @@ fn parse_f64(v: &str) -> Option<f64> {
     }
 }
 
-/// Practically idential yaml yaml-rust::YamlLoader
-struct SuricataYamlLoader {
-    docs: Vec<Yaml>,
-    doc_stack: Vec<(Yaml, usize)>,
-    key_stack: Vec<Yaml>,
-    anchor_map: BTreeMap<usize, Yaml>,
+struct YamlLoader {
+    docs: Vec<ConfValue>,
+    doc_stack: Vec<(ConfValue, usize)>,
+    key_stack: Vec<ConfValue>,
+    anchor_map: BTreeMap<usize, ConfValue>,
 
-    // The current filename being parsed.
+    /// Current filename being parsed.
     filename: Option<PathBuf>,
 
-    // Set to true if the next event should be an include filename.
+    /// Set when the next event is to handle an include.
     include: bool,
 
     error: Option<LoaderError>,
 }
 
-impl SuricataYamlLoader {
+impl YamlLoader {
     fn new() -> Self {
         Self {
             docs: Vec::new(),
@@ -96,9 +96,7 @@ impl SuricataYamlLoader {
         self.filename = Some(filename);
     }
 
-    /// Copied from yaml-rust.
-    fn insert_new_node(&mut self, node: (Yaml, usize)) {
-        // valid anchor id starts from 1
+    fn insert_new_node(&mut self, node: (ConfValue, usize)) {
         if node.1 > 0 {
             self.anchor_map.insert(node.1, node.0.clone());
         }
@@ -107,15 +105,15 @@ impl SuricataYamlLoader {
         } else {
             let parent = self.doc_stack.last_mut().unwrap();
             match *parent {
-                (Yaml::Array(ref mut v), _) => v.push(node.0),
-                (Yaml::Hash(ref mut h), _) => {
+                (ConfValue::Array(ref mut v), _) => v.push(node.0),
+                (ConfValue::Hash(ref mut h), _) => {
                     let cur_key = self.key_stack.last_mut().unwrap();
                     // current node is a key
                     if cur_key.is_badvalue() {
                         *cur_key = node.0;
-                    // current node is a value
+                        // current node is a value
                     } else {
-                        let mut newkey = Yaml::BadValue;
+                        let mut newkey = ConfValue::BadValue;
                         mem::swap(&mut newkey, cur_key);
                         h.insert(newkey, node.0);
                     }
@@ -127,7 +125,7 @@ impl SuricataYamlLoader {
 
     fn is_key(&self) -> bool {
         let parent = self.doc_stack.last().unwrap();
-        if let (Yaml::Hash(_), _) = *parent {
+        if let (ConfValue::Hash(_), _) = *parent {
             let cur_key = self.key_stack.last().unwrap();
             if cur_key.is_badvalue() {
                 return true;
@@ -144,7 +142,7 @@ impl SuricataYamlLoader {
                 for doc in docs {
                     if merge {
                         match doc {
-                            Yaml::Hash(hash) => {
+                            ConfValue::Hash(hash) => {
                                 for (k, v) in hash {
                                     self.insert_new_node((k, 0));
                                     self.insert_new_node((v, 0));
@@ -175,13 +173,15 @@ impl SuricataYamlLoader {
     }
 }
 
-impl MarkedEventReceiver for SuricataYamlLoader {
-    fn on_event(&mut self, ev: yaml_rust::Event, _: yaml_rust::scanner::Marker) {
-        // If an error has occurred, do nothing. Unfortutantely we have to do
+impl MarkedEventReceiver for YamlLoader {
+    fn on_event(&mut self, ev: Event, _mark: Marker) {
+        // If an error has occurred, do nothing. Unfortunately we have to do
         // this until the scanner has an error or end of file.
         if self.error.is_some() {
             return;
         }
+
+        // Handle include.
         if self.include {
             match ev {
                 Event::Scalar(v, _, _, _) => {
@@ -196,28 +196,25 @@ impl MarkedEventReceiver for SuricataYamlLoader {
             self.include = false;
             return;
         }
+
         match ev {
-            Event::DocumentStart => {
-                // do nothing
-            }
-            Event::DocumentEnd => {
-                match self.doc_stack.len() {
-                    // empty document
-                    0 => self.docs.push(Yaml::BadValue),
-                    1 => self.docs.push(self.doc_stack.pop().unwrap().0),
-                    _ => unreachable!(),
-                }
-            }
+            Event::DocumentStart => {}
+            Event::DocumentEnd => match self.doc_stack.len() {
+                0 => self.docs.push(ConfValue::BadValue),
+                1 => self.docs.push(self.doc_stack.pop().unwrap().0),
+                _ => unreachable!(),
+            },
             Event::SequenceStart(aid) => {
-                self.doc_stack.push((Yaml::Array(Vec::new()), aid));
+                self.doc_stack.push((ConfValue::Array(Vec::new()), aid));
             }
             Event::SequenceEnd => {
                 let node = self.doc_stack.pop().unwrap();
                 self.insert_new_node(node);
             }
             Event::MappingStart(aid) => {
-                self.doc_stack.push((Yaml::Hash(Hash::new()), aid));
-                self.key_stack.push(Yaml::BadValue);
+                self.doc_stack
+                    .push((ConfValue::Hash(LinkedHashMap::new()), aid));
+                self.key_stack.push(ConfValue::BadValue);
             }
             Event::MappingEnd => {
                 self.key_stack.pop().unwrap();
@@ -233,39 +230,41 @@ impl MarkedEventReceiver for SuricataYamlLoader {
                     self.load_include(&v, false);
                     return;
                 }
+                dbg!(style);
                 let node = if style != TScalarStyle::Plain {
-                    Yaml::String(v)
+                    ConfValue::String(StringValue::new(v))
                 } else if let Some(TokenType::Tag(ref handle, ref suffix)) = tag {
                     // XXX tag:yaml.org,2002:
+                    dbg!(handle);
                     if handle == "!!" {
                         match suffix.as_ref() {
                             "bool" => {
                                 // "true" or "false"
                                 match v.parse::<bool>() {
-                                    Err(_) => Yaml::BadValue,
-                                    Ok(v) => Yaml::Boolean(v),
+                                    Err(_) => ConfValue::BadValue,
+                                    Ok(v) => ConfValue::Boolean(v),
                                 }
                             }
                             "int" => match v.parse::<i64>() {
-                                Err(_) => Yaml::BadValue,
-                                Ok(v) => Yaml::Integer(v),
+                                Err(_) => ConfValue::BadValue,
+                                Ok(v) => ConfValue::Integer(v),
                             },
                             "float" => match parse_f64(&v) {
-                                Some(_) => Yaml::Real(v),
-                                None => Yaml::BadValue,
+                                Some(_) => ConfValue::Real(v),
+                                None => ConfValue::BadValue,
                             },
                             "null" => match v.as_ref() {
-                                "~" | "null" => Yaml::Null,
-                                _ => Yaml::BadValue,
+                                "~" | "null" => ConfValue::Null,
+                                _ => ConfValue::BadValue,
                             },
-                            _ => Yaml::String(v),
+                            _ => ConfValue::String(StringValue::new(v)),
                         }
                     } else {
-                        Yaml::String(v)
+                        ConfValue::String(StringValue::new(v))
                     }
                 } else {
                     // Datatype is not specified, or unrecognized
-                    Yaml::from_str(&v)
+                    ConfValue::from_str(&v)
                 };
 
                 self.insert_new_node((node, aid));
@@ -273,11 +272,13 @@ impl MarkedEventReceiver for SuricataYamlLoader {
             Event::Alias(id) => {
                 let n = match self.anchor_map.get(&id) {
                     Some(v) => v.clone(),
-                    None => Yaml::BadValue,
+                    None => ConfValue::BadValue,
                 };
                 self.insert_new_node((n, 0));
             }
-            _ => { /* ignore */ }
+            _ => {
+                // Ignored.
+            }
         }
     }
 }
@@ -291,8 +292,8 @@ fn is_include(token: &Option<TokenType>) -> bool {
     false
 }
 
-pub fn load_from_str(source: &str) -> Result<Vec<Yaml>, LoaderError> {
-    let mut loader = SuricataYamlLoader::new();
+pub fn load_from_str(source: &str) -> Result<Vec<ConfValue>, LoaderError> {
+    let mut loader = YamlLoader::new();
     let mut parser = yaml_rust::parser::Parser::new(source.chars());
     parser
         .load(&mut loader, true)
@@ -303,7 +304,7 @@ pub fn load_from_str(source: &str) -> Result<Vec<Yaml>, LoaderError> {
     Ok(loader.docs)
 }
 
-pub fn load_from_file<P: AsRef<Path>>(filename: P) -> Result<Vec<Yaml>, LoaderError> {
+pub fn load_from_file<P: AsRef<Path>>(filename: P) -> Result<Vec<ConfValue>, LoaderError> {
     let file = std::fs::File::open(&filename).map_err(|err| LoaderError::FileOpen {
         filename: filename.as_ref().display().to_string(),
         source: err,
@@ -318,7 +319,7 @@ pub fn load_from_file<P: AsRef<Path>>(filename: P) -> Result<Vec<Yaml>, LoaderEr
         }
     }
 
-    let mut loader = SuricataYamlLoader::new();
+    let mut loader = YamlLoader::new();
     loader.set_filename(&filename);
     let mut parser = yaml_rust::parser::Parser::new(FileCharIterator::new(file));
     parser
