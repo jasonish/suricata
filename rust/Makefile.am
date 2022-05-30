@@ -2,6 +2,7 @@ EXTRA_DIST =	src derive \
 		.cargo/config.in \
 		cbindgen.toml \
 		include/rust-bindings.h \
+		include/rust-config.h \
 		vendor
 
 if !DEBUG
@@ -51,6 +52,7 @@ endif
 			$(RUST_SURICATA_LIBDIR)/${RUST_SURICATA_LIBNAME}; \
 	fi
 	$(MAKE) target/include/rust-bindings.h
+	$(MAKE) target/include/rust-config.h
 
 install-library:
 	$(MKDIR_P) "$(DESTDIR)$(libdir)"
@@ -86,8 +88,13 @@ target/include/rust-bindings.h: $(RUST_SURICATA_LIB)
 	rm -f gen/rust-bindings.h
 	cbindgen --config $(abs_top_srcdir)/rust/cbindgen.toml \
 		--quiet --output $(abs_top_builddir)/rust/$@
+target/include/rust-config.h: $(RUST_SURICATA_LIB)
+	rm -f gen/rust-bindings.h
+	cbindgen --config $(abs_top_srcdir)/rust/cbindgen.toml \
+		--quiet --output $(abs_top_builddir)/rust/$@ config
 else
 target/include/rust-bindings.h:
+target/include/rust-config.h:
 endif
 
 # These targets for cbindgen are used during make dist, they are the same as
@@ -98,8 +105,12 @@ if HAVE_CBINDGEN
 include/rust-bindings.h:
 	cbindgen --config $(abs_top_srcdir)/rust/cbindgen.toml \
 		--quiet --output $(abs_top_builddir)/rust/$@
+include/rust-config.h:
+	cbindgen --config $(abs_top_srcdir)/rust/cbindgen.toml \
+		--quiet --output $(abs_top_builddir)/rust/$@ config
 else
 include/rust-bindings.h:
+include/rust-config.h:
 endif
 
 doc:
