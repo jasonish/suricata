@@ -41,6 +41,7 @@
 #include "util-unittest.h"
 #include "util-debug.h"
 #include "util-path.h"
+#include "rust-config.h"
 
 /** Maximum size of a complete domain name. */
 #define NODE_NAME_MAX 1024
@@ -218,6 +219,7 @@ ConfNode *ConfGetRootNode(void)
  */
 int ConfSet(const char *name, const char *val)
 {
+    RsConfSet(name, val);
     ConfNode *node = ConfGetNodeOrCreate(name, 0);
     if (node == NULL || node->final) {
         return 0;
@@ -379,6 +381,7 @@ int ConfGetChildValueWithDefault(const ConfNode *base, const ConfNode *dflt,
     return ret;
 }
 
+#if 0
 /**
  * \brief Retrieve a configuration value as an integer.
  *
@@ -420,6 +423,7 @@ int ConfGetInt(const char *name, intmax_t *val)
     *val = tmpint;
     return 1;
 }
+#endif
 
 int ConfGetChildValueInt(const ConfNode *base, const char *name, intmax_t *val)
 {

@@ -28,6 +28,65 @@ lazy_static! {
     static ref DEFAULT: RwLock<Yaml> = RwLock::new(Yaml::Hash(LinkedHashMap::new()));
 }
 
+pub trait SuricataYaml {
+    fn set_int(&mut self, key: &str, value: i64) -> bool;
+    fn set_from_str(&mut self, key: &str, value: &str) -> bool;
+}
+
+impl SuricataYaml for Yaml {
+    fn set_int(&mut self, key: &str, value: i64) -> bool {
+        let parts: Vec<&str> = key.splitn(2, '.').collect();
+        let key = Yaml::from_str(parts[0]);
+        match self {
+            Yaml::Hash(hash) => {
+                if parts.len() == 1 {
+                    match hash.get(&key) {
+                        None | Some(Yaml::Integer(_)) => {
+                            hash.insert(key, Yaml::Integer(value));
+                            return true;
+                        }
+                        _ => {
+                            return false;
+                        }
+                    }
+                } else {
+                    let entry = hash.entry(key).or_insert_with(|| Yaml::Hash(LinkedHashMap::new()));
+                    return entry.set_int(parts[1], value);
+                }
+            }
+            _ => {
+                return false;
+            }
+        }
+    }
+
+    fn set_from_str(&mut self, key: &str, value: &str) -> bool {
+        let parts: Vec<&str> = key.splitn(2, '.').collect();
+        let key = Yaml::from_str(parts[0]);
+        match self {
+            Yaml::Hash(hash) => {
+                if parts.len() == 1 {
+                    match hash.get(&key) {
+                        None | Some(Yaml::Integer(_)) => {
+                            hash.insert(key, Yaml::from_str(value));
+                            return true;
+                        }
+                        _ => {
+                            return false;
+                        }
+                    }
+                } else {
+                    let entry = hash.entry(key).or_insert_with(|| Yaml::Hash(LinkedHashMap::new()));
+                    return entry.set_from_str(parts[1], value);
+                }
+            }
+            _ => {
+                return false;
+            }
+        }
+    }
+}
+
 pub fn get_node<'a>(node: &'a Yaml, key: &str) -> Option<&'a Yaml> {
     let parts: Vec<&str> = key.splitn(2, '.').collect();
     if parts.is_empty() {
@@ -70,5 +129,25 @@ mod test {
 
         let node = get_node(&config, "nested.aaa").unwrap();
         assert_eq!(node.as_str().unwrap(), "bbb");
+    }
+
+    #[test]
+    fn test_set_int() {
+        let mut config = Yaml::Hash(LinkedHashMap::new());
+        config.set_int("foo", 1);
+        assert_eq!(config["foo"], Yaml::Integer(1));
+
+        config.set_int("foo", 2);
+        assert_eq!(config["foo"], Yaml::Integer(2));
+
+        config.set_int("bar.foo", 3);
+        assert_eq!(config["bar"]["foo"], Yaml::Integer(3));
+
+        config.set_int("bar.far", 4);
+        assert_eq!(config["bar"]["far"], Yaml::Integer(4));
+
+        // This will fail as bar is a hash, so we can't set it to a value of a different
+        // type.
+        assert_eq!(config.set_int("bar", 5), false);
     }
 }

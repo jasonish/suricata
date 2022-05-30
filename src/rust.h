@@ -23,6 +23,7 @@
 typedef struct HttpRangeContainerBlock HttpRangeContainerBlock;
 #include "rust-context.h"
 #include "rust-bindings.h"
+#include "rust-config.h"
 
 /* Some manual exports from Rust as we are not yet exporting constants with
  * cbindgen. */

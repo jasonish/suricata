@@ -14,7 +14,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
 
-use crate::{get_node, DEFAULT};
+use crate::{get_node, DEFAULT, SuricataYaml};
 use lazy_static::lazy_static;
 use std::collections::HashMap;
 use std::ffi::{CStr, CString};
@@ -28,7 +28,7 @@ lazy_static! {
 
 #[allow(non_snake_case)]
 #[no_mangle]
-pub unsafe extern "C" fn ConfGet(key: *const c_char, vptr: *mut *const c_char) -> c_int {
+pub unsafe extern "C" fn NewConfGet(key: *const c_char, vptr: *mut *const c_char) -> c_int {
     let key = match CStr::from_ptr(key).to_str() {
         Ok(key) => key,
         Err(_) => return -1,
@@ -58,15 +58,34 @@ pub unsafe extern "C" fn ConfGet(key: *const c_char, vptr: *mut *const c_char) -
 pub unsafe extern "C" fn ConfGetInt(key: *const c_char, vptr: *mut i64) -> c_int {
     let key = match CStr::from_ptr(key).to_str() {
         Ok(key) => key,
-        Err(_) => return -1,
+        Err(_) => return 0,
     };
     let root = DEFAULT.read().unwrap();
-    let node = get_node(&*root, key).unwrap();
-    if let Some(n) = node.as_i64() {
-        *vptr = n;
-        0
+    if let Some(node) = get_node(&*root, key) {
+        if let Some(n) = node.as_i64() {
+            *vptr = n;
+            return 1;
+        }
+    }
+    0
+}
+
+#[allow(non_snake_case)]
+#[no_mangle]
+pub unsafe extern "C" fn RsConfSet(key: *const c_char, value: *const c_char) -> c_int {
+    let key = match CStr::from_ptr(key).to_str() {
+        Ok(cs) => cs,
+        Err(_) => return 0,
+    };
+    let value = match CStr::from_ptr(value).to_str() {
+        Ok(cs) => cs,
+        Err(_) => return 0,
+    };
+    let mut root = DEFAULT.write().unwrap();
+    if root.set_from_str(key, value) {
+        1
     } else {
-        -1
+        0
     }
 }
 
@@ -87,7 +106,7 @@ mod test {
 
         let key = CString::new("nested.aaa").unwrap();
         let mut value: *const c_char = std::ptr::null();
-        let rc = unsafe { ConfGet(key.as_ptr(), &mut value) };
+        let rc = unsafe { NewConfGet(key.as_ptr(), &mut value) };
         assert_eq!(rc, 0);
         assert_ne!(value, std::ptr::null());
         let expected = CString::new("bbb").unwrap();
@@ -107,7 +126,7 @@ mod test {
         let mut vptr: i64 = -1;
         let key = CString::new("nested.int").unwrap();
         let rc = unsafe { ConfGetInt(key.as_ptr() as *mut _, &mut vptr) };
-        assert_eq!(rc, 0);
+        assert_eq!(rc, 1);
         assert_eq!(vptr, 999);
     }
 }
