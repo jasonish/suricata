@@ -31,9 +31,23 @@ lazy_static! {
 pub trait SuricataYaml {
     fn set_int(&mut self, key: &str, value: i64) -> bool;
     fn set_from_str(&mut self, key: &str, value: &str) -> bool;
+
+    /// The legacy Yaml handling in Suricata treated strings with certain values as truthy
+    /// for boolean values, such as "yes", or "on", or "1". This method gives an interface
+    /// that is compatible with that logic.
+    fn is_true(&self) -> bool;
 }
 
 impl SuricataYaml for Yaml {
+    fn is_true(&self) -> bool {
+        match self {
+            Yaml::Boolean(v) => *v,
+            Yaml::String(v) => matches!(v.to_lowercase().as_str(), "1" | "yes" | "true" | "on"),
+            Yaml::Integer(v) => *v != 0,
+            _ => false,
+        }
+    }
+
     fn set_int(&mut self, key: &str, value: i64) -> bool {
         let parts: Vec<&str> = key.splitn(2, '.').collect();
         let key = Yaml::from_str(parts[0]);
@@ -43,20 +57,18 @@ impl SuricataYaml for Yaml {
                     match hash.get(&key) {
                         None | Some(Yaml::Integer(_)) => {
                             hash.insert(key, Yaml::Integer(value));
-                            return true;
+                            true
                         }
-                        _ => {
-                            return false;
-                        }
+                        _ => false,
                     }
                 } else {
-                    let entry = hash.entry(key).or_insert_with(|| Yaml::Hash(LinkedHashMap::new()));
-                    return entry.set_int(parts[1], value);
+                    let entry = hash
+                        .entry(key)
+                        .or_insert_with(|| Yaml::Hash(LinkedHashMap::new()));
+                    entry.set_int(parts[1], value)
                 }
             }
-            _ => {
-                return false;
-            }
+            _ => false,
         }
     }
 
@@ -69,20 +81,18 @@ impl SuricataYaml for Yaml {
                     match hash.get(&key) {
                         None | Some(Yaml::Integer(_)) => {
                             hash.insert(key, Yaml::from_str(value));
-                            return true;
+                            true
                         }
-                        _ => {
-                            return false;
-                        }
+                        _ => false,
                     }
                 } else {
-                    let entry = hash.entry(key).or_insert_with(|| Yaml::Hash(LinkedHashMap::new()));
-                    return entry.set_from_str(parts[1], value);
+                    let entry = hash
+                        .entry(key)
+                        .or_insert_with(|| Yaml::Hash(LinkedHashMap::new()));
+                    entry.set_from_str(parts[1], value)
                 }
             }
-            _ => {
-                return false;
-            }
+            _ => false,
         }
     }
 }
