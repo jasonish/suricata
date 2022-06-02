@@ -975,6 +975,10 @@ static TmEcode LoadYamlConfig(SCInstance *suri)
         SCReturnInt(TM_ECODE_FAILED);
     }
 
+    if (!config_load_yaml(suri->conf_filename)) {
+        SCReturnInt(TM_ECODE_FAILED);
+    }
+
     SCReturnInt(TM_ECODE_OK);
 }
 
