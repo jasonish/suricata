@@ -208,7 +208,7 @@ pub unsafe extern "C" fn ScConfHashGet(node: &Yaml, key: *const c_char) -> *cons
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::{loader, set_default};
+    use crate::{loader, set_global};
 
     #[test]
     fn test_ffi_conf_get() {
@@ -218,7 +218,7 @@ mod test {
             aaa: bbb
         "#;
         let config = loader::load_from_str(doc).unwrap().pop().unwrap();
-        set_default(config);
+        set_global(config);
 
         let key = CString::new("nested.aaa").unwrap();
         let mut value: *const c_char = std::ptr::null();
@@ -238,7 +238,7 @@ mod test {
             int: 999
         "#;
         let config = loader::load_from_str(doc).unwrap().pop().unwrap();
-        set_default(config);
+        set_global(config);
         let mut vptr: i64 = -1;
         let key = CString::new("nested.int").unwrap();
         let rc = unsafe { ScConfGetInt(key.as_ptr() as *mut _, &mut vptr) };
