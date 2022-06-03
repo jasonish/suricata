@@ -35,6 +35,6 @@ pub unsafe extern "C" fn config_load_yaml(filename: *const c_char) -> bool {
             return false;
         }
     };
-    suricata_config::set_default(config);
+    suricata_config::set_global(config);
     true
 }

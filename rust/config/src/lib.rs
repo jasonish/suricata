@@ -115,7 +115,7 @@ pub fn get_node<'a>(node: &'a Yaml, key: &str) -> Option<&'a Yaml> {
     None
 }
 
-pub fn set_default(yaml: Yaml) {
+pub fn set_global(yaml: Yaml) {
     let mut default = GLOBAL.write().unwrap();
     *default = yaml;
 }
