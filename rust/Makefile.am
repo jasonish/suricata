@@ -1,4 +1,4 @@
-EXTRA_DIST =	src derive \
+EXTRA_DIST =	src derive config \
 		.cargo/config.in \
 		cbindgen.toml \
 		include/rust-bindings.h \
