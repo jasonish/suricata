@@ -734,6 +734,107 @@ void ConfNodeDump(const ConfNode *node, const char *prefix)
     level--;
 }
 
+void ConfNodeFromYaml(Yaml *yaml, ConfNode *node, bool in_vars) {
+    switch (ScYamlGetType(yaml)) {
+    case SC_YAML_TYPE_NULL:
+	// Do nothing, leaves value as null.
+	break;
+    case SC_YAML_TYPE_BOOLEAN:
+    case SC_YAML_TYPE_INTEGER:
+    case SC_YAML_TYPE_REAL:
+    case SC_YAML_TYPE_STRING: {
+	const char *value = ScConfValueString(yaml);
+	if (value != NULL) {
+	    if ((node->val = SCStrdup(value)) == NULL) {
+		return;
+	    }
+	}
+	break;
+    }
+    case SC_YAML_TYPE_HASH: {
+	YamlHashIter *iter = ScConfHashIter(yaml);
+	if (iter == NULL) {
+	    return;
+	}
+	const char *key = NULL;
+	Yaml *yaml_child = NULL;
+	while (ScConfHashIterNext(iter, &key, &yaml_child)) {
+	    /* Legacy compatibility. The old loader will set the value
+	     * of a hash node containing a hash, to the key of the
+	     * first entry in the hash.
+	     *
+	     * Parts of the Suricata code that depend on this should
+	     * be fixed. */
+	    if (node->val == NULL) {
+		node->val = SCStrdup(key);
+	    }
+	    switch (ScYamlGetType(yaml_child)) {
+	    case SC_YAML_TYPE_BOOLEAN:
+	    case SC_YAML_TYPE_INTEGER:
+	    case SC_YAML_TYPE_REAL:
+	    case SC_YAML_TYPE_HASH:
+	    case SC_YAML_TYPE_ARRAY:
+	    case SC_YAML_TYPE_NULL:
+	    case SC_YAML_TYPE_STRING: {
+		ConfNode *new = ConfNodeNew();
+		if (new == NULL) {
+		    break;
+		}
+		if ((new->name = SCStrdup(key)) == NULL) {
+		    ConfNodeFree(new);
+		    break;
+		}
+		if (!in_vars) {
+		    char *c;
+		    while ((c = strchr(new->name, '_'))) {
+			*c = '-';
+		    }
+		}
+		if (strcmp(key, "vars") == 0) {
+		    in_vars = true;
+		}
+		ConfNodeFromYaml(yaml_child, new, in_vars);
+		TAILQ_INSERT_TAIL(&node->head, new, next);
+		break;
+	    }
+	    default:
+		break;
+	    }
+	}
+	ScConfHashIterFree(iter);
+	break;
+    }
+    case SC_YAML_TYPE_ARRAY: {
+	char sequence_name[5];
+	node->is_seq = 1;
+	int count = 0;
+	Yaml *elem = NULL;
+	YamlArrayIter *iter = ScConfArrayIter(yaml);
+	if (iter == NULL) {
+	    return;
+	}
+	while (ScConfArrayIterNext(iter, &elem)) {
+	    snprintf(sequence_name, 4, "%d", count);
+	    ConfNode *new = ConfNodeNew();
+	    if (new == NULL) {
+		break;
+	    }
+	    if ((new->name = SCStrdup(sequence_name)) == NULL) {
+		ConfNodeFree(new);
+		break;
+	    }
+	    ConfNodeFromYaml(elem, new, false);
+	    TAILQ_INSERT_TAIL(&node->head, new, next);
+	    count += 1;
+	}
+	ScConfArrayIterFree(iter);
+	break;
+    }
+    default:
+	break;
+    }
+}
+
 /**
  * \brief Dump configuration to stdout.
  */

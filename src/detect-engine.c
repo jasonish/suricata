@@ -4696,8 +4696,8 @@ static int DetectEngineTest01(void)
     DetectEngineCtx *de_ctx = DetectEngineCtxInit();
     FAIL_IF_NULL(de_ctx);
 
+    ConfDump();
     FAIL_IF_NOT(de_ctx->inspection_recursion_limit == -1);
-
     DetectEngineCtxFree(de_ctx);
 
     DetectEngineDeInitYamlConf();

@@ -17,6 +17,7 @@
 mod ffi;
 mod file;
 pub mod loader;
+pub mod printer;
 
 pub use crate::loader::LoaderError;
 use lazy_static::lazy_static;
@@ -26,6 +27,16 @@ pub use yaml_rust::Yaml;
 
 lazy_static! {
     static ref GLOBAL: RwLock<Yaml> = RwLock::new(Yaml::Hash(LinkedHashMap::new()));
+    static ref DEFAULT: Yaml = build_default();
+}
+
+pub fn build_default() -> Yaml {
+    let default_string = include_str!("default.yaml");
+    let default = loader::load_from_str(default_string)
+        .unwrap()
+        .pop()
+        .unwrap();
+    default
 }
 
 pub trait SuricataYaml {
@@ -36,6 +47,8 @@ pub trait SuricataYaml {
     /// for boolean values, such as "yes", or "on", or "1". This method gives an interface
     /// that is compatible with that logic.
     fn is_true(&self) -> bool;
+
+    fn get_node(&self, key: &str) -> Option<&Yaml>;
 }
 
 impl SuricataYaml for Yaml {
@@ -95,6 +108,24 @@ impl SuricataYaml for Yaml {
             _ => false,
         }
     }
+
+    fn get_node(&self, key: &str) -> Option<&Yaml> {
+        let parts: Vec<&str> = key.splitn(2, '.').collect();
+        if parts.is_empty() {
+            return None;
+        }
+        if let Yaml::Hash(hash) = self {
+            let key = Yaml::from_str(parts[0]);
+            if let Some(node) = hash.get(&key) {
+                if parts.len() == 1 {
+                    return Some(node);
+                } else {
+                    return node.get_node(parts[1]);
+                }
+            }
+        }
+        None
+    }
 }
 
 pub fn get_node<'a>(node: &'a Yaml, key: &str) -> Option<&'a Yaml> {
@@ -120,9 +151,74 @@ pub fn set_global(yaml: Yaml) {
     *default = yaml;
 }
 
+/// Merge Yaml b into a.
+///
+/// This really only deals with hashes. All over types, including lists are terminal
+/// values that the merge does not descend into.
+pub fn merge(a: &mut Yaml, b: &Yaml) {
+    match b {
+        Yaml::Hash(b) => {
+            if let Yaml::Hash(ahash) = a {
+                for (k, v) in b {
+                    // Skip object defaults that are not part of the running config.
+                    if k.as_str() == Some("__defaults") {
+                        continue;
+                    }
+                    if ahash.contains_key(k) {
+                        merge(ahash.get_mut(k).unwrap(), v);
+                    } else {
+                        ahash.insert(k.clone(), v.clone());
+                    }
+                }
+            }
+        }
+        Yaml::Array(_)
+        | Yaml::String(_)
+        | Yaml::Boolean(_)
+        | Yaml::Integer(_)
+        | Yaml::Null
+        | Yaml::Real(_)
+        | Yaml::Alias(_)
+        | Yaml::BadValue => {}
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::loader::load_from_str;
+    use crate::printer::print_node;
+
+    #[test]
+    fn test_merge() {
+        let default = DEFAULT.clone();
+
+        let user_config = r#"
+        outputs:
+          - fast:
+              enabled: yes
+        "#;
+        let mut user = load_from_str(user_config).unwrap().pop().unwrap();
+
+        // Merge default into user.
+        merge(&mut user, &default);
+
+        // Now do some business logic merging.
+        if let Yaml::Array(outputs) = &user["outputs"] {
+            for output in outputs {
+                if let Yaml::Hash(hash) = output {
+                    for (k, _v) in hash {
+                        if let Yaml::String(_k) = k {
+                            let defaults = DEFAULT.get_node("outputs");
+                            dbg!(defaults);
+                        }
+                    }
+                }
+            }
+        }
+
+        print_node(&user, vec![]);
+    }
 
     #[test]
     fn test_get_node() {

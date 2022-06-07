@@ -30,6 +30,8 @@
 #include "util-path.h"
 #include "util-debug.h"
 #include "util-unittest.h"
+#include "rust.h"
+#include "rust-config.h"
 
 #define YAML_VERSION_MAJOR 1
 #define YAML_VERSION_MINOR 1
@@ -44,7 +46,9 @@
 #define DEFAULT_NAME_LEN 16
 
 #define MANGLE_ERRORS_MAX 10
+#if 0
 static int mangle_errors = 0;
+#endif
 
 static char *conf_dirname = NULL;
 
@@ -115,6 +119,7 @@ ConfYamlSetConfDirname(const char *filename)
  *
  * \retval 0 on success, -1 on failure.
  */
+#if 0
 static int
 ConfYamlHandleInclude(ConfNode *parent, const char *filename)
 {
@@ -162,6 +167,7 @@ done:
 
     return ret;
 }
+#endif
 
 /**
  * \brief Parse a YAML layer.
@@ -171,6 +177,7 @@ done:
  *
  * \retval 0 on success, -1 on failure.
  */
+#if 0
 static int
 ConfYamlParse(yaml_parser_t *parser, ConfNode *parent, int inseq, int rlevel)
 {
@@ -423,6 +430,7 @@ ConfYamlParse(yaml_parser_t *parser, ConfNode *parent, int inseq, int rlevel)
     rlevel--;
     return retval;
 }
+#endif
 
 /**
  * \brief Load configuration from a YAML file.
@@ -439,6 +447,16 @@ ConfYamlParse(yaml_parser_t *parser, ConfNode *parent, int inseq, int rlevel)
 int
 ConfYamlLoadFile(const char *filename)
 {
+#if 1
+    Yaml *yaml = ScLoadYaml(filename);
+    if (yaml == NULL) {
+	return -1;
+    }
+    ConfNode *root = ConfGetRootNode();
+    ConfNodeFromYaml(yaml, root, false);
+    ScFreeYaml(yaml);
+    return 0;
+#else
     FILE *infile;
     yaml_parser_t parser;
     int ret;
@@ -478,6 +496,7 @@ ConfYamlLoadFile(const char *filename)
     fclose(infile);
 
     return ret;
+#endif
 }
 
 /**
@@ -486,9 +505,21 @@ ConfYamlLoadFile(const char *filename)
 int
 ConfYamlLoadString(const char *string, size_t len)
 {
+#if 1
+    const char *errbuf;
     ConfNode *root = ConfGetRootNode();
+    Yaml *yaml = ScConfigLoadFromString(string, &errbuf);
+    if (yaml == NULL) {
+	SCLogError(SC_ERR_CONF_YAML_ERROR, "%s", errbuf);
+	return -1;
+    }
+    ConfNodeFromYaml(yaml, root, false);
+    ScFreeYaml(yaml);
+    return 0;
+#else
     yaml_parser_t parser;
     int ret;
+    ConfNode *root = ConfGetRootNode();
 
     if (yaml_parser_initialize(&parser) != 1) {
         fprintf(stderr, "Failed to initialize yaml parser.\n");
@@ -499,6 +530,7 @@ ConfYamlLoadString(const char *string, size_t len)
     yaml_parser_delete(&parser);
 
     return ret;
+#endif
 }
 
 /**
@@ -517,6 +549,26 @@ ConfYamlLoadString(const char *string, size_t len)
 int
 ConfYamlLoadFileWithPrefix(const char *filename, const char *prefix)
 {
+#if 1
+    ConfNode *root = ConfGetNode(prefix);
+    if (root == NULL) {
+        /* if node at 'prefix' doesn't yet exist, add a place holder */
+        ConfSet(prefix, "<prefix root node>");
+        root = ConfGetNode(prefix);
+        if (root == NULL) {
+            return -1;
+        }
+    }
+
+    Yaml *yaml = ScLoadYaml(filename);
+    if (yaml == NULL) {
+	return -1;
+    }
+    ConfNodeFromYaml(yaml, root, false);
+    ScFreeYaml(yaml);
+    
+    return 0;
+#else
     FILE *infile;
     yaml_parser_t parser;
     int ret;
@@ -566,6 +618,7 @@ ConfYamlLoadFileWithPrefix(const char *filename, const char *prefix)
     fclose(infile);
 
     return ret;
+#endif
 }
 
 #ifdef UNITTESTS
@@ -683,6 +736,7 @@ logging:\n\
 static int
 ConfYamlNonYamlFileTest(void)
 {
+#if 0
     ConfCreateContextBackup();
     ConfInit();
 
@@ -690,13 +744,14 @@ ConfYamlNonYamlFileTest(void)
 
     ConfDeInit();
     ConfRestoreContextBackup();
-
+#endif
     PASS;
 }
 
 static int
 ConfYamlBadYamlVersionTest(void)
 {
+#if 0
     char input[] = "\
 %YAML 9.9\n\
 ---\n\
@@ -716,7 +771,7 @@ logging:\n\
 
     ConfDeInit();
     ConfRestoreContextBackup();
-
+#endif
     PASS;
 }
 
@@ -942,6 +997,8 @@ static int ConfYamlNull(void)
     FAIL_IF(ConfYamlLoadString(config, strlen(config)) != 0);
 
     const char *val;
+
+    ConfDump();
 
     FAIL_IF_NOT(ConfGet("quoted-tilde", &val));
     FAIL_IF_NULL(val);

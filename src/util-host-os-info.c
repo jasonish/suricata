@@ -1433,8 +1433,7 @@ host-os-policy:\n\
     ConfYamlLoadString(config, strlen(config));
 
     ConfNode *root = ConfGetNode("host-os-policy");
-    if (root == NULL)
-        goto end;
+    FAIL_IF_NULL(root);
 
     int count = 0;
 
@@ -1442,24 +1441,21 @@ host-os-policy:\n\
     TAILQ_FOREACH(policy, &root->head, next) {
         switch (count) {
             case 0:
-                if (strcmp("one-two", policy->name) != 0)
-                    goto end;
+                FAIL_IF(strcmp("one-two", policy->name) != 0);
                 break;
             case 1:
-                if (strcmp("one-two-three", policy->name) != 0)
-                    goto end;
+                FAIL_IF(strcmp("one-two-three", policy->name) != 0);
                 break;
             case 2:
-                if (strcmp("four-five", policy->name) != 0)
-                    goto end;
+		ConfDump();
+		printf("four-five: %s\n", policy->name);
+                FAIL_IF(strcmp("four-five", policy->name) != 0);
                 break;
             case 3:
-                if (strcmp("six-seven-eight", policy->name) != 0)
-                    goto end;
+                FAIL_IF(strcmp("six-seven-eight", policy->name) != 0);
                 break;
             case 4:
-                if (strcmp("nine-ten-eleven", policy->name) != 0)
-                    goto end;
+                FAIL_IF(strcmp("nine-ten-eleven", policy->name) != 0);
                 break;
         }
         count++;
@@ -1467,7 +1463,6 @@ host-os-policy:\n\
 
     result = 1;
 
- end:
     ConfDeInit();
     ConfRestoreContextBackup();
 

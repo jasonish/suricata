@@ -17,24 +17,50 @@
 
 use std::ffi::CStr;
 use std::os::raw::c_char;
+use suricata_config::Yaml;
+
+// #[no_mangle]
+// pub unsafe extern "C" fn config_load_yaml(filename: *const c_char) -> bool {
+//     let filename = match CStr::from_ptr(filename).to_str() {
+//         Ok(cs) => cs,
+//         Err(err) => {
+//             SCLogError!("Failed to convert C filename to UTF-8: {:?}", err);
+//             return false;
+//         }
+//     };
+//
+//     let config = match suricata_config::loader::load_from_file(filename) {
+//         Ok(mut docs) => docs.pop().unwrap(),
+//         Err(err) => {
+//             SCLogError!("Failed to load {}: {:?}", filename, err);
+//             return false;
+//         }
+//     };
+//     suricata_config::set_global(config);
+//     true
+// }
 
 #[no_mangle]
-pub unsafe extern "C" fn config_load_yaml(filename: *const c_char) -> bool {
+pub unsafe extern "C" fn ScLoadYaml(filename: *const c_char) -> *mut Yaml {
     let filename = match CStr::from_ptr(filename).to_str() {
         Ok(cs) => cs,
         Err(err) => {
             SCLogError!("Failed to convert C filename to UTF-8: {:?}", err);
-            return false
-        },
+            return std::ptr::null_mut();
+        }
     };
 
     let config = match suricata_config::loader::load_from_file(filename) {
         Ok(mut docs) => docs.pop().unwrap(),
         Err(err) => {
             SCLogError!("Failed to load {}: {:?}", filename, err);
-            return false;
+            return std::ptr::null_mut();
         }
     };
-    suricata_config::set_global(config);
-    true
+    Box::into_raw(Box::new(config)) as *const _ as *mut _
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn ScFreeYaml(yaml: *mut Yaml) {
+    let _ = Box::from_raw(yaml);
 }
