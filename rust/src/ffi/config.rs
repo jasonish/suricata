@@ -15,26 +15,56 @@
  * 02110-1301, USA.
  */
 
-use std::ffi::CStr;
+use std::ffi::{CStr, CString};
 use std::os::raw::c_char;
+use suricata_config::{LoaderError, Yaml};
+
+pub const SC_CONFIG_ERRBUF_SIZE: usize = 4096;
 
 #[no_mangle]
-pub unsafe extern "C" fn config_load_yaml(filename: *const c_char) -> bool {
+pub unsafe extern "C" fn ScLoadYaml2(filename: *const c_char, errbuf: *mut c_char) -> *mut Yaml {
     let filename = match CStr::from_ptr(filename).to_str() {
         Ok(cs) => cs,
         Err(err) => {
             SCLogError!("Failed to convert C filename to UTF-8: {:?}", err);
-            return false
-        },
+            return std::ptr::null_mut();
+        }
     };
 
     let config = match suricata_config::loader::load_from_file(filename) {
         Ok(mut docs) => docs.pop().unwrap(),
         Err(err) => {
-            SCLogError!("Failed to load {}: {:?}", filename, err);
-            return false;
+            let error = match err {
+                LoaderError::NotAFile(_) => "Provided filename is not a file".to_string(),
+                LoaderError::YamlScanError { filename, source } => {
+                    let error = format!(
+                        "YAML scan error at line {}, col {}",
+                        source.marker().line(),
+                        source.marker().col()
+                    );
+
+                    // Include the filename if there is one, the error could originate
+                    // from an include.
+                    if let Some(filename) = filename {
+                        format!("{}, filename={}", error, filename)
+                    } else {
+                        error
+                    }
+                }
+                _ => {
+                    format!("{:?}", err)
+                }
+            };
+            let error = CString::new(error).unwrap();
+            let size = std::cmp::min(error.as_bytes_with_nul().len(), SC_CONFIG_ERRBUF_SIZE);
+            std::ptr::copy_nonoverlapping(error.as_ptr(), errbuf, size);
+            return std::ptr::null_mut();
         }
     };
-    suricata_config::set_global(config);
-    true
+    Box::into_raw(Box::new(config)) as *const _ as *mut _
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn ScFreeYaml(yaml: *mut Yaml) {
+    let _ = Box::from_raw(yaml);
 }

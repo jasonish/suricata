@@ -3,6 +3,9 @@ name = "suricata-config"
 version = "@PACKAGE_VERSION@"
 edition = "2018"
 
+[lib]
+path = "@e_rustdir@/config/src/lib.rs"
+
 [dependencies]
 yaml-rust = { version = "0.4" }
 linked-hash-map = { version = "0.5.4" }
