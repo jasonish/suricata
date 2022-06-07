@@ -288,7 +288,6 @@ mod test {
     use super::*;
     use crate::{loader, set_global};
 
-    #[test]
     fn test_ffi_conf_get() {
         let doc = r#"
         simple: value
@@ -308,7 +307,6 @@ mod test {
         assert_eq!(expected, actual);
     }
 
-    #[test]
     fn test_ffi_conf_getint() {
         let doc = r#"
         simple: value
@@ -322,5 +320,11 @@ mod test {
         let rc = unsafe { ScConfGetInt(key.as_ptr() as *mut _, &mut vptr) };
         assert_eq!(rc, 1);
         assert_eq!(vptr, 999);
+    }
+
+    #[test]
+    fn run_tests() {
+        test_ffi_conf_get();
+        test_ffi_conf_getint();
     }
 }
