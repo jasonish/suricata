@@ -68,7 +68,7 @@ pub unsafe extern "C" fn ScConfigLoadFromString(
         Err(err) => {
             let error = format!("Failed to load config from string: {:?}", err);
             *errptr = get_cstring(&error);
-            return std::ptr::null_mut();
+            std::ptr::null_mut()
         }
     }
 }
@@ -238,7 +238,7 @@ pub unsafe extern "C" fn ScConfValueString(node: &Yaml) -> *const c_char {
         Yaml::String(s) => get_cstring(s),
         Yaml::Boolean(v) => get_cstring(&*v.to_string()),
         Yaml::Integer(v) => get_cstring(&*v.to_string()),
-        Yaml::Real(v) => get_cstring(&v.to_string()),
+        Yaml::Real(v) => get_cstring(v),
         Yaml::Null => get_cstring("~"),
         _ => std::ptr::null(),
     }

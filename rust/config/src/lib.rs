@@ -32,11 +32,10 @@ lazy_static! {
 
 pub fn build_default() -> Yaml {
     let default_string = include_str!("default.yaml");
-    let default = loader::load_from_str(default_string)
+    loader::load_from_str(default_string)
         .unwrap()
         .pop()
-        .unwrap();
-    default
+        .unwrap()
 }
 
 pub trait SuricataYaml {
