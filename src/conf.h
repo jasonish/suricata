@@ -25,6 +25,7 @@
 #define __CONF_H__
 
 #include "queue.h"
+#include "rust-config.h"
 
 /**
  * Structure of a configuration parameter.
@@ -97,5 +98,7 @@ int ConfNodeIsSequence(const ConfNode *node);
 ConfNode *ConfSetIfaceNode(const char *ifaces_node_name, const char *iface);
 int ConfSetRootAndDefaultNodes(
         const char *ifaces_node_name, const char *iface, ConfNode **if_root, ConfNode **if_default);
+
+void ConfNodeFromYaml(Yaml *yaml, ConfNode *root, bool);
 
 #endif /* ! __CONF_H__ */

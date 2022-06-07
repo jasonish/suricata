@@ -24,6 +24,8 @@
 #ifndef __CONF_YAML_LOADER_H__
 #define __CONF_YAML_LOADER_H__
 
+#include "rust-config.h"
+
 int ConfYamlLoadFile(const char *);
 int ConfYamlLoadString(const char *, size_t);
 int ConfYamlLoadFileWithPrefix(const char *filename, const char *prefix);

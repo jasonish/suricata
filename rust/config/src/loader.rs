@@ -129,6 +129,9 @@ impl SuricataYamlLoader {
     }
 
     fn is_key(&self) -> bool {
+        if self.doc_stack.is_empty() {
+            return false;
+        }
         let parent = self.doc_stack.last().unwrap();
         if let (Yaml::Hash(_), _) = *parent {
             let cur_key = self.key_stack.last().unwrap();
@@ -268,7 +271,11 @@ impl MarkedEventReceiver for SuricataYamlLoader {
                     }
                 } else {
                     // Datatype is not specified, or unrecognized
-                    Yaml::from_str(&v)
+                    match v.to_lowercase().as_ref() {
+                        // Suricata accepts any form of unquoted "null" as a null.
+                        "null" => Yaml::Null,
+                        _ => Yaml::from_str(&v),
+                    }
                 };
 
                 self.insert_new_node((node, aid));

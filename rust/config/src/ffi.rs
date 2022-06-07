@@ -22,6 +22,19 @@ use std::os::raw::{c_char, c_int};
 use std::sync::Mutex;
 pub use yaml_rust::Yaml;
 
+#[repr(C)]
+#[derive(Debug)]
+pub enum ScYamlType {
+    Unknown = 0,
+    Hash,
+    Array,
+    String,
+    Boolean,
+    Integer,
+    Real,
+    Null,
+}
+
 lazy_static! {
     static ref CSTRINGS: Mutex<HashMap<String, CString>> = Mutex::new(HashMap::new());
 }
@@ -35,6 +48,29 @@ fn get_cstring(value: &str) -> *const c_char {
     let cstring = CString::new(value).unwrap();
     cstrings.insert(value.to_string(), cstring);
     cstrings.get(value).unwrap().as_ptr()
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn ScConfigLoadFromString(
+    input: *const c_char, errptr: *mut *const c_char,
+) -> *mut Yaml {
+    let input = match CStr::from_ptr(input).to_str() {
+        Ok(input) => input,
+        Err(err) => {
+            let error = format!("Failed to convert input to UTF-8: {:?}", err);
+            *errptr = get_cstring(&error);
+            return std::ptr::null_mut();
+        }
+    };
+
+    match crate::loader::load_from_str(input) {
+        Ok(mut config) => Box::into_raw(Box::new(config.pop().unwrap())),
+        Err(err) => {
+            let error = format!("Failed to load config from string: {:?}", err);
+            *errptr = get_cstring(&error);
+            return std::ptr::null_mut();
+        }
+    }
 }
 
 #[no_mangle]
@@ -98,10 +134,10 @@ pub unsafe extern "C" fn ScConfArrayIter(node: &'static Yaml) -> *mut YamlArrayI
 
 #[no_mangle]
 pub unsafe extern "C" fn ScConfArrayIterNext(
-    iter: &mut YamlArrayIter, vptr: *mut *const Yaml,
+    iter: &mut YamlArrayIter, vptr: *mut *mut Yaml,
 ) -> bool {
     if let Some(next) = iter.0.next() {
-        *vptr = next as *const _;
+        *vptr = next as *const _ as *mut _;
         true
     } else {
         false
@@ -143,13 +179,18 @@ pub unsafe extern "C" fn ScConfHashIterNext(
     iter: *mut YamlHashIter, kptr: *mut *const c_char, vptr: *mut *mut Yaml,
 ) -> bool {
     if let Some((key, val)) = (*iter).0.next() {
-        if let Some(key) = key.as_str() {
-            *kptr = get_cstring(key) as *mut _;
-            *vptr = val as *const _ as *mut _;
-            return true;
-        }
+        let xkey = match key {
+            Yaml::String(v) | Yaml::Real(v) => v.to_string(),
+            Yaml::Integer(v) => v.to_string(),
+            Yaml::Boolean(v) => v.to_string(),
+            _ => return false,
+        };
+        *kptr = get_cstring(&xkey) as *mut _;
+        *vptr = val as *const _ as *mut _;
+        true
+    } else {
+        false
     }
-    false
 }
 
 /// Free a HashIter returned from ScConfHashIter.
@@ -192,6 +233,18 @@ pub unsafe extern "C" fn ScConfValueIsTrue(value: *const Yaml) -> bool {
 }
 
 #[no_mangle]
+pub unsafe extern "C" fn ScConfValueString(node: &Yaml) -> *const c_char {
+    match node {
+        Yaml::String(s) => get_cstring(s),
+        Yaml::Boolean(v) => get_cstring(&*v.to_string()),
+        Yaml::Integer(v) => get_cstring(&*v.to_string()),
+        Yaml::Real(v) => get_cstring(&v.to_string()),
+        Yaml::Null => get_cstring("~"),
+        _ => std::ptr::null(),
+    }
+}
+
+#[no_mangle]
 pub unsafe extern "C" fn ScConfHashGet(node: &Yaml, key: *const c_char) -> *const Yaml {
     let key = match CStr::from_ptr(key).to_str() {
         Ok(s) => Yaml::from_str(s),
@@ -203,6 +256,31 @@ pub unsafe extern "C" fn ScConfHashGet(node: &Yaml, key: *const c_char) -> *cons
     } else {
         std::ptr::null()
     }
+}
+
+#[no_mangle]
+pub extern "C" fn ScYamlGetType(node: &Yaml) -> ScYamlType {
+    match node {
+        Yaml::Hash(_) => ScYamlType::Hash,
+        Yaml::Array(_) => ScYamlType::Array,
+        Yaml::String(_) => ScYamlType::String,
+        Yaml::Boolean(_) => ScYamlType::Boolean,
+        Yaml::Integer(_) => ScYamlType::Integer,
+        Yaml::Real(_) => ScYamlType::Real,
+        Yaml::Null => ScYamlType::Null,
+        _ => ScYamlType::Unknown,
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn ScYamlIsHash(node: &Yaml) -> bool {
+    node.as_hash().is_some()
+}
+
+#[no_mangle]
+pub extern "C" fn ScConfGetGlobal() -> *mut Yaml {
+    let global = GLOBAL.read().unwrap();
+    (&*global) as *const _ as *mut _
 }
 
 #[cfg(test)]

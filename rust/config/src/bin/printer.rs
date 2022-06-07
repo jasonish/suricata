@@ -16,7 +16,7 @@
 
 use suricata_config::loader::load_from_file;
 use suricata_config::loader::LoaderError;
-use suricata_config::Yaml;
+use suricata_config::printer::print_node;
 
 fn main() {
     let filename = std::env::args().nth(1).unwrap();
@@ -35,44 +35,5 @@ fn main() {
                 panic!("Failed to load file: {:?}", err);
             }
         },
-    }
-}
-
-fn print_node(node: &Yaml, prefix: Vec<String>) {
-    let path = prefix.join(".");
-    match node {
-        Yaml::Real(v) => {
-            println!("{} = {}", &path, v);
-        }
-        Yaml::String(v) => {
-            println!("{} = {}", &path, v);
-        }
-        Yaml::Null => {
-            println!("{} = ~", &path);
-        }
-        Yaml::Boolean(v) => {
-            println!("{} = {}", &path, v);
-        }
-        Yaml::Integer(i) => {
-            println!("{} = {}", &path, i);
-        }
-        Yaml::Hash(h) => {
-            for (k, v) in h {
-                let mut prefix = prefix.clone();
-                prefix.push(k.as_str().unwrap().to_string());
-                print_node(v, prefix);
-            }
-        }
-        Yaml::Array(v) => {
-            for (i, e) in v.iter().enumerate() {
-                let mut prefix = prefix.clone();
-                prefix.push(i.to_string());
-                print_node(e, prefix);
-            }
-        }
-        Yaml::Alias(_) | Yaml::BadValue => {
-            // Shouldn't happen.
-            unreachable!()
-        }
     }
 }
