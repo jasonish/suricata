@@ -38,11 +38,7 @@
 #define DEFAULT_NAME_LEN 16
 
 #define MANGLE_ERRORS_MAX 10
-#if 0
 static int mangle_errors = 0;
-#endif
-
-static char *conf_dirname = NULL;
 
 /**
  * \brief Mangle unsupported characters.
@@ -51,15 +47,17 @@ static char *conf_dirname = NULL;
  *
  * \retval none
  */
-static void
-Mangle(char *string)
+static bool Mangle(char *string)
 {
+    bool mangled = false;
     char *c;
 
-    while ((c = strchr(string, '_')))
+    while ((c = strchr(string, '_'))) {
+        mangled = true;
         *c = '-';
+    }
 
-    return;
+    return mangled;
 }
 
 /**
@@ -197,9 +195,16 @@ void ConfNodeFromYaml(Yaml *yaml, ConfNode *node, bool in_vars)
                             break;
                         }
                         if (!in_vars) {
-                            char *c;
-                            while ((c = strchr(new->name, '_'))) {
-                                *c = '-';
+                            if (Mangle(new->name)) {
+                                if (mangle_errors < MANGLE_ERRORS_MAX) {
+                                    SCLogWarning(SC_WARN_DEPRECATED,
+                                            "%s is deprecated. Please use %s.", key, new->name);
+                                    mangle_errors++;
+                                    if (mangle_errors >= MANGLE_ERRORS_MAX)
+                                        SCLogWarning(SC_WARN_DEPRECATED,
+                                                "not showing more "
+                                                "parameter name warnings.");
+                                }
                             }
                         }
                         if (strcmp(key, "vars") == 0) {
@@ -494,12 +499,6 @@ ConfYamlFileIncludeTest(void)
     FAIL_IF_NULL((config_file = fopen(include_filename, "w")));
     FAIL_IF(fwrite(include_file_contents, strlen(include_file_contents), 1, config_file) != 1);
     fclose(config_file);
-
-    /* Reset conf_dirname. */
-    if (conf_dirname != NULL) {
-        SCFree(conf_dirname);
-        conf_dirname = NULL;
-    }
 
     FAIL_IF(ConfYamlLoadFile("ConfYamlFileIncludeTest-config.yaml") != 0);
 
