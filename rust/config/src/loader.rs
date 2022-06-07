@@ -337,5 +337,9 @@ pub fn load_from_file<P: AsRef<Path>>(filename: P) -> Result<Vec<Yaml>, LoaderEr
             filename: Some(filename.as_ref().to_str().unwrap().to_string()),
             source: err,
         })?;
-    Ok(loader.docs)
+    if let Some(err) = loader.error {
+        Err(err)
+    } else {
+        Ok(loader.docs)
+    }
 }

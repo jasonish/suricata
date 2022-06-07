@@ -99,6 +99,4 @@ ConfNode *ConfSetIfaceNode(const char *ifaces_node_name, const char *iface);
 int ConfSetRootAndDefaultNodes(
         const char *ifaces_node_name, const char *iface, ConfNode **if_root, ConfNode **if_default);
 
-void ConfNodeFromYaml(Yaml *yaml, ConfNode *root, bool);
-
 #endif /* ! __CONF_H__ */
