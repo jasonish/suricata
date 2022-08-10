@@ -136,3 +136,4 @@ pub mod quic;
 pub mod plugin;
 pub mod util;
 pub mod ffi;
+pub mod base64;
