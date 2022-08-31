@@ -1,0 +1,2 @@
+CompileFlags:
+  Add: [-DHAVE_CONFIG_H]
