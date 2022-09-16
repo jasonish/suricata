@@ -2585,3 +2585,4 @@ echo "To install Suricata into /usr/bin/suricata, have the config in
 ./configure --prefix=/usr/ --sysconfdir=/etc/ --localstatedir=/var/"
 echo
 
+
