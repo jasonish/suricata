@@ -765,7 +765,7 @@ jobs:
           cd ../libhtp/htp
           gcov-9 -p *.[ch]
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@81cd2dc8148241f03f5839d295e000b8f761e378
+        uses: codecov/codecov-action@d9f34f8cd5cb3b3eb79b3e4b5dae3a16df499a70
         with:
           fail_ci_if_error: false
           flags: suricata-verify
@@ -841,7 +841,7 @@ jobs:
           cd ../libhtp/htp
           gcov-9 -p *.[ch]
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@81cd2dc8148241f03f5839d295e000b8f761e378
+        uses: codecov/codecov-action@d9f34f8cd5cb3b3eb79b3e4b5dae3a16df499a70
         with:
           fail_ci_if_error: false
           flags: unittests
@@ -921,7 +921,7 @@ jobs:
           cd src
           llvm-cov-10 gcov -p *.c
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@81cd2dc8148241f03f5839d295e000b8f761e378
+        uses: codecov/codecov-action@d9f34f8cd5cb3b3eb79b3e4b5dae3a16df499a70
         with:
           fail_ci_if_error: false
           flags: fuzzcorpus
