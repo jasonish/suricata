@@ -245,6 +245,7 @@ jobs:
     container: almalinux:8.4
     needs: [prepare-deps, prepare-cbindgen]
     steps:
+      - run: env
       # Cache Rust stuff.
       - name: Cache cargo registry
         uses: actions/cache@v1
