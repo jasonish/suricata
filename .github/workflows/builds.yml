@@ -227,7 +227,6 @@ jobs:
           name: prep
           path: prep
       - run: cat prep/env >> ${GITHUB_ENV}
-      - run: ./scripts/bundle.sh
       - run: tar xf prep/suricata-verify.tar.gz
       - name: Setup cbindgen
         run: |
@@ -235,6 +234,7 @@ jobs:
           cp prep/cbindgen $HOME/.cargo/bin
           chmod 755 $HOME/.cargo/bin/cbindgen
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+      - run: ./scripts/bundle.sh
       - name: Configuring
         run: |
           ./autogen.sh
@@ -283,8 +283,7 @@ jobs:
         with:
           name: prep
           path: prep
-      - run: tar xvf prep/libhtp.tar.gz
-      - run: tar xvf prep/suricata-update.tar.gz
+      - run: cat prep/env >> ${GITHUB_ENV}
       - run: tar xvf prep/suricata-verify.tar.gz
       - name: Setup cbindgen
         run: |
@@ -343,6 +342,7 @@ jobs:
                 texlive-upquote \
                 texlive-capt-of \
                 texlive-needspace
+      - run: ./scripts/bundle.sh
       - name: Configuring
         run: |
           ./autogen.sh
@@ -564,14 +564,14 @@ jobs:
         with:
           name: prep
           path: prep
-      - run: tar xf prep/libhtp.tar.gz
-      - run: tar xf prep/suricata-update.tar.gz
+      - run: cat prep/env >> ${GITHUB_ENV}
       - name: Setup cbindgen
         run: |
           mkdir -p $HOME/.cargo/bin
           cp prep/cbindgen $HOME/.cargo/bin
           chmod 755 $HOME/.cargo/bin/cbindgen
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+      - run: ./scripts/bundle.sh
       - run: ./autogen.sh
       - run: CC="clang" CFLAGS="$DEFAULT_CFLAGS -Wshadow -fsanitize=address -fno-omit-frame-pointer" ./configure --enable-debug --enable-unittests --disable-shared --enable-rust-strict --enable-hiredis
         env:
