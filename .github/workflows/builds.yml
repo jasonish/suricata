@@ -5,18 +5,6 @@ on:
   - pull_request
 
 env:
-  DEFAULT_LIBHTP_REPO: https://github.com/OISF/libhtp
-  DEFAULT_LIBHTP_BRANCH: 0.5.x
-  DEFAULT_LIBHTP_PR:
-
-  DEFAULT_SU_REPO: https://github.com/OISF/suricata-update
-  DEFAULT_SU_BRANCH: master-1.2.x
-  DEFAULT_SU_PR:
-
-  DEFAULT_SV_REPO: https://github.com/OISF/suricata-verify
-  DEFAULT_SV_BRANCH: master
-  DEFAULT_SV_PR:
-
   DEFAULT_CFLAGS: "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-function"
 
   # Apt sometimes likes to ask for user input, this will prevent that.
@@ -34,6 +22,18 @@ jobs:
   prepare-deps:
     name: Prepare dependencies
     runs-on: ubuntu-latest
+    env:
+      DEFAULT_LIBHTP_REPO: https://github.com/OISF/libhtp
+      DEFAULT_LIBHTP_BRANCH: 0.5.x
+      DEFAULT_LIBHTP_PR:
+        
+      DEFAULT_SU_REPO: https://github.com/OISF/suricata-update
+      DEFAULT_SU_BRANCH: master-1.2.x
+      DEFAULT_SU_PR:
+          
+      DEFAULT_SV_REPO: https://github.com/OISF/suricata-verify
+      DEFAULT_SV_BRANCH: master
+      DEFAULT_SV_PR:
     steps:
       - name: Cache ~/.cargo
         uses: actions/cache@v1
@@ -166,21 +166,6 @@ jobs:
 
       - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
 
-      # Download and extract dependency archives created during prep
-      # job.
-      - uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741
-        with:
-          name: prep
-          path: prep
-      - run: cat prep/env >> ${GITHUB_ENV}
-      - run: ./scripts/bundle.sh
-      - run: tar xf prep/suricata-verify.tar.gz
-      - name: Setup cbindgen
-        run: |
-          mkdir -p $HOME/.cargo/bin
-          cp prep/cbindgen $HOME/.cargo/bin
-          chmod 755 $HOME/.cargo/bin/cbindgen
-          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
       - name: Install system packages
         run: |
           dnf -y install dnf-plugins-core
@@ -234,6 +219,22 @@ jobs:
                 texlive-upquote \
                 texlive-capt-of \
                 texlive-needspace
+
+      # Download and extract dependency archives created during prep
+      # job.
+      - uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741
+        with:
+          name: prep
+          path: prep
+      - run: cat prep/env >> ${GITHUB_ENV}
+      - run: ./scripts/bundle.sh
+      - run: tar xf prep/suricata-verify.tar.gz
+      - name: Setup cbindgen
+        run: |
+          mkdir -p $HOME/.cargo/bin
+          cp prep/cbindgen $HOME/.cargo/bin
+          chmod 755 $HOME/.cargo/bin/cbindgen
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
       - name: Configuring
         run: |
           ./autogen.sh
