@@ -23,12 +23,38 @@ jobs:
     name: Create Test Bundle
     runs-on: ubuntu-latest
     steps:
+      - name: asdf
+        env:
+          # We fetch the actual pull request to get the latest body as
+          # github.event.pull_request.body has the body from the
+          # initial pull request.
+          PR_HREF: ${{ github.event.pull_request._links.self.href }}
+        run: |
+          if test "${PR_HREF}"; then
+              body=$(curl -s "${PR_HREF}" | jq -r .body | tr -d '\r')
+
+              libhtp_repo=$(echo "${body}" | awk '/^libhtp-repo/ { print $2 }')
+              libhtp_branch=$(echo "${body}" | awk '/^libhtp-branch/ { print $2 }')
+              libhtp_pr=$(echo "${body}" | awk '/^libhtp-pr/ { print $2 }')
+
+              su_repo=$(echo "${body}" | awk '/^suricata-update-repo/ { print $2 }')
+              su_branch=$(echo "${body}" | awk '/^suricata-update-branch/ { print $2 }')
+              su_pr=$(echo "${body}" | awk '/^suricata-update-pr/ { print $2 }')
+
+              SU_REPO=$(echo "${body}" | awk -F = '/^SU_REPO=/ { print $2 }')
+              echo SU_REPO=${SU_REPO}
+
+
+              sv_repo=$(echo "${body}" | awk '/^suricata-verify-repo/ { print $2 }')
+              sv_branch=$(echo "${body}" | awk '/^suricata-verify-branch/ { print $2 }')
+              sv_pr=$(echo "${body}" | awk '/^suricata-verify-pr/ { print $2 }')
+          fi
       - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
         with:
           path: suricata
       - run: ./scripts/bundle.sh
         working-directory: suricata
-      - run: tar zcvf suricata.tar.gz suricata
+      - run: tar zcf suricata.tar.gz suricata
       - name: Upload bundle
         uses: actions/upload-artifact@v3
         with:
