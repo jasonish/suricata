@@ -23,13 +23,13 @@ jobs:
     name: Prepare dependencies
     runs-on: ubuntu-latest
     env:
-      DEFAULT_LIBHTP_REPO: https://github.com/OISF/libhtp
-      DEFAULT_LIBHTP_BRANCH: 0.5.x
-      DEFAULT_LIBHTP_PR:
+      # DEFAULT_LIBHTP_REPO: https://github.com/OISF/libhtp
+      # DEFAULT_LIBHTP_BRANCH: 0.5.x
+      # DEFAULT_LIBHTP_PR:
         
-      DEFAULT_SU_REPO: https://github.com/OISF/suricata-update
-      DEFAULT_SU_BRANCH: master-1.2.x
-      DEFAULT_SU_PR:
+      # DEFAULT_SU_REPO: https://github.com/OISF/suricata-update
+      # DEFAULT_SU_BRANCH: master-1.2.x
+      # DEFAULT_SU_PR:
           
       DEFAULT_SV_REPO: https://github.com/OISF/suricata-verify
       DEFAULT_SV_BRANCH: master
@@ -484,14 +484,14 @@ jobs:
         with:
           name: prep
           path: prep
-      - run: tar xf prep/libhtp.tar.gz
-      - run: tar xf prep/suricata-update.tar.gz
+      - run: cat prep/env >> ${GITHUB_ENV}
       - name: Setup cbindgen
         run: |
           mkdir -p $HOME/.cargo/bin
           cp prep/cbindgen $HOME/.cargo/bin
           chmod 755 $HOME/.cargo/bin/cbindgen
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+      - run: ./scripts/bundle.sh
       - run: ./autogen.sh
       - run: CC="clang" CFLAGS="$DEFAULT_CFLAGS -Wshadow -fsanitize=address -fno-omit-frame-pointer" ./configure --enable-debug --enable-unittests --disable-shared --enable-rust-strict --enable-hiredis
         env:
@@ -636,13 +636,14 @@ jobs:
         with:
           name: prep
           path: prep
-      - run: tar xf prep/libhtp.tar.gz
+      - run: cat prep/env >> ${GITHUB_ENV}
       - name: Setup cbindgen
         run: |
           mkdir -p $HOME/.cargo/bin
           cp prep/cbindgen $HOME/.cargo/bin
           chmod 755 $HOME/.cargo/bin/cbindgen
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+      - run: ./scripts/bundle.sh libhtp
       - run: ./autogen.sh
       - run: CFLAGS="${DEFAULT_CFLAGS}" ./configure --enable-unittests --disable-nss --disable-nspr
       - run: make -j2
@@ -702,14 +703,14 @@ jobs:
         with:
           name: prep
           path: prep
-      - run: tar xf prep/libhtp.tar.gz
-      - run: tar xf prep/suricata-update.tar.gz
+      - run: cat prep/env >> ${GITHUB_ENV}
       - name: Setup cbindgen
         run: |
           mkdir -p $HOME/.cargo/bin
           cp prep/cbindgen $HOME/.cargo/bin
           chmod 755 $HOME/.cargo/bin/cbindgen
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+      - run: ./scripts/bundle.sh
       - run: ./autogen.sh
       - run: CFLAGS="$DEFAULT_CFLAGS -DNDEBUG" ./configure --enable-unittests --enable-http2-decompression
       - run: make -j2
@@ -832,13 +833,14 @@ jobs:
         with:
           name: prep
           path: prep
-      - run: tar xf prep/libhtp.tar.gz
+      - run: cat prep/env >> ${GITHUB_ENV}
       - name: Setup cbindgen
         run: |
           mkdir -p $HOME/.cargo/bin
           cp prep/cbindgen $HOME/.cargo/bin
           chmod 755 $HOME/.cargo/bin/cbindgen
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+      - run: ./scripts/bundle.sh
       - run: ./autogen.sh
       - run: CFLAGS="${DEFAULT_CFLAGS}" ./configure --enable-debug-validation
       - run: make -j2
@@ -1007,7 +1009,7 @@ jobs:
           mkdir -p $HOME/.cargo/bin
           cp prep/cbindgen $HOME/.cargo/bin
           chmod 755 $HOME/.cargo/bin/cbindgen
-          echo "$HOME/.cargo/bin" >> $GITHUB_PATH      - run: tar xf prep/libhtp.tar.gz
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
       - run: ./scripts/bundle.sh
       - run: ./autogen.sh
       - run: AFL_HARDEN=1 ac_cv_func_realloc_0_nonnull=yes ac_cv_func_malloc_0_nonnull=yes CFLAGS="-fsanitize=address -fno-omit-frame-pointer" CXXFLAGS=$CFLAGS CC=afl-clang-fast CXX=afl-clang-fast++ ./configure --enable-fuzztargets --disable-shared
@@ -1289,8 +1291,6 @@ jobs:
           path: prep
       - run: cat prep/env >> ${GITHUB_ENV}
       - run: ./scripts/bundle.sh
-      # - run: tar xf prep/libhtp.tar.gz
-      # - run: tar xf prep/suricata-update.tar.gz
       - name: Npcap DLL
         run: |
           curl -sL -O https://nmap.org/npcap/dist/npcap-1.00.exe
