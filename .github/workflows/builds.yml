@@ -22,8 +22,12 @@ jobs:
   bundle:
     name: Create Test Bundle
     runs-on: ubuntu-latest
+    env:
+      DEFAULT_SV_REPO: https://github.com/OISF/suricata-verify
+      DEFAULT_SV_BRANCH: master
+      DEFAULT_SV_PR:
     steps:
-      - name: asdf
+      - name: Parse pull request body
         env:
           # We fetch the actual pull request to get the latest body as
           # github.event.pull_request.body has the body from the
@@ -46,23 +50,37 @@ jobs:
               SV_PR=$(echo "${body}" | awk -F = '/^SV_PR=/ { print $2 }')
           fi
 
-          echo ${LIBHTP_REPO} >> ${GIBHUB_ENV}
-          echo ${LIBHTP_BRANCH} >> ${GIBHUB_ENV}
-          echo ${LIBHTP_PR} >> ${GIBHUB_ENV}
+          echo LIBHTP_REPO=${LIBHTP_REPO} >> ${GIBHUB_ENV}
+          echo LIBHTP_BRANCH=${LIBHTP_BRANCH} >> ${GIBHUB_ENV}
+          echo LIBHTP_PR=${LIBHTP_PR} >> ${GIBHUB_ENV}
 
-          echo ${SU_REPO} >> ${GIBHUB_ENV}
-          echo ${SU_BRANCH} >> ${GIBHUB_ENV}
-          echo ${SU_PR} >> ${GIBHUB_ENV}
+          echo SU_REPO=${SU_REPO} >> ${GIBHUB_ENV}
+          echo SU_BRANCH=${SU_BRANCH} >> ${GIBHUB_ENV}
+          echo SU_PR=${SU_PR} >> ${GIBHUB_ENV}
 
-          echo ${SV_REPO} >> ${GIBHUB_ENV}
-          echo ${SV_BRANCH} >> ${GIBHUB_ENV}
-          echo ${SV_PR} >> ${GIBHUB_ENV}
+          echo SV_REPO=${SV_REPO:-${DEFAULT_SV_REPO}} >> ${GIBHUB_ENV}
+          echo SV_BRANCH=${SV_BRANCH:-${DEFAULT_SV_BRANCH}} >> ${GIBHUB_ENV}
+          echo SV_PR=${SV_PR:-${DEFAULT_SV_PR}} >> ${GIBHUB_ENV}
       - run: env
       - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
         with:
           path: suricata
-      - run: ./scripts/bundle.sh
+      - name: Bundle libhtp, suricata-update
+        run: ./scripts/bundle.sh
         working-directory: suricata
+      - name: Bundle suricata-verify
+        working-directory: suricata
+        run: |
+          git clone ${SV_REPO} -b ${SV_BRANCH} suricata-verify
+          if [[ "${SV_PR}" != "" ]]; then
+              cd suricata-verify
+              git fetch origin pull/${SV_PR}/head:prep
+              git checkout prep
+              git config --global user.email you@example.com
+              git config --global user.name You
+              git rebase ${DEFAULT_SV_BRANCH}
+              cd ..
+          fi
       - run: tar zcf suricata.tar.gz suricata
       - name: Upload bundle
         uses: actions/upload-artifact@v3
