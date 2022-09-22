@@ -172,11 +172,8 @@ jobs:
         with:
           name: prep
           path: prep
-      - run: cat prep/env
       - run: cat prep/env >> ${GITHUB_ENV}
-      - run: env
-      - run: tar xf prep/libhtp.tar.gz
-      - run: tar xf prep/suricata-update.tar.gz
+      - run: ./scripts/bundle.sh
       - run: tar xf prep/suricata-verify.tar.gz
       - name: Setup cbindgen
         run: |
