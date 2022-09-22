@@ -224,7 +224,7 @@ jobs:
     name: AlmaLinux 9
     runs-on: ubuntu-latest
     container: almalinux:9
-    needs: [prepare-deps, prepare-cbindgen]
+    needs: [bundle, prepare-deps, prepare-cbindgen]
     steps:
       # Cache Rust stuff.
       - name: Cache cargo registry
@@ -232,9 +232,6 @@ jobs:
         with:
           path: ~/.cargo/registry
           key: cargo-registry
-
-      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
-
       - name: Install system packages
         run: |
           dnf -y install dnf-plugins-core
@@ -288,22 +285,23 @@ jobs:
                 texlive-upquote \
                 texlive-capt-of \
                 texlive-needspace
-
+      - uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741
+        with:
+          name: suricata
+          path: .
+      - run: ls -l
       # Download and extract dependency archives created during prep
       # job.
       - uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741
         with:
           name: prep
           path: prep
-      - run: cat prep/env >> ${GITHUB_ENV}
-      - run: tar xf prep/suricata-verify.tar.gz
       - name: Setup cbindgen
         run: |
           mkdir -p $HOME/.cargo/bin
           cp prep/cbindgen $HOME/.cargo/bin
           chmod 755 $HOME/.cargo/bin/cbindgen
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-      - run: ./scripts/bundle.sh
       - name: Configuring
         run: |
           ./autogen.sh
