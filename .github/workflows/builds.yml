@@ -28,7 +28,7 @@ jobs:
           path: suricata
       - run: ./scripts/bundle.sh
         working-directory: suricata
-      - run: zcvf suricata.tar.gz suricata
+      - run: tar zcvf suricata.tar.gz suricata
       - name: Upload bundle
         uses: actions/upload-artifact@v3
         with:
