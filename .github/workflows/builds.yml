@@ -219,6 +219,10 @@ jobs:
         with:
           name: prep
           path: .
+      - name: Uploading cbindgen
+        uses: actions/upload-artifact@v3
+        with:
+          path: cbindgen
 
   almalinux-9:
     name: AlmaLinux 9
