@@ -109,11 +109,6 @@ jobs:
           tar zcf suricata-verify.tar.gz suricata-verify
       - name: Cleaning up
         run: rm -rf libhtp suricata-update suricata-verify
-      - name: Uploading prep archive
-        uses: actions/upload-artifact@v2
-        with:
-          name: prep
-          path: .
       - name: Writing environment file
         run: |
           rm -f env
@@ -126,11 +121,11 @@ jobs:
           echo SV_REPO=${sv_repo} >> env
           echo SV_BRANCH=${sv_branch} >> env
           echo SV_PR=${sv_pr} >> env
-      - name: Uploading env file
+      - name: Uploading prep archive
         uses: actions/upload-artifact@v2
         with:
-          name: env
-          path: env
+          name: prep
+          path: .
 
   prepare-cbindgen:
     name: Prepare cbindgen
@@ -175,16 +170,11 @@ jobs:
       # job.
       - uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741
         with:
-          name: env
-          path: env
-      - run: cat env
-
-      # Download and extract dependency archives created during prep
-      # job.
-      - uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741
-        with:
           name: prep
           path: prep
+      - run: cat prep/env
+      - run: . prep/env
+      - run: env
       - run: tar xvf prep/libhtp.tar.gz
       - run: tar xvf prep/suricata-update.tar.gz
       - run: tar xvf prep/suricata-verify.tar.gz
