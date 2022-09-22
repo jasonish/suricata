@@ -24,13 +24,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
+        path: suricata
       - run: ./scripts/bundle.sh
-      - run: cd .. && tar zcvf suricata.tar.gz suricata
+        working-directory: suricata
+      - run: zcvf suricata.tar.gz suricata
       - name: Upload bundle
         uses: actions/upload-artifact@v3
         with:
           name: suricata
-          path: ../suricata.tar.gz
+          path: suricata.tar.gz
 
   prepare-deps:
     name: Prepare dependencies
