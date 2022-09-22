@@ -175,6 +175,14 @@ jobs:
       # job.
       - uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741
         with:
+          name: env
+          path: env
+      - run: cat env
+
+      # Download and extract dependency archives created during prep
+      # job.
+      - uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741
+        with:
           name: prep
           path: prep
       - run: tar xvf prep/libhtp.tar.gz
