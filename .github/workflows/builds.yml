@@ -19,6 +19,18 @@ env:
   RUST_VERSION_MIN: 1.41.1
 jobs:
 
+  bundle:
+    name: Create Test Bundle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
+      - run: ./scripts/bundle.sh
+      - name: Upload bundle
+        uses: actions/upload-artifact@v2
+        with:
+          name: suricata
+          path: .
+
   prepare-deps:
     name: Prepare dependencies
     runs-on: ubuntu-latest
