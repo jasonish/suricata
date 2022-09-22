@@ -222,13 +222,14 @@ jobs:
       - name: Uploading cbindgen
         uses: actions/upload-artifact@v3
         with:
+          name: cbindgen
           path: cbindgen
 
   almalinux-9:
     name: AlmaLinux 9
     runs-on: ubuntu-latest
     container: almalinux:9
-    needs: [bundle, prepare-deps, prepare-cbindgen]
+    needs: [bundle, prepare-cbindgen]
     steps:
       # Cache Rust stuff.
       - name: Cache cargo registry
@@ -293,6 +294,9 @@ jobs:
         with:
           name: suricata
           path: .
+      - uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741
+        with:
+          name: cbindgen
       - run: ls -l
       # Download and extract dependency archives created during prep
       # job.
