@@ -114,6 +114,23 @@ jobs:
         with:
           name: prep
           path: .
+      - name: Writing environment file
+        run: |
+          rm -f env
+          echo SU_REPO=${su_repo} >> env
+          echo SU_BRANCH=${su_branch} >> env
+          echo SU_PR=${su_pr} >> env
+          echo LIBHTP_REPO=${libhtp_repo} >> env
+          echo LIBHTP_BRANCH=${libhtp_branch} >> env
+          echo LIBHTP_PR=${libhtp_pr} >> env
+          echo SV_REPO=${sv_repo} >> env
+          echo SV_BRANCH=${sv_branch} >> env
+          echo SV_PR=${sv_pr} >> env
+      - name: Uploading env file
+        uses: actions/upload-artifact@v2
+        with:
+          name: env
+          path: env
 
   prepare-cbindgen:
     name: Prepare cbindgen
