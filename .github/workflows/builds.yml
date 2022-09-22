@@ -45,6 +45,19 @@ jobs:
               SV_BRANCH=$(echo "${body}" | awk -F = '/^SV_BRANCH=/ { print $2 }')
               SV_PR=$(echo "${body}" | awk -F = '/^SV_PR=/ { print $2 }')
           fi
+
+          echo ${LIBHTP_REPO} >> ${GIBHUB_ENV}
+          echo ${LIBHTP_BRANCH} >> ${GIBHUB_ENV}
+          echo ${LIBHTP_PR} >> ${GIBHUB_ENV}
+
+          echo ${SU_REPO} >> ${GIBHUB_ENV}
+          echo ${SU_BRANCH} >> ${GIBHUB_ENV}
+          echo ${SU_PR} >> ${GIBHUB_ENV}
+
+          echo ${SV_REPO} >> ${GIBHUB_ENV}
+          echo ${SV_BRANCH} >> ${GIBHUB_ENV}
+          echo ${SV_PR} >> ${GIBHUB_ENV}
+      - run: env
       - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
         with:
           path: suricata
