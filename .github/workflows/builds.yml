@@ -23,13 +23,13 @@ jobs:
     name: Prepare dependencies
     runs-on: ubuntu-latest
     env:
-      # DEFAULT_LIBHTP_REPO: https://github.com/OISF/libhtp
-      # DEFAULT_LIBHTP_BRANCH: 0.5.x
-      # DEFAULT_LIBHTP_PR:
+      DEFAULT_LIBHTP_REPO: https://github.com/OISF/libhtp
+      DEFAULT_LIBHTP_BRANCH: 0.5.x
+      DEFAULT_LIBHTP_PR:
         
-      # DEFAULT_SU_REPO: https://github.com/OISF/suricata-update
-      # DEFAULT_SU_BRANCH: master-1.2.x
-      # DEFAULT_SU_PR:
+      DEFAULT_SU_REPO: https://github.com/OISF/suricata-update
+      DEFAULT_SU_BRANCH: master-1.2.x
+      DEFAULT_SU_PR:
           
       DEFAULT_SV_REPO: https://github.com/OISF/suricata-verify
       DEFAULT_SV_BRANCH: master
