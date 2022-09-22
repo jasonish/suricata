@@ -248,7 +248,7 @@ jobs:
     name: AlmaLinux 9
     runs-on: ubuntu-latest
     container: almalinux:9
-    needs: [bundle, prepare-cbindgen]
+    needs: [bundle, cbindgen]
     steps:
       # Cache Rust stuff.
       - name: Cache cargo registry
@@ -296,19 +296,19 @@ jobs:
                 sudo \
                 which \
                 zlib-devel
-          # # These packages required to build the PDF.
-          # dnf -y install \
-          #       texlive-latex \
-          #       texlive-cmap \
-          #       texlive-collection-latexrecommended \
-          #       texlive-fncychap \
-          #       texlive-titlesec \
-          #       texlive-tabulary \
-          #       texlive-framed \
-          #       texlive-wrapfig \
-          #       texlive-upquote \
-          #       texlive-capt-of \
-          #       texlive-needspace
+          # These packages required to build the PDF.
+          dnf -y install \
+                texlive-latex \
+                texlive-cmap \
+                texlive-collection-latexrecommended \
+                texlive-fncychap \
+                texlive-titlesec \
+                texlive-tabulary \
+                texlive-framed \
+                texlive-wrapfig \
+                texlive-upquote \
+                texlive-capt-of \
+                texlive-needspace
       - name: Download cbindgen
         uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741
         with:
@@ -319,10 +319,10 @@ jobs:
           mv cbindgen $HOME/.cargo/bin
           chmod 755 $HOME/.cargo/bin/cbindgen
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+          cbindgen --version
       - uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741
         with:
           name: suricata
-      - run: ls -l
       - run: tar zxvf suricata.tar.gz --strip-components=1
       - name: Configuring
         run: |
@@ -520,7 +520,7 @@ jobs:
     name: Fedora 36 (debug, clang, asan, wshadow, rust-strict)
     runs-on: ubuntu-latest
     container: fedora:36
-    needs: [prepare-deps, prepare-cbindgen]
+    needs: [bundle, cbindgen]
     steps:
 
       # Cache Rust stuff.
@@ -568,19 +568,21 @@ jobs:
                 sudo \
                 which \
                 zlib-devel
-      - uses: actions/checkout@dcd71f646680f2efd8db4afa5ad64fdcba30e748
-      - uses: actions/download-artifact@v2
+      - name: Download cbindgen
+        uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741
         with:
-          name: prep
-          path: prep
-      - run: cat prep/env >> ${GITHUB_ENV}
+          name: cbindgen
       - name: Setup cbindgen
         run: |
           mkdir -p $HOME/.cargo/bin
-          cp prep/cbindgen $HOME/.cargo/bin
+          mv cbindgen $HOME/.cargo/bin
           chmod 755 $HOME/.cargo/bin/cbindgen
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-      - run: ./scripts/bundle.sh
+          cbindgen --version
+      - uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741
+        with:
+          name: suricata
+      - run: tar zxf suricata.tar.gz --strip-components=1
       - run: ./autogen.sh
       - run: CC="clang" CFLAGS="$DEFAULT_CFLAGS -Wshadow -fsanitize=address -fno-omit-frame-pointer" ./configure --enable-debug --enable-unittests --disable-shared --enable-rust-strict --enable-hiredis
         env:
@@ -588,8 +590,6 @@ jobs:
           ac_cv_func_malloc_0_nonnull: "yes"
       - run: make -j2
       - run: ASAN_OPTIONS="detect_leaks=0" ./src/suricata -u -l .
-      - name: Extracting suricata-verify
-        run: tar xf prep/suricata-verify.tar.gz
       - name: Running suricata-verify
         run: python3 ./suricata-verify/run.py
       - run: make install
