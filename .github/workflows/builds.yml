@@ -36,6 +36,8 @@ jobs:
           if test "${PR_HREF}"; then
               body=$(curl -s "${PR_HREF}" | jq -r .body | tr -d '\r')
 
+              echo $body
+
               LIBHTP_REPO=$(echo "${body}" | awk -F = '/^LIBHTP_REPO=/ { print $2 }')
               LIBHTP_BRANCH=$(echo "${body}" | awk -F = '/^LIBHTP_BRANCH=/ { print $2 }')
               LIBHTP_PR=$(echo "${body}" | awk -F = '/^LIBHTP_PR=/ { print $2 }')
