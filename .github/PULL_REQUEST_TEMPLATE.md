@@ -11,6 +11,10 @@ Describe changes:
 -
 -
 
+SV_PR=
+SV_REPO=
+SV_BRANCH=
+
 #suricata-verify-pr:
 #suricata-verify-repo:
 #suricata-verify-branch:
