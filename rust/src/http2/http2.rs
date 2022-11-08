@@ -1193,7 +1193,7 @@ pub unsafe extern "C" fn rs_http2_getfiles(
     tx: *mut std::os::raw::c_void, direction: u8,
 ) -> *mut FileContainer {
     let tx = cast_pointer!(tx, HTTP2Transaction);
-    if direction == Direction::ToClient.into() {
+    if direction == Direction::ToClient as u8 {
         &mut tx.files.files_tc as *mut FileContainer
     } else {
         &mut tx.files.files_ts as *mut FileContainer

@@ -28,6 +28,19 @@ use crate::frames::Frame;
 use nom7::{Err, IResult};
 use nom7::number::streaming::be_u16;
 
+use serde::Serialize;
+
+#[derive(Serialize, Debug, Clone)]
+pub struct TestStruct {
+    pub name: String,
+}
+
+impl TestStruct {
+    pub fn to_string(&self) {
+        println!("{}", serde_json::to_string(&self).unwrap());
+    }
+}
+
 /// DNS record types.
 pub const DNS_RECORD_TYPE_A           : u16 = 1;
 pub const DNS_RECORD_TYPE_NS          : u16 = 2;
@@ -931,7 +944,7 @@ pub unsafe extern "C" fn rs_dns_probe_tcp(
         } else {
             Direction::ToClient
         };
-        if (direction & DIR_BOTH) != dir.into() {
+        if (direction & DIR_BOTH) != dir as u8 {
             *rdir = dir as u8;
         }
         return ALPROTO_DNS;
