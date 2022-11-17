@@ -30,7 +30,7 @@ install-conf:
 	install -d "$(DESTDIR)$(e_logfilesdir)"
 	install -d "$(DESTDIR)$(e_logcertsdir)"
 	install -d "$(DESTDIR)$(e_rundir)"
-	install -m 770 -d "$(DESTDIR)$(e_localstatedir)"
+	install -m 770 -d "$(DESTDIR)$(e_runstatedir)"
 
 install-rules:
 if INSTALL_SURICATA_UPDATE

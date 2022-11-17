@@ -53,7 +53,7 @@ args = parser.parse_args()
 if args.socket != None:
     SOCKET_PATH = args.socket
 elif has_defaults:
-    SOCKET_PATH = os.path.join(defaults.localstatedir, "suricata-command.socket")
+    SOCKET_PATH = os.path.join(defaults.runstatedir, "suricata-command.socket")
 else:
     print("Unable to determine path to suricata-command.socket.", file=sys.stderr)
     sys.exit(1)
