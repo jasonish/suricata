@@ -89,10 +89,10 @@ const char *ConfigGetDataDirectory()
 #ifdef OS_WIN32
         data_dir = _getcwd(NULL, 0);
         if (data_dir == NULL) {
-            data_dir = DEFAULT_DATA_DIR;
+            data_dir = DEFAULT_STATE_DATA_DIR;
         }
 #else
-        data_dir = DEFAULT_DATA_DIR;
+        data_dir = DEFAULT_STATE_DATA_DIR;
 #endif /* OS_WIN32 */
     }
 
