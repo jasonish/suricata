@@ -1,0 +1,14 @@
+name: Post Authors
+
+on:
+  workflow_run:
+    workflows:
+      - "New Author Check"
+    types:
+      - completed
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "this runs after the author check"
