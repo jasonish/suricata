@@ -38,4 +38,33 @@ jobs:
       - name: unzip
         run: unzip new-authors.zip
       - run: cat new-authors.txt
+      - run: |
+          if [[ "$(cat new-authors.txt | wc -l)" != 0 ]]; then
+              echo has_new_authors=yes >> $GITHUB_ENV
+          fi
+      - if: ${{ env.has_new_authors == 'yes' }}
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          retries: 3
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'This pull request contains *NEW* authors.'
+            })
+      - if: ${{ env.has_new_authors != 'yes' }}
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          retries: 3
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'This pull request contains NO new authors.'
+            })
+      
         
