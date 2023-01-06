@@ -16,7 +16,7 @@ jobs:
       #   with:
       #     name: new-authors
       - name: 'Download artifact'
-        uses: actions/github-script@v5
+        uses: actions/github-script@v6
         with:
           script: |
             let allArtifacts = await github.rest.actions.listWorkflowRunArtifacts({
@@ -35,3 +35,7 @@ jobs:
             });
             let fs = require('fs');
             fs.writeFileSync(`${process.env.GITHUB_WORKSPACE}/new-authors.zip`, Buffer.from(download.data));
+      - name: unzip
+        run: unzip new-authors.zip
+      - run: cat new-authors.zip
+        
