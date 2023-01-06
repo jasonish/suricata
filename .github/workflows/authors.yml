@@ -33,6 +33,11 @@ jobs:
       - if: ${{ env.has_new_authors == 'yes' }}
         run: cat new-authors.txt
       - if: ${{ env.has_new_authors == 'yes' }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: new-authors
+          path: new-authors.txt
+      - if: ${{ env.has_new_authors == 'yes' }}
         run: exit 1
       # - if: ${{ env.has_new_authors == 'yes' }}
       #   uses: actions/github-script@v6
