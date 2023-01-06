@@ -21,6 +21,7 @@ jobs:
       - run: cat commit-authors.txt
       - name: Check new authors
         run: |
+          touch new-authors.txt
           while read -r author; do
              echo "Checking author: ${author}"
              if ! grep -q "^${author}\$" authors.txt; then
@@ -32,8 +33,7 @@ jobs:
           done < commit-authors.txt
       - if: ${{ env.has_new_authors == 'yes' }}
         run: cat new-authors.txt
-      - if: ${{ env.has_new_authors == 'yes' }}
-        uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v3
         with:
           name: new-authors
           path: new-authors.txt
