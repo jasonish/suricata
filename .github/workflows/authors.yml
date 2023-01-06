@@ -7,6 +7,7 @@ jobs:
   check-id:
     name: Check Author ID
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - run: sudo apt -y install git
       - uses: actions/checkout@v3.2.0
@@ -32,26 +33,28 @@ jobs:
       - if: ${{ env.has_new_authors == 'yes' }}
         run: cat new-authors.txt
       - if: ${{ env.has_new_authors == 'yes' }}
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          retries: 3
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: 'This pull request contains *NEW* authors.'
-            })
-      - if: ${{ env.has_new_authors != 'yes' }}
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          retries: 3
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: 'This pull request contains NO new authors.'
-            })
+        run: exit 1
+      # - if: ${{ env.has_new_authors == 'yes' }}
+      #   uses: actions/github-script@v6
+      #   with:
+      #     github-token: ${{secrets.GITHUB_TOKEN}}
+      #     retries: 3
+      #     script: |
+      #       github.rest.issues.createComment({
+      #         issue_number: context.issue.number,
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         body: 'This pull request contains *NEW* authors.'
+      #       })
+      # - if: ${{ env.has_new_authors != 'yes' }}
+      #   uses: actions/github-script@v6
+      #   with:
+      #     github-token: ${{secrets.GITHUB_TOKEN}}
+      #     retries: 3
+      #     script: |
+      #       github.rest.issues.createComment({
+      #         issue_number: context.issue.number,
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         body: 'This pull request contains NO new authors.'
+      #       })
