@@ -3,7 +3,7 @@ name: Post Authors
 on:
   workflow_run:
     workflows:
-      - "New Author Check"
+      - New Author Check
     types:
       - completed
 
@@ -12,7 +12,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "this runs after the author check"
-      - uses: actions/download-artifact@9782bd6a9848b53b110e712e20e42d89988822b7
+      # - uses: actions/download-artifact@9782bd6a9848b53b110e712e20e42d89988822b7
+      #   with:
+      #     name: new-authors
+      - name: 'Download artifact'
+        uses: actions/github-script@v5
         with:
-          name: new-authors
-
+          script: |
+            let allArtifacts = await github.rest.actions.listWorkflowRunArtifacts({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               run_id: context.payload.workflow_run.id,
+            });
+            let matchArtifact = allArtifacts.data.artifacts.filter((artifact) => {
+              return artifact.name == "new-authors"
+            })[0];
+            let download = await github.rest.actions.downloadArtifact({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               artifact_id: matchArtifact.id,
+               archive_format: 'zip',
+            });
+            let fs = require('fs');
+            fs.writeFileSync(`${process.env.GITHUB_WORKSPACE}/new-authors.zip`, Buffer.from(download.data));
