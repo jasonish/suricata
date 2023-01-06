@@ -37,5 +37,5 @@ jobs:
             fs.writeFileSync(`${process.env.GITHUB_WORKSPACE}/new-authors.zip`, Buffer.from(download.data));
       - name: unzip
         run: unzip new-authors.zip
-      - run: cat new-authors.zip
+      - run: cat new-authors.txt
         
