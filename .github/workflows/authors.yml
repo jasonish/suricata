@@ -5,7 +5,7 @@ on:
 
 jobs:
   check-id:
-    name: Check Author ID
+    name: New Author Check
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
