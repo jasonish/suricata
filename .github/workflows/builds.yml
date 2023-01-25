@@ -38,6 +38,8 @@ jobs:
     name: Prepare dependencies
     runs-on: ubuntu-latest
     steps:
+      - run: env
+      - run: echo ${{ github.event.pull_request._links.self.href }}
       - run: sudo apt update && sudo apt -y install jq curl
       - name: Parse repo and branch information
         env:
