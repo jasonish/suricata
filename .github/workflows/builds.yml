@@ -49,6 +49,9 @@ jobs:
           if test "${PR_HREF}"; then
               body=$(curl -s "${PR_HREF}" | jq -r .body | tr -d '\r')
 
+              echo "Parsing branch and PR info from:"
+              echo "${body}"
+
               libhtp_repo=$(echo "${body}" | awk '/^libhtp-repo/ { print $2 }')
               libhtp_branch=$(echo "${body}" | awk '/^libhtp-branch/ { print $2 }')
               libhtp_pr=$(echo "${body}" | awk '/^libhtp-pr/ { print $2 }')
