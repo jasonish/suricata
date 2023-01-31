@@ -2509,6 +2509,21 @@ fi
 # Add diagnostic filename
 CPPFLAGS="${CPPFLAGS} -D__SCFILENAME__=\\\"\$(*F)\\\""
 
+# Check for out of tree build.
+#
+# For in-tree builds we enable cargo publishing by creating a
+# publishable Cargo.toml.
+#
+# Out of tree builds are not publishable due to a hard-coded filename
+# in [lib.path], so we disable publishing when doing an out of tree
+# build.
+if test -e ./src/suricata.c; then
+    cargo_publish_comment="#"
+else
+    cargo_publish_comment=""
+fi
+AC_SUBST(cargo_publish_comment)
+
 AC_SUBST(CFLAGS)
 AC_SUBST(LDFLAGS)
 AC_SUBST(CPPFLAGS)
