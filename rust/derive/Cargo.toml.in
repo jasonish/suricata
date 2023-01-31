@@ -5,10 +5,11 @@ edition = "2021"
 description = "Derive macros for Suricata"
 license = "GPL-2.0-only"
 repository = "http://github.com/OISF/suricata.git"
+@cargo_publish_comment@publish = false
 
 [lib]
 proc-macro = true
-path = "@e_rustdir@/derive/src/lib.rs"
+@cargo_publish_comment@path = "@e_rustdir@/derive/src/lib.rs"
 
 [dependencies]
 proc-macro-crate = "= 1.1.0"
