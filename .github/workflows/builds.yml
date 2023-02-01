@@ -40,7 +40,7 @@ jobs:
     name: Prepare dependencies
     runs-on: ubuntu-latest
     steps:
-      - run: ${PR_NUMBER}
+      - run: echo ${PR_NUMBER}
       - name: Dumping github context for debugging
         run: echo '${{ toJSON(github) }}'
       - run: sudo apt update && sudo apt -y install jq curl
