@@ -1567,6 +1567,7 @@ jobs:
                 autoconf \
                 automake \
                 cargo \
+                clang \
                 git \
                 jq \
                 libtool \
