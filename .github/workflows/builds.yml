@@ -1100,9 +1100,15 @@ jobs:
         working-directory: /home/suricata/suricata
       - run: sudo -u suricata -s ./.github/workflows/scripts/fedora-non-root.sh configure
         working-directory: /home/suricata/suricata
+        env:
+          ac_cv_func_realloc_0_nonnull: "yes"
+          ac_cv_func_malloc_0_nonnull: "yes"
+          LDFLAGS: "-fsanitize=address"
+          CC: "clang"
+          CFLAGS: "${{ env.DEFAULT_CFLAGS }} -Wshadow -fsanitize=address -fno-omit-frame-pointer"
       - run: sudo -u suricata -s ./.github/workflows/scripts/fedora-non-root.sh make
         working-directory: /home/suricata/suricata
-      - run: sudo -u suricata -s ./.github/workflows/scripts/fedora-non-root.sh unit-test
+      - run: sudo -u suricata -s ./.github/workflows/scripts/fedora-non-root.sh check
         working-directory: /home/suricata/suricata
       - run: sudo -u suricata -s ./.github/workflows/scripts/fedora-non-root.sh verify
         working-directory: /home/suricata/suricata

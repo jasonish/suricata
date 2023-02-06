@@ -22,11 +22,6 @@ case "$1" in
         ./autogen.sh
         ;;
     configure)
-        ac_cv_func_realloc_0_nonnull="yes" \
-            ac_cv_func_malloc_0_nonnull="yes" \
-            LDFLAGS="-fsanitize=address" \
-            CC="clang" \
-            CFLAGS="$DEFAULT_CFLAGS -Wshadow -fsanitize=address -fno-omit-frame-pointer" \
             ./configure \
             --enable-debug \
             --enable-unittests \
@@ -39,7 +34,7 @@ case "$1" in
         make -j2
         ;;
     unit-test)
-        ASAN_OPTIONS="detect_leaks=0" ./src/suricata -u -l .
+        ASAN_OPTIONS="detect_leaks=0" make check
         ;;
     verify)
         python3 ./suricata-verify/run.py -q
