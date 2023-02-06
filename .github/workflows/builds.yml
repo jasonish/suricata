@@ -1096,9 +1096,13 @@ jobs:
       - run: chown -R suricata:suricata /home/suricata
       - run: sudo -u suricata -s ./.github/workflows/scripts/fedora-non-root.sh cbindgen
         working-directory: /home/suricata/suricata
+
+      - run: sudo -u suricata -s ./autogen
+        working-directory: /home/suricata/suricata
+
       - run: sudo -u suricata -s ./.github/workflows/scripts/fedora-non-root.sh autogen
         working-directory: /home/suricata/suricata
-      - run: sudo -u suricata -s ./.github/workflows/scripts/fedora-non-root.sh configure
+      - run: sudo -u suricata -s ./.github/workflows/scripts/fedora-non-root.sh configure --enable-debug --enable-unittests --disable-shared --enable-rust-strict --enable-hiredis --enable-nfqueue
         working-directory: /home/suricata/suricata
         env:
           ac_cv_func_realloc_0_nonnull: "yes"

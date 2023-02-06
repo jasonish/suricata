@@ -22,13 +22,8 @@ case "$1" in
         ./autogen.sh
         ;;
     configure)
-            ./configure \
-            --enable-debug \
-            --enable-unittests \
-            --disable-shared \
-            --enable-rust-strict \
-            --enable-hiredis \
-            --enable-nfqueue
+	shift
+        ./configure $@
         ;;
     make)
         make -j2
