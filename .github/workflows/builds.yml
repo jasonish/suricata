@@ -1094,8 +1094,16 @@ jobs:
       - run: mkdir /home/suricata/suricata
       - run: cp -a . /home/suricata/suricata
       - run: chown -R suricata:suricata /home/suricata
-      - run: sudo -u suricata -s ./.github/workflows/scripts/fedora-non-root.sh cbindgen
-        working-directory: /home/suricata/suricata
+
+      - run: sudo -u suricata -s mkdir -p .cargo/bin
+        working-directory: /home/suricata
+      - run: sudo -u suricata -s mkdir -p cp suricata/prep/cbindgen .cargo/bin
+        working-directory: /home/suricata
+      - run: sudo -u suricata -s chmod 755 .cargo/bin/cbindgen
+        working-directory: /home/suricata
+
+      # - run: sudo -u suricata -s ./.github/workflows/scripts/fedora-non-root.sh cbindgen
+      #   working-directory: /home/suricata/suricata
 
       - run: sudo -u suricata -s ./autogen
         working-directory: /home/suricata/suricata
