@@ -269,6 +269,14 @@ jobs:
       - run: make install
       - run: suricatasc -h
       - run: suricata-update -V
+      - run: make html
+        working-directory: doc/userguide
+      - uses: actions/upload-artifact@v3
+        with:
+          name: docs
+          path: |
+            doc/userguide/_build/html
+            doc/userguide/_build/latex/Suricata.pdf
 
   almalinux-9-templates:
     name: AlmaLinux 9 Test Templates
