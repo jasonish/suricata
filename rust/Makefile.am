@@ -1,3 +1,5 @@
+SUBDIRS = 	config
+
 EXTRA_DIST =	src derive \
 		.cargo/config.in \
 		cbindgen.toml \

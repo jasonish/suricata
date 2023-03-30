@@ -1,0 +1,10 @@
+[package]
+name = "suricata-config"
+version = "@PACKAGE_VERSION@"
+edition = "2021"
+license = "MIT"
+
+[lib]
+path = "@e_rustdir@/config/src/lib.rs"
+
+[dependencies]
