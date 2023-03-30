@@ -4,7 +4,11 @@ version = "@PACKAGE_VERSION@"
 edition = "2021"
 
 [workspace]
-members = [".", "./derive"]
+members = [
+    ".",
+    "derive",
+    "config",
+]
 
 [lib]
 crate-type = ["staticlib", "rlib"]
