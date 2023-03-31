@@ -8,3 +8,10 @@ license = "MIT"
 path = "@e_rustdir@/config/src/lib.rs"
 
 [dependencies]
+# Requires Rust 1.64+.
+serde_yaml = { version = "0.9.31", default_features = false, features = [] }
+serde = { version = "1.0.195", default_features = false, features = [] }
+thiserror = { version = "1.0.56", default_features = false, features = [] }
+
+# Last version to support Rust 1.64.
+clap = { version = "=4.2.1", features = ["derive"] }

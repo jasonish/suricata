@@ -72,6 +72,7 @@ asn1-rs = { version = "~0.5.2" }
 time = "=0.3.13"
 
 suricata-derive = { path = "./derive" }
+suricata-config = { path = "./config" }
 
 [dev-dependencies]
 test-case = "~3.3.1"

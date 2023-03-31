@@ -45,6 +45,8 @@
 
 #include "conf.h"
 #include "conf-yaml-loader.h"
+#include "rust-config.h"
+#include "config.h"
 
 #include "decode.h"
 #include "defrag.h"
@@ -955,17 +957,31 @@ static TmEcode LoadYamlConfig(SCInstance *suri)
     if (suri->conf_filename == NULL)
         suri->conf_filename = DEFAULT_CONF_FILE;
 
-    if (ConfYamlLoadFile(suri->conf_filename) != 0) {
-        /* Error already displayed. */
+    SCConfigValue *config = SCConfigLoadFile(suri->conf_filename);
+    if (config == NULL) {
+        /* TODO: Check if error is already logged. */
+        SCLogError("Failed to load configuration file");
         SCReturnInt(TM_ECODE_FAILED);
     }
+    SCConfigMerge(SCConfigGetRoot(), config);
+    SCConfigValueFree(config);
 
     if (suri->additional_configs) {
         for (int i = 0; suri->additional_configs[i] != NULL; i++) {
             SCLogConfig("Loading additional configuration file %s", suri->additional_configs[i]);
-            ConfYamlHandleInclude(ConfGetRootNode(), suri->additional_configs[i]);
+            config = SCConfigLoadFile(suri->additional_configs[i]);
+            if (config == NULL) {
+                SCLogError("Failed to load additional configuration file: %s",
+                        suri->additional_configs[i]);
+            } else {
+                SCConfigMerge(SCConfigGetRoot(), config);
+                SCConfigValueFree(config);
+            }
         }
     }
+
+    /* Convert new config to legacy. */
+    SCConfigValueToLegacy(ConfGetRootNode(), SCConfigGetRoot());
 
     SCReturnInt(TM_ECODE_OK);
 }

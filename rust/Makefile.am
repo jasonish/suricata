@@ -4,6 +4,7 @@ EXTRA_DIST =	src derive \
 		.cargo/config.in \
 		cbindgen.toml \
 		dist/rust-bindings.h \
+		dist/rust-config.h \
 		vendor
 
 if !DEBUG
@@ -53,6 +54,7 @@ endif
 			$(RUST_SURICATA_LIBDIR)/${RUST_SURICATA_LIBNAME}; \
 	fi
 	$(MAKE) gen/rust-bindings.h
+	$(MAKE) gen/rust-config.h
 
 install-library:
 	$(MKDIR_P) "$(DESTDIR)$(libdir)"
@@ -76,6 +78,7 @@ maintainer-clean-local:
 check:
 	CARGO_HOME="$(CARGO_HOME)" @rustup_home@ \
 		CARGO_TARGET_DIR="$(abs_top_builddir)/rust/target" \
+	        ABS_TOP_SRCDIR="$(abs_top_srcdir)" \
 		$(CARGO) test --all $(RELEASE) --features "$(RUST_FEATURES)"
 
 vendor:
@@ -85,8 +88,12 @@ if HAVE_CBINDGEN
 gen/rust-bindings.h: $(RUST_SURICATA_LIB)
 	cbindgen --config $(abs_top_srcdir)/rust/cbindgen.toml \
 		--quiet --verify --output $(abs_top_builddir)/rust/gen/rust-bindings.h || true
+gen/rust-config.h: $(RUST_SURICATA_LIB)
+	cbindgen --config $(abs_top_srcdir)/rust/config/cbindgen.toml \
+		--quiet --verify --output $(abs_top_builddir)/rust/gen/rust-config.h config || true
 else
 gen/rust-bindings.h:
+gen/rust-config.h:
 endif
 
 doc:
@@ -96,8 +103,12 @@ if HAVE_CBINDGEN
 dist/rust-bindings.h:
 	cbindgen --config $(abs_top_srcdir)/rust/cbindgen.toml \
 		--quiet --output $(abs_top_builddir)/rust/dist/rust-bindings.h
+dist/rust-config.h:
+	cbindgen --config $(abs_top_srcdir)/rust/config/cbindgen.toml \
+		--quiet --output $(abs_top_builddir)/rust/dist/rust-config.h config
 else
 dist/rust-bindings.h:
+dist/rust-config.h:
 endif
 
 Cargo.toml: Cargo.toml.in

@@ -28,6 +28,7 @@
 #include "util-debug.h"
 #include "conf-yaml-loader.h"
 #include "util-running-modes.h"
+#include "config.h"
 
 int ListKeywords(const char *keyword_info)
 {
@@ -43,8 +44,15 @@ int ListKeywords(const char *keyword_info)
 int ListAppLayerProtocols(const char *conf_filename)
 {
     EngineModeSetIDS();
-    if (ConfYamlLoadFile(conf_filename) != -1)
+#if 0
+    if (ConfYamlLoadFile(conf_filename) != -1) {
         SCLogLoadConfig(0, 0, 0, 0);
+    }
+#else
+    if (!SCConfigLoad(conf_filename)) {
+        SCLogLoadConfig(0, 0, 0, 0);
+    }
+#endif
     MpmTableSetup();
     SpmTableSetup();
     AppLayerSetup();
