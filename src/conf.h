@@ -58,6 +58,7 @@ typedef struct ConfNode_ {
 void ConfInit(void);
 void ConfDeInit(void);
 ConfNode *ConfGetRootNode(void);
+void ConfSetRootNode(ConfNode *node);
 int ConfGet(const char *name, const char **vptr);
 int ConfGetInt(const char *name, intmax_t *val);
 int ConfGetBool(const char *name, int *val);

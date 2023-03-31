@@ -1,0 +1,5 @@
+suricata-version: "7.0"
+
+parent:
+  child:
+    value: foobar

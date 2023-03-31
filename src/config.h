@@ -1,4 +1,4 @@
-/* Copyright (C) 2007-2010 Open Information Security Foundation
+/* Copyright (C) 2024 Open Information Security Foundation
  *
  * You can copy, redistribute or modify this Program under the terms of
  * the GNU General Public License version 2 as published by the Free
@@ -15,21 +15,20 @@
  * 02110-1301, USA.
  */
 
-/**
- * \file
- *
- * \author Endace Technology Limited - Jason Ish <jason.ish@endace.com>
- */
+#ifndef SC_CONFIG_H
+#define SC_CONFIG_H
 
-#ifndef SURICATA_CONF_YAML_LOADER_H
-#define SURICATA_CONF_YAML_LOADER_H
-
+#include "suricata-common.h"
 #include "conf.h"
 
-int ConfYamlLoadString(const char *, size_t);
-int ConfYamlLoadFileWithPrefix(const char *filename, const char *prefix);
-int ConfYamlHandleInclude(ConfNode *parent, const char *filename);
+#include "rust-config.h"
 
-void ConfYamlRegisterTests(void);
+void SCConfigFree(void);
+void SCConfigBackup(void);
+void SCConfigRestore(void);
+SCConfigValue *SCConfigGetRoot(void);
+void SCConfigSetRoot(SCConfigValue *config);
+void SCConfigValueToLegacy(ConfNode *parent, SCConfigValue *value);
+bool SCConfigLoad(const char *filename);
 
-#endif /* !SURICATA_CONF_YAML_LOADER_H */
+#endif /* SC_CONFIG_H */

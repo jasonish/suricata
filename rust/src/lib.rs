@@ -120,3 +120,7 @@ pub mod lzma;
 pub mod util;
 pub mod ffi;
 pub mod feature;
+
+// Use and re-export suricata_config. We do this mainly so its linked
+// into the library.
+pub use suricata_config as config;

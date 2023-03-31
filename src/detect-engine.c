@@ -28,6 +28,7 @@
 #include "flow-private.h"
 #include "flow-util.h"
 #include "flow-worker.h"
+#include "config.h"
 #include "conf.h"
 #include "conf-yaml-loader.h"
 #include "datasets.h"
@@ -4706,7 +4707,14 @@ int DetectEngineReload(const SCInstance *suri)
         if (suri->additional_configs) {
             for (int i = 0; suri->additional_configs[i] != NULL; i++) {
                 SCLogConfig("Reloading %s", suri->additional_configs[i]);
-                ConfYamlHandleInclude(node, suri->additional_configs[i]);
+                SCConfigValue *config = SCConfigLoadFile(suri->additional_configs[i]);
+                if (config == NULL) {
+                    SCLogError("Failed to load additional configuration file: %s",
+                            suri->additional_configs[i]);
+                } else {
+                    SCConfigMerge(SCConfigGetRoot(), config);
+                    SCConfigValueFree(config);
+                }
             }
         }
 

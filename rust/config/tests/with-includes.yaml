@@ -1,0 +1,6 @@
+suricata-version: "7"
+
+include: one.yaml
+
+nested:
+  include: one.yaml

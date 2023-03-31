@@ -8,3 +8,13 @@ license = "MIT"
 path = "@e_rustdir@/config/src/lib.rs"
 
 [dependencies]
+serde = { version = "1.0.195", default_features = false, features = [] }
+thiserror = { version = "1.0.56", default_features = false, features = [] }
+
+# Last version to support Rust 1.63.
+serde_yaml = { version = "=0.9.21", default_features = false, features = [] }
+
+# Last versions to support Rust 1.63. While we don't directly depend
+# on clap_lex, clap does.
+clap = { version = "=4.0.32", features = ["derive"] }
+clap_lex = { version = "=0.3.0" }

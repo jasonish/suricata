@@ -38,6 +38,7 @@
 
 #include "suricata-common.h"
 #include "conf.h"
+#include "config.h"
 #include "util-unittest.h"
 #include "util-debug.h"
 #include "util-path.h"
@@ -119,6 +120,13 @@ static ConfNode *ConfGetNodeOrCreate(const char *name, int final)
  */
 void ConfInit(void)
 {
+    if (SCConfigGetRoot() == NULL) {
+        SCConfigValue *value = SCConfigNewMapping();
+        SCConfigSetRoot(value);
+    } else {
+        SCLogError("Configuration already initialized.");
+    }
+
     if (root != NULL) {
         SCLogDebug("already initialized");
         return;
@@ -207,6 +215,14 @@ ConfNode *ConfGetNode(const char *name)
 ConfNode *ConfGetRootNode(void)
 {
     return root;
+}
+
+void ConfSetRootNode(ConfNode *node)
+{
+    if (root != NULL) {
+        ConfNodeFree(root);
+    }
+    root = node;
 }
 
 /**
@@ -669,6 +685,7 @@ int ConfRemove(const char *name)
  */
 void ConfCreateContextBackup(void)
 {
+    SCConfigBackup();
     root_backup = root;
     root = NULL;
 
@@ -681,6 +698,7 @@ void ConfCreateContextBackup(void)
  */
 void ConfRestoreContextBackup(void)
 {
+    SCConfigRestore();
     root = root_backup;
     root_backup = NULL;
 
@@ -692,6 +710,9 @@ void ConfRestoreContextBackup(void)
  */
 void ConfDeInit(void)
 {
+    if (SCConfigGetRoot() != NULL) {
+        SCConfigFree();
+    }
     if (root != NULL) {
         ConfNodeFree(root);
         root = NULL;
