@@ -162,7 +162,7 @@ static TmEcode JsonTemplateLogThreadDeinit(ThreadVars *t, void *data)
     return TM_ECODE_OK;
 }
 
-void JsonTemplateRustLogRegister(void)
+void JsonTemplateLogRegister(void)
 {
     /* TEMPLATE_START_REMOVE */
     if (ConfGetNode("app-layer.protocols.template") == NULL) {

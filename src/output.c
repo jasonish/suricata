@@ -1116,7 +1116,7 @@ void OutputRegisterLoggers(void)
     /* Pgsql JSON logger. */
     JsonPgsqlLogRegister();
     /* Template JSON logger. */
-    JsonTemplateRustLogRegister();
+    JsonTemplateLogRegister();
     /* RDP JSON logger. */
     JsonRdpLogRegister();
     /* DCERPC JSON logger. */
