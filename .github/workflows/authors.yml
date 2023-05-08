@@ -8,6 +8,10 @@ jobs:
     name: New Author Check
     runs-on: ubuntu-latest
     steps:
+      - name: Dumping github context for debugging
+        run: echo $JSON
+        env:
+          JSON: ${{ toJSON(github) }}
       - run: sudo apt -y install git
       - uses: actions/checkout@v3.2.0
         with:
