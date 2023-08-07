@@ -982,7 +982,8 @@ static int ConfYamlNull(void)
                     "unquoted-NULL: NULL\n"
                     "empty-quoted: \"\"\n"
                     "empty-unquoted: \n"
-                    "list: [\"null\", null, \"Null\", Null, \"NULL\", NULL, \"~\", ~]\n";
+                    "list: [\"null\", null, \"Null\", Null, \"NULL\", NULL, \"~\", ~]\n"
+                    "parent:\n  child: null\n";
     FAIL_IF(ConfYamlLoadString(config, strlen(config)) != 0);
 
     const char *val;
@@ -1030,6 +1031,14 @@ static int ConfYamlNull(void)
     FAIL_IF_NOT(ConfGet("list.6", &val));
     FAIL_IF_NULL(val);
     FAIL_IF_NOT(ConfGet("list.7", &val));
+    FAIL_IF_NOT_NULL(val);
+
+    /* Test "parent.child". As this is specifically set to NULL, we
+     * expect the value to exist with a NULL value. */
+    ConfNode *parent = ConfGetNode("parent");
+    val = "foo";
+    FAIL_IF_NULL(parent);
+    FAIL_IF_NOT(ConfGetChildValue(parent, "child", &val));
     FAIL_IF_NOT_NULL(val);
 
     ConfDeInit();
