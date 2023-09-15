@@ -254,11 +254,6 @@ jobs:
                 texlive-upquote \
                 texlive-capt-of \
                 texlive-needspace
-      #- name: Setup cppclean
-      #  run: |
-      #    git clone --depth 1 --branch suricata https://github.com/catenacyber/cppclean
-      #    cd cppclean
-      #    python3 setup.py install
       - name: Configuring
         run: |
           ./autogen.sh
@@ -284,6 +279,11 @@ jobs:
           test -e /usr/local/lib/suricata/python/suricata/update/configs/modify.conf
           test -e /usr/local/lib/suricata/python/suricata/update/configs/threshold.in
           test -e /usr/local/lib/suricata/python/suricata/update/configs/update.yaml
+      - name: Build C flow logger plugin
+        working-directory: examples/plugins/c-flow-logger
+        run: make
+      - name: Check C flow logger plugin
+        run: test -e examples/plugins/c-flow-logger/.libs/flowlogger.so.0.0.0
 
   almalinux-9-templates:
     name: AlmaLinux 9 Test Templates
