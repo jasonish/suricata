@@ -485,6 +485,11 @@ typedef enum {
     LOGGER_JSON_METADATA,
     LOGGER_JSON_FRAME,
     LOGGER_JSON_STREAM,
+
+    /** A reserved ID for library/plugin loggers. Might want to break
+        it out to low level log type: flow, packet, etc. */
+    LOGGER_RESERVED,
+
     LOGGER_SIZE,
 } LoggerId;
 
