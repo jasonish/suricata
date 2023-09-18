@@ -64,7 +64,7 @@ static OutputFlowLogger *list = NULL;
  *
  * \retval 0 on success, -1 on failure.
  */
-int OutputRegisterFlowLogger(const char *name, SCFlowLoggerFunc LogFunc, void *initdata,
+int SCOutputRegisterFlowLogger(const char *name, SCFlowLoggerFunc LogFunc, void *initdata,
         ThreadInitFunc ThreadInit, ThreadDeinitFunc ThreadDeinit)
 {
     OutputFlowLogger *op = SCMalloc(sizeof(*op));
