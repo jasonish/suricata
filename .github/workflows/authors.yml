@@ -14,7 +14,7 @@ jobs:
         working-directory: suricata
       - run: git fetch author
         working-directory: suricata
-      - run: git checkout author/${{ github.event.pull_request.head.ref }}
+      - run: git checkout "author/${{ github.event.pull_request.head.ref }}"
         working-directory: suricata
       - name: Export known authors from master branch
         run: git log --format="%an <%ae>" origin/master | sort | uniq > ../authors.txt
