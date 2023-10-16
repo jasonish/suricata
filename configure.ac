@@ -2613,6 +2613,7 @@ AC_CONFIG_FILES(python/Makefile python/suricata/config/defaults.py)
 AC_CONFIG_FILES(ebpf/Makefile)
 AC_CONFIG_FILES(libsuricata-config)
 AC_CONFIG_FILES(examples/plugins/c-flow-logger/Makefile)
+AC_CONFIG_FILES(examples/plugins/c-json-filetype/Makefile)
 
 AC_OUTPUT
 

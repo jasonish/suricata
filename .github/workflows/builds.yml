@@ -284,6 +284,11 @@ jobs:
         run: make
       - name: Check C flow logger plugin
         run: test -e examples/plugins/c-flow-logger/.libs/flowlogger.so.0.0.0
+      - name: Build C json filetype plugin
+        working-directory: examples/plugins/c-json-filetype
+        run: make
+      - name: Check C json filetype plugin
+        run: test -e examples/plugins/c-json-filetype/.libs/filetype.so.0.0.0
 
   almalinux-9-templates:
     name: AlmaLinux 9 Test Templates
