@@ -104,7 +104,7 @@ jobs:
 
       # Now checkout Suricata for the bundle script.
       - name: Checking out Suricata
-        uses: actions/checkout@v3.5.3
+        uses: actions/checkout@v4.1.1
 
       - name: Fetching libhtp
         run: |
@@ -189,7 +189,7 @@ jobs:
           key: ${{ github.job }}-dnf
       - run: echo "keepcache=1" >> /etc/dnf/dnf.conf
 
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
 
       # Download and extract dependency archives created during prep
       # job.
@@ -306,7 +306,7 @@ jobs:
           path: ~/.cargo/registry
           key: cargo-registry
 
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
 
       # Download and extract dependency archives created during prep
       # job.
@@ -395,7 +395,7 @@ jobs:
           key: ${{ github.job }}-dnf
       - run: echo "keepcache=1" >> /etc/dnf/dnf.conf
 
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
 
       # Prebuild check for duplicate SIDs
       - name: Check for duplicate SIDs
@@ -791,7 +791,7 @@ jobs:
       - name: Install Rust
         run: curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain 1.63.0 -y
       - run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
           name: prep
@@ -885,7 +885,7 @@ jobs:
                 systemd-devel \
                 which \
                 zlib-devel
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
           name: prep
@@ -978,7 +978,7 @@ jobs:
                 sudo \
                 which \
                 zlib-devel
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
           name: prep
@@ -1075,7 +1075,7 @@ jobs:
                 systemd-devel \
                 which \
                 zlib-devel
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
           name: prep
@@ -1168,7 +1168,7 @@ jobs:
                 sudo \
                 which \
                 zlib-devel
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
           name: prep
@@ -1258,7 +1258,7 @@ jobs:
                 which \
                 zlib-devel
       - run: adduser suricata
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
           name: prep
@@ -1348,7 +1348,7 @@ jobs:
                 sudo \
                 which \
                 zlib-devel
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
           name: prep
@@ -1420,7 +1420,7 @@ jobs:
       # packaged Rust version is too old for coverage, so get from rustup
       - name: Install Rust
         run: curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain 1.63.0 -y
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
           name: prep
@@ -1540,7 +1540,7 @@ jobs:
       # packaged Rust version is too old for coverage, so get from rustup
       - name: Install Rust
         run: curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain 1.63.0 -y
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
           name: prep
@@ -1628,7 +1628,7 @@ jobs:
                 zlib1g-dev \
                 exuberant-ctags \
                 dpdk-dev
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
           name: prep
@@ -1775,7 +1775,7 @@ jobs:
                 zlib1g \
                 zlib1g-dev \
                 exuberant-ctags
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
           name: prep
@@ -1850,7 +1850,7 @@ jobs:
                 zlib1g \
                 zlib1g-dev
       - run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
           name: prep
@@ -1924,7 +1924,7 @@ jobs:
                 linux-headers-$(uname -r)
 
       - name: Checkout Netmap repository
-        uses: actions/checkout@v3.5.3
+        uses: actions/checkout@v4.1.1
         with:
           repository: luigirizzo/netmap
           # gets cloned to $GITHUB_WORKSPACE/netmap/
@@ -1937,7 +1937,7 @@ jobs:
           make -j2
           sudo make install
 
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
           name: prep
@@ -2035,7 +2035,7 @@ jobs:
           ninja -C build install
           ldconfig
           cd $HOME
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
           name: prep
@@ -2112,7 +2112,7 @@ jobs:
               texlive-latex-extra \
               zlib1g \
               zlib1g-dev
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
           name: prep
@@ -2194,7 +2194,7 @@ jobs:
               texlive-latex-extra \
               zlib1g \
               zlib1g-dev
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
           name: prep
@@ -2276,7 +2276,7 @@ jobs:
       - name: Install Rust
         run: curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain ${RUST_VERSION_MIN} -y
       - run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
           name: prep
@@ -2355,7 +2355,7 @@ jobs:
       - name: Install Rust
         run: curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain $RUST_VERSION_KNOWN -y
       - run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
           name: prep
@@ -2429,7 +2429,7 @@ jobs:
       - name: Install Rust
         run: curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain $RUST_VERSION_KNOWN -y
       - run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
           name: prep
@@ -2484,7 +2484,7 @@ jobs:
         run: cargo install --debug --version 0.24.3 cbindgen
       - run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
       - run: pip3 install PyYAML
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
       - name: Downloading prep archive
         uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
@@ -2517,7 +2517,7 @@ jobs:
         with:
           path: ~/.cargo
           key: ${{ github.job }}-cargo
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
       - uses: msys2/setup-msys2@v2
         with:
           msystem: MINGW64
@@ -2527,7 +2527,7 @@ jobs:
       # preinstalled one to be picked up by configure
       - name: cbindgen
         run: cargo install --root /usr --force --debug --version 0.24.3 cbindgen
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
           name: prep
@@ -2573,7 +2573,7 @@ jobs:
         with:
           path: ~/.cargo
           key: ${{ github.job }}-cargo
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
       - uses: msys2/setup-msys2@v2
         with:
           msystem: MINGW64
@@ -2583,7 +2583,7 @@ jobs:
       # preinstalled one to be picked up by configure
       - name: cbindgen
         run: cargo install --root /usr --force --debug --version 0.24.3 cbindgen
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
           name: prep
@@ -2617,7 +2617,7 @@ jobs:
         with:
           path: ~/.cargo
           key: ${{ github.job }}-cargo
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
       - uses: msys2/setup-msys2@v2
         with:
           msystem: MINGW64
@@ -2627,7 +2627,7 @@ jobs:
       # preinstalled one to be picked up by configure
       - name: cbindgen
         run: cargo install --root /usr --force --debug --version 0.24.3 cbindgen
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v4.1.1
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
           name: prep
