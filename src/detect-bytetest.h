@@ -34,8 +34,8 @@
 #define DETECT_BYTETEST_OP_LE  7 /**< less than equal operator */
 
 /** Bytetest Base */
-#define DETECT_BYTETEST_BASE_UNSET 0  /**< Unset type value string (automatic)*/
-#define DETECT_BYTETEST_BASE_OCT   8  /**< "oct" type value string */
+#define DETECT_BYTETEST_BASE_UNSET 0 /**< Unset type value string (automatic)*/
+#define DETECT_BYTETEST_BASE_OCT   8 /**< "oct" type value string */
 #define DETECT_BYTETEST_BASE_DEC   10 /**< "dec" type value string */
 #define DETECT_BYTETEST_BASE_HEX   16 /**< "hex" type value string */
 

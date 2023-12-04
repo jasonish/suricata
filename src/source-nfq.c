@@ -1115,7 +1115,7 @@ TmEcode NFQSetVerdict(Packet *p)
                     } else {
                         ret = nfq_set_verdict2(t->qh, p->nfq_v.id, verdict, p->nfq_v.mark, 0, NULL);
                     }
-#else  /* fall back to old function */
+#else /* fall back to old function */
                     if (p->flags & PKT_STREAM_MODIFIED) {
                         ret = nfq_set_verdict_mark(t->qh, p->nfq_v.id, verdict,
                                 htonl(p->nfq_v.mark), GET_PKT_LEN(p), GET_PKT_DATA(p));
@@ -1146,7 +1146,7 @@ TmEcode NFQSetVerdict(Packet *p)
                                     (p->nfq_v.mark & ~nfq_config.mask),
                             0, NULL);
                 }
-#else  /* fall back to old function */
+#else /* fall back to old function */
                 if (p->flags & PKT_STREAM_MODIFIED) {
                     ret = nfq_set_verdict_mark(t->qh, p->nfq_v.id, verdict,
                             htonl((nfq_config.mark & nfq_config.mask) |
