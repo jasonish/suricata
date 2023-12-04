@@ -551,7 +551,7 @@ cleanup:
     return 0;
 }
 
-#else  /* HAVE_LIBNET_ICMPV6_UNREACH */
+#else /* HAVE_LIBNET_ICMPV6_UNREACH */
 
 int RejectSendLibnet11IPv6ICMP(ThreadVars *tv, Packet *p, void *data, enum RejectDirection dir)
 {

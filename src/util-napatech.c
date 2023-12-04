@@ -1080,10 +1080,9 @@ static void *NapatechBufMonitorLoop(void *arg)
                             hStat.u.usageData_v0.data.hb[hb_count].deQueued / 1024 +
                             hStat.u.usageData_v0.data.hb[hb_count].enQueued / 1024 - HB_HIGHWATER;
 
-                    HB_fill_level[hb_count] =
-                            (uint32_t)((100 * hStat.u.usageData_v0.data.hb[hb_count].deQueued /
-                                               1024) /
-                                       bufSize);
+                    HB_fill_level[hb_count] = (uint32_t)(
+                            (100 * hStat.u.usageData_v0.data.hb[hb_count].deQueued / 1024) /
+                            bufSize);
 
 #ifndef NAPATECH_ENABLE_BYPASS
                     ave_OB_fill_level[stream_id] += OB_fill_level[hb_count];

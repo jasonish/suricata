@@ -1077,8 +1077,8 @@ void SCACTileDestroyCtx(MpmCtx *mpm_ctx)
 #define SCHECK(x) ((x) > 0)
 #define BUF_TYPE  int32_t
 // Extract byte N=0,1,2,3 from x
-#define BYTE0(x) (((x) & 0x000000ff) >> 0)
-#define BYTE1(x) (((x) & 0x0000ff00) >> 8)
+#define BYTE0(x) (((x)&0x000000ff) >> 0)
+#define BYTE1(x) (((x)&0x0000ff00) >> 8)
 #define BYTE2(x) (((x) & 0x00ff0000) >> 16)
 #define BYTE3(x) (((x) & 0xff000000) >> 24)
 #define EXTRA    4 // need 4 extra bytes to avoid OOB reads
@@ -1181,7 +1181,7 @@ uint32_t SCACTileSearchLarge(const SCACTileSearchCtx *ctx, MpmThreadCtx *mpm_thr
 
 /* Type of next_state */
 #define STYPE    int16_t
-#define SLOAD(x) *(STYPE *restrict)(x)
+#define SLOAD(x) *(STYPE * restrict)(x)
 
 #define FUNC_NAME SCACTileSearchSmall256
 // y = 256 * (x & 0x7FFF)

@@ -456,9 +456,12 @@ static int ProgramFlow(Packet *p, int inline_mode)
     /* Only bypass TCP and UDP */
     if (PKT_IS_TCP(p)) {
         SC_ATOMIC_ADD(flow_callback_tcp_pkts, 1);
-    } else if PKT_IS_UDP (p) {
-        SC_ATOMIC_ADD(flow_callback_udp_pkts, 1);
-    } else {
+    } else if
+        PKT_IS_UDP(p)
+        {
+            SC_ATOMIC_ADD(flow_callback_udp_pkts, 1);
+        }
+    else {
         SC_ATOMIC_ADD(flow_callback_unhandled_pkts, 1);
     }
 

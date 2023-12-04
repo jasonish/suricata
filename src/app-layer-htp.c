@@ -1932,8 +1932,8 @@ end:
             if ((uint64_t)hstate->conn->in_data_counter > hstate->last_request_data_stamp &&
                     (uint64_t)hstate->conn->in_data_counter - hstate->last_request_data_stamp <
                             (uint64_t)UINT_MAX) {
-                const uint32_t data_size = (uint32_t)((uint64_t)hstate->conn->in_data_counter -
-                                                      hstate->last_request_data_stamp);
+                const uint32_t data_size = (uint32_t)(
+                        (uint64_t)hstate->conn->in_data_counter - hstate->last_request_data_stamp);
                 const uint32_t depth = MIN(data_size, hstate->cfg->request.inspect_min_size);
 
                 /* body still in progress, but due to min inspect size we need to inspect now */
