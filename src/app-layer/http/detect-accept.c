@@ -26,22 +26,22 @@
  *
  * \author Victor Julien <victor@inliniac.net>
  *
- * Implements support http_referer sticky buffer
+ * Implements support http_header_*
  */
 
-#define KEYWORD_NAME_LEGACY "http_referer"
-#define KEYWORD_NAME        "http.referer"
-#define KEYWORD_DOC         "http-keywords.html#http-referer"
-#define BUFFER_NAME         "http_referer"
-#define BUFFER_DESC         "http referer header"
-#define HEADER_NAME         "Referer"
-#define KEYWORD_ID          DETECT_AL_HTTP_HEADER_REFERER
+#define KEYWORD_NAME_LEGACY "http_accept"
+#define KEYWORD_NAME        "http.accept"
+#define KEYWORD_DOC         "http-keywords.html#http-accept"
+#define BUFFER_NAME         "http_accept"
+#define BUFFER_DESC         "http accept header"
+#define HEADER_NAME         "Accept"
+#define KEYWORD_ID          DETECT_AL_HTTP_HEADER_ACCEPT
 #define KEYWORD_TOSERVER    1
 
-#include "detect-http-headers-stub.h"
-#include "detect-http-referer.h"
+#include "app-layer/http/detect-headers-stub.h"
+#include "app-layer/http/detect-accept.h"
 
-void RegisterHttpHeadersReferer(void)
+void RegisterHttpHeadersAccept(void)
 {
     DetectHttpHeadersRegisterStub();
 }

@@ -26,22 +26,23 @@
  *
  * \author Victor Julien <victor@inliniac.net>
  *
- * Implements http_accept_enc sticky buffer
+ * Implements http_content_len sticky buffer
  */
 
-#define KEYWORD_NAME_LEGACY "http_accept_enc"
-#define KEYWORD_NAME        "http.accept_enc"
-#define KEYWORD_DOC         "http-keywords.html#http-accept-enc"
-#define BUFFER_NAME         "http_accept_enc"
-#define BUFFER_DESC         "http accept encoding header"
-#define HEADER_NAME         "Accept-Encoding"
-#define KEYWORD_ID          DETECT_AL_HTTP_HEADER_ACCEPT_ENC
+#define KEYWORD_NAME_LEGACY "http_content_len"
+#define KEYWORD_NAME        "http.content_len"
+#define KEYWORD_DOC         "http-keywords.html#http-content-len"
+#define BUFFER_NAME         "http_content_len"
+#define BUFFER_DESC         "http content length header"
+#define HEADER_NAME         "Content-Length"
+#define KEYWORD_ID          DETECT_AL_HTTP_HEADER_CONTENT_LEN
 #define KEYWORD_TOSERVER    1
+#define KEYWORD_TOCLIENT    1
 
-#include "detect-http-headers-stub.h"
-#include "detect-http-accept-enc.h"
+#include "app-layer/http/detect-headers-stub.h"
+#include "app-layer/http/detect-content-len.h"
 
-void RegisterHttpHeadersAcceptEnc(void)
+void RegisterHttpHeadersContentLen(void)
 {
     DetectHttpHeadersRegisterStub();
 }
