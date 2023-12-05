@@ -35,7 +35,7 @@
 #include "app-layer-detect-proto.h"
 #include "app-layer-parser.h"
 
-#include "app-layer-nfs-tcp.h"
+#include "app-layer/nfs/parser-tcp.h"
 
 #include "rust.h"
 
