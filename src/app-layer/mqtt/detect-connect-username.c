@@ -28,7 +28,7 @@
 #include "detect-engine.h"
 #include "detect-engine-mpm.h"
 #include "detect-engine-prefilter.h"
-#include "detect-mqtt-connect-username.h"
+#include "app-layer/mqtt/detect-connect-username.h"
 #include "rust.h"
 
 #define KEYWORD_NAME "mqtt.connect.username"
