@@ -34,7 +34,7 @@
 #include "detect-engine-prefilter.h"
 #include "detect-content.h"
 #include "detect-pcre.h"
-#include "detect-tls-cert-subject.h"
+#include "app-layer/tls/detect-cert-subject.h"
 
 #include "flow.h"
 #include "flow-util.h"

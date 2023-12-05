@@ -47,7 +47,7 @@
 
 #include "app-layer.h"
 #include "app-layer/ssl/parser.h"
-#include "detect-tls-cert-issuer.h"
+#include "app-layer/tls/detect-cert-issuer.h"
 
 #include "util-unittest.h"
 #include "util-unittest-helper.h"
