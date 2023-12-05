@@ -32,7 +32,7 @@ example:
 
 Case sensitive, can't use 'nocase', or other modifiers.
 
-**Note:** ``tls.cert_subject`` replaces the following legacy keywords: ``tls_cert_subject`` and ``tls.subject``. 
+**Note:** ``tls.cert_subject`` replaces the following legacy keywords: ``tls_cert_subject`` and ``tls.subject``.
 It's recommended that rules be converted to use the new one.
 
 tls.cert_issuer
@@ -62,7 +62,7 @@ example:
 
 Case sensitive, can't use 'nocase', or other modifiers.
 
-**Note:** ``tls.cert_issuer`` replaces the following legacy keywords: ``tls_cert_issuer`` and ``tls.issuerdn``. 
+**Note:** ``tls.cert_issuer`` replaces the following legacy keywords: ``tls_cert_issuer`` and ``tls.issuerdn``.
 It's recommended that rules be converted to use the new one.
 
 tls.cert_serial

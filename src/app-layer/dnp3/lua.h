@@ -15,20 +15,13 @@
  * 02110-1301, USA.
  */
 
-#ifndef __DETECT_DNP3_H__
-#define __DETECT_DNP3_H__
+#ifndef __UTIL_LUA_DNP3_H__
+#define __UTIL_LUA_DNP3_H__
 
-/**
- * Struct for mapping symbolic names to values.
- */
-typedef struct DNP3Mapping_ {
-    const char *name;
-    uint16_t value;
-} DNP3Mapping;
+#ifdef HAVE_LUA
 
-/* Map of internal indicators to value for external use. */
-extern DNP3Mapping DNP3IndicatorsMap[];
+int LuaRegisterDNP3Functions(lua_State *);
 
-void DetectDNP3Register(void);
+#endif /* HAVE_LUA */
 
-#endif /* __DETECT_DNP3_H__ */
+#endif /* !__UTIL_LUA_DNP3_H__ */

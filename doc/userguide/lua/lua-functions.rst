@@ -812,7 +812,7 @@ Example:
           return 0
       end
   end
-  
+
 HasshServerGet
 ~~~~~~~~~~~~~~
 
@@ -828,7 +828,7 @@ Example:
           return 0
       end
   end
-  
+
 HasshServerGetString
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -998,7 +998,7 @@ index so in our case we need to use 0.
          SCFlowintSet(0, a + 1)
      else
          SCFlowintSet(0, 1)
-     end 
+     end
 
 SCFlowintGet
 ~~~~~~~~~~~~
@@ -1031,7 +1031,7 @@ SCFlowvarSet
 Set a Flowvar. First parameter is the index, second is the data
 and third is the length of data.
 
-You can use it to set string 
+You can use it to set string
 
 ::
 
@@ -1041,7 +1041,7 @@ You can use it to set string
      needs["flowvar"] = {"cnt"}
      return needs
  end
- 
+
  function match(args)
      a = SCFlowvarGet(0);
      if a then
@@ -1050,7 +1050,7 @@ You can use it to set string
      else
          a = tostring(1)
          SCFlowvarSet(0, a, #a)
-     end 
+     end
 
 Misc
 ----

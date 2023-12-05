@@ -77,4 +77,3 @@ applayer_proto_detection_skipped
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Protocol detection was skipped because of :ref:`proto-detect-bail-out`.
-

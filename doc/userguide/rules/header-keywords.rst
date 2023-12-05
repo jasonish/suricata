@@ -345,7 +345,7 @@ It is also possible to use the `tcp.flags` content as a fast_pattern by using th
 Example::
 
   alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"Example tcp.flags sig"; \
- :example-rule-emphasis:`tcp.flags:FPU,CE; prefilter;` classtype:misc-activity; sid:1; rev:1;)  
+ :example-rule-emphasis:`tcp.flags:FPU,CE; prefilter;` classtype:misc-activity; sid:1; rev:1;)
 
 seq
 ^^^

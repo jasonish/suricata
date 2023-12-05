@@ -92,4 +92,3 @@ Syntax::
 Signature example::
 
  alert snmp any any -> any any (msg:"SNMP response"; snmp.pdu_type:2; sid:3; rev:1;)
-

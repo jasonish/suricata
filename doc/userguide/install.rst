@@ -34,7 +34,7 @@ Common configure options
 
 .. option:: --disable-gccmarch-native
 
-    Do not optimize the binary for the hardware it is built on. Add this 
+    Do not optimize the binary for the hardware it is built on. Add this
     flag if the binary is meant to be portable or if Suricata is to be used in a VM.
 
 .. option:: --prefix=/usr/
@@ -281,9 +281,9 @@ repository, the same procedures as above apply, just using another PPA,
 
     We do our best to make others aware of continuing development and items
     within the engine that are not yet complete or optimal. With this in mind,
-    please refer to `Suricata's issue tracker on Redmine 
-    <http://redmine.openinfosecfoundation.org/projects/suricata/issues>`_ 
-    for an up-to-date list of what we are working on, planned roadmap, 
+    please refer to `Suricata's issue tracker on Redmine
+    <http://redmine.openinfosecfoundation.org/projects/suricata/issues>`_
+    for an up-to-date list of what we are working on, planned roadmap,
     and to report issues.
 
 `OISF launchpad: suricata-daily <https://launchpad.net/~oisf/+archive/suricata-daily>`_.
