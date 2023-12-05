@@ -1,4 +1,4 @@
-/* Copyright (C) 2020 Open Information Security Foundation
+/* Copyright (C) 2023 Open Information Security Foundation
  *
  * You can copy, redistribute or modify this Program under the terms of
  * the GNU General Public License version 2 as published by the Free
@@ -19,7 +19,7 @@
  *
  * \author Sascha Steinbiss <sascha@steinbiss.name>
  *
- * Implements the mqtt.connect.willmessage sticky buffer
+ * Implements the mqtt.connect.protocolstring sticky buffer
  */
 
 #include "suricata-common.h"
@@ -28,16 +28,17 @@
 #include "detect-engine.h"
 #include "detect-engine-mpm.h"
 #include "detect-engine-prefilter.h"
-#include "detect-mqtt-connect-willmessage.h"
+#include "app-layer/mqtt/detect-connect-protocol-string.h"
 #include "rust.h"
 
-#define KEYWORD_NAME "mqtt.connect.willmessage"
-#define KEYWORD_DOC  "mqtt-keywords.html#mqtt-connect-willmessage"
-#define BUFFER_NAME  "mqtt.connect.willmessage"
-#define BUFFER_DESC  "MQTT CONNECT will message"
+#define KEYWORD_NAME "mqtt.connect.protocol_string"
+#define KEYWORD_DOC  "mqtt-keywords.html#mqtt-connect-protocol_string"
+#define BUFFER_NAME  "mqtt.connect.protocol_string"
+#define BUFFER_DESC  "MQTT CONNECT protocol string"
 static int g_buffer_id = 0;
 
-static int DetectMQTTConnectWillMessageSetup(DetectEngineCtx *de_ctx, Signature *s, const char *arg)
+static int DetectMQTTConnectProtocolStringSetup(
+        DetectEngineCtx *de_ctx, Signature *s, const char *arg)
 {
     if (DetectBufferSetActiveList(de_ctx, s, g_buffer_id) < 0)
         return -1;
@@ -57,7 +58,7 @@ static InspectionBuffer *GetData(DetectEngineThreadCtx *det_ctx,
         const uint8_t *b = NULL;
         uint32_t b_len = 0;
 
-        if (rs_mqtt_tx_get_connect_willmessage(txv, &b, &b_len) != 1)
+        if (rs_mqtt_tx_get_connect_protocol_string(txv, &b, &b_len) != 1)
             return NULL;
         if (b == NULL || b_len == 0)
             return NULL;
@@ -68,15 +69,16 @@ static InspectionBuffer *GetData(DetectEngineThreadCtx *det_ctx,
     return buffer;
 }
 
-void DetectMQTTConnectWillMessageRegister(void)
+void DetectMQTTConnectProtocolStringRegister(void)
 {
-    /* mqtt.connect.willmessage sticky buffer */
-    sigmatch_table[DETECT_AL_MQTT_CONNECT_WILLMESSAGE].name = KEYWORD_NAME;
-    sigmatch_table[DETECT_AL_MQTT_CONNECT_WILLMESSAGE].desc =
-            "sticky buffer to match on the MQTT CONNECT will message";
-    sigmatch_table[DETECT_AL_MQTT_CONNECT_WILLMESSAGE].url = "/rules/" KEYWORD_DOC;
-    sigmatch_table[DETECT_AL_MQTT_CONNECT_WILLMESSAGE].Setup = DetectMQTTConnectWillMessageSetup;
-    sigmatch_table[DETECT_AL_MQTT_CONNECT_WILLMESSAGE].flags |= SIGMATCH_NOOPT;
+    /* mqtt.connect.protocol_string sticky buffer */
+    sigmatch_table[DETECT_AL_MQTT_CONNECT_PROTOCOL_STRING].name = KEYWORD_NAME;
+    sigmatch_table[DETECT_AL_MQTT_CONNECT_PROTOCOL_STRING].desc =
+            "sticky buffer to match on the MQTT CONNECT protocol string";
+    sigmatch_table[DETECT_AL_MQTT_CONNECT_PROTOCOL_STRING].url = "/rules/" KEYWORD_DOC;
+    sigmatch_table[DETECT_AL_MQTT_CONNECT_PROTOCOL_STRING].Setup =
+            DetectMQTTConnectProtocolStringSetup;
+    sigmatch_table[DETECT_AL_MQTT_CONNECT_PROTOCOL_STRING].flags |= SIGMATCH_NOOPT;
 
     DetectAppLayerInspectEngineRegister2(BUFFER_NAME, ALPROTO_MQTT, SIG_FLAG_TOSERVER, 0,
             DetectEngineInspectBufferGeneric, GetData);

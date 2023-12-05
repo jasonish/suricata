@@ -36,7 +36,7 @@
 #include "detect-engine-content-inspection.h"
 #include "detect-engine-mpm.h"
 #include "detect-engine-prefilter.h"
-#include "detect-mqtt-subscribe-topic.h"
+#include "app-layer/mqtt/detect-subscribe-topic.h"
 #include "util-unittest.h"
 #include "util-unittest-helper.h"
 
