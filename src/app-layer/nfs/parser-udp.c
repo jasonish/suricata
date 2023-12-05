@@ -32,7 +32,7 @@
 #include "app-layer-detect-proto.h"
 #include "app-layer-parser.h"
 
-#include "app-layer-nfs-udp.h"
+#include "app-layer/nfs/parser-udp.h"
 #include "util-enum.h"
 
 #include "rust.h"
