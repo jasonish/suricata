@@ -1610,9 +1610,9 @@ static int IPOnlyTestSig03(void)
     SigFree(de_ctx, s);
 
     /* pcre */
-    s = SigInit(
-            de_ctx, "alert tcp any any -> any any (msg:\"SigTest40-03 sig is not IPOnly (pcre) \"; "
-                    "pcre:\"/e?idps rule[sz]/i\"; classtype:misc-activity; sid:400001; rev:1;)");
+    s = SigInit(de_ctx,
+            "alert tcp any any -> any any (msg:\"SigTest40-03 sig is not IPOnly (pcre) \"; "
+            "pcre:\"/e?idps rule[sz]/i\"; classtype:misc-activity; sid:400001; rev:1;)");
     if (s == NULL) {
         goto end;
     }
@@ -1647,9 +1647,9 @@ static int IPOnlyTestSig03(void)
     SigFree(de_ctx, s);
 
     /* flowbits */
-    s = SigInit(
-            de_ctx, "alert tcp any any -> any any (msg:\"SigTest40-03 sig is not IPOnly (flowbits) "
-                    "\"; flowbits:unset; classtype:misc-activity; sid:400001; rev:1;)");
+    s = SigInit(de_ctx,
+            "alert tcp any any -> any any (msg:\"SigTest40-03 sig is not IPOnly (flowbits) "
+            "\"; flowbits:unset; classtype:misc-activity; sid:400001; rev:1;)");
     if (s == NULL) {
         goto end;
     }

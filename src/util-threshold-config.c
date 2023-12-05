@@ -2328,9 +2328,9 @@ static int SCThresholdConfTest21(void)
     DetectEngineCtx *de_ctx = DetectEngineCtxInit();
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
-    Signature *s = DetectEngineAppendSig(
-            de_ctx, "alert tcp any any -> any any (msg:\"Threshold limit\"; content:\"abc\"; "
-                    "threshold: type limit, track by_dst, count 5, seconds 60; sid:1000;)");
+    Signature *s = DetectEngineAppendSig(de_ctx,
+            "alert tcp any any -> any any (msg:\"Threshold limit\"; content:\"abc\"; "
+            "threshold: type limit, track by_dst, count 5, seconds 60; sid:1000;)");
     FAIL_IF_NULL(s);
     g_ut_threshold_fp = SCThresholdConfGenerateValidDummyFD20();
     FAIL_IF_NULL(g_ut_threshold_fp);

@@ -3317,9 +3317,9 @@ static int SigParseTest18(void)
     if (de_ctx == NULL)
         goto end;
 
-    if (DetectEngineAppendSig(de_ctx, "alert tcp 1.2.3.4 any -> !1.2.3.4 any "
-                                      "(msg:\"SigParseTest01\"; sid:99999999999999999999;)") !=
-            NULL)
+    if (DetectEngineAppendSig(de_ctx,
+                "alert tcp 1.2.3.4 any -> !1.2.3.4 any "
+                "(msg:\"SigParseTest01\"; sid:99999999999999999999;)") != NULL)
         goto end;
 
     result = 1;
@@ -3338,9 +3338,9 @@ static int SigParseTest19(void)
     if (de_ctx == NULL)
         goto end;
 
-    if (DetectEngineAppendSig(
-                de_ctx, "alert tcp 1.2.3.4 any -> !1.2.3.4 any (msg:\"SigParseTest01\"; sid:1; "
-                        "gid:99999999999999999999;)") != NULL)
+    if (DetectEngineAppendSig(de_ctx,
+                "alert tcp 1.2.3.4 any -> !1.2.3.4 any (msg:\"SigParseTest01\"; sid:1; "
+                "gid:99999999999999999999;)") != NULL)
         goto end;
 
     result = 1;
@@ -3359,9 +3359,9 @@ static int SigParseTest20(void)
     if (de_ctx == NULL)
         goto end;
 
-    if (DetectEngineAppendSig(
-                de_ctx, "alert tcp 1.2.3.4 any -> !1.2.3.4 any (msg:\"SigParseTest01\"; sid:1; "
-                        "rev:99999999999999999999;)") != NULL)
+    if (DetectEngineAppendSig(de_ctx,
+                "alert tcp 1.2.3.4 any -> !1.2.3.4 any (msg:\"SigParseTest01\"; sid:1; "
+                "rev:99999999999999999999;)") != NULL)
         goto end;
 
     result = 1;

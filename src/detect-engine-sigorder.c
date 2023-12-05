@@ -862,25 +862,25 @@ static int SCSigOrderingTest02(void)
     DetectEngineCtx *de_ctx = DetectEngineCtxInit();
     FAIL_IF(de_ctx == NULL);
 
-    sig = DetectEngineAppendSig(
-            de_ctx, "alert tcp any !21:902 -> any any (msg:\"Testing sigordering\"; "
-                    "content:\"220\"; offset:0; depth:4; pcre:\"/220[- ]/\"; rev:4; sid:1;)");
+    sig = DetectEngineAppendSig(de_ctx,
+            "alert tcp any !21:902 -> any any (msg:\"Testing sigordering\"; "
+            "content:\"220\"; offset:0; depth:4; pcre:\"/220[- ]/\"; rev:4; sid:1;)");
     FAIL_IF_NULL(sig);
 
-    sig = DetectEngineAppendSig(
-            de_ctx, "drop tcp any !21:902 -> any any (msg:\"Testing sigordering\"; "
-                    "content:\"220\"; offset:0; depth:4; pcre:\"/220[- ]/\"; rev:4; sid:2;)");
+    sig = DetectEngineAppendSig(de_ctx,
+            "drop tcp any !21:902 -> any any (msg:\"Testing sigordering\"; "
+            "content:\"220\"; offset:0; depth:4; pcre:\"/220[- ]/\"; rev:4; sid:2;)");
     FAIL_IF_NULL(sig);
 
-    sig = DetectEngineAppendSig(
-            de_ctx, "drop tcp any !21:902 -> any any (msg:\"Testing sigordering\"; "
-                    "content:\"220\"; offset:10; depth:4; pcre:\"/220[- ]/\"; rev:4; sid:3;)");
+    sig = DetectEngineAppendSig(de_ctx,
+            "drop tcp any !21:902 -> any any (msg:\"Testing sigordering\"; "
+            "content:\"220\"; offset:10; depth:4; pcre:\"/220[- ]/\"; rev:4; sid:3;)");
     FAIL_IF_NULL(sig);
 
-    sig = DetectEngineAppendSig(
-            de_ctx, "pass tcp any !21:902 -> any any (msg:\"Testing sigordering\"; "
-                    "content:\"220\"; offset:0; depth:4; pcre:\"/220[- ]/\"; "
-                    "flowvar:http_host,\"www.oisf.net\"; rev:4; priority:1; sid:4;)");
+    sig = DetectEngineAppendSig(de_ctx,
+            "pass tcp any !21:902 -> any any (msg:\"Testing sigordering\"; "
+            "content:\"220\"; offset:0; depth:4; pcre:\"/220[- ]/\"; "
+            "flowvar:http_host,\"www.oisf.net\"; rev:4; priority:1; sid:4;)");
     FAIL_IF_NULL(sig);
 
     sig = DetectEngineAppendSig(de_ctx,
@@ -888,10 +888,10 @@ static int SCSigOrderingTest02(void)
             "offset:0; depth:4; pcre:\"/220[- ]/\"; rev:4; priority:1; sid:5;)");
     FAIL_IF_NULL(sig);
 
-    sig = DetectEngineAppendSig(
-            de_ctx, "pass tcp any !21:902 -> any any (msg:\"Testing sigordering\"; "
-                    "pcre:\"/^User-Agent: (?P<flow_http_host>.*)\\r\\n/m\"; content:\"220\"; "
-                    "offset:10; depth:4; rev:4; priority:3; sid:6;)");
+    sig = DetectEngineAppendSig(de_ctx,
+            "pass tcp any !21:902 -> any any (msg:\"Testing sigordering\"; "
+            "pcre:\"/^User-Agent: (?P<flow_http_host>.*)\\r\\n/m\"; content:\"220\"; "
+            "offset:10; depth:4; rev:4; priority:3; sid:6;)");
     FAIL_IF_NULL(sig);
 
     sig = DetectEngineAppendSig(de_ctx,
@@ -915,14 +915,14 @@ static int SCSigOrderingTest02(void)
             "offset:11; depth:4; pcre:\"/220[- ]/\"; rev:4; priority:3; sid:10;)");
     FAIL_IF_NULL(sig);
 
-    sig = DetectEngineAppendSig(
-            de_ctx, "alert tcp any !21:902 -> any any (msg:\"Testing sigordering\"; "
-                    "content:\"220\"; offset:11; depth:4; pcre:\"/220[- ]/\"; rev:4; sid:11;)");
+    sig = DetectEngineAppendSig(de_ctx,
+            "alert tcp any !21:902 -> any any (msg:\"Testing sigordering\"; "
+            "content:\"220\"; offset:11; depth:4; pcre:\"/220[- ]/\"; rev:4; sid:11;)");
     FAIL_IF_NULL(sig);
 
-    sig = DetectEngineAppendSig(
-            de_ctx, "alert tcp any !21:902 -> any any (msg:\"Testing sigordering\"; "
-                    "content:\"220\"; offset:11; depth:4; pcre:\"/220[- ]/\"; rev:4; sid:12;)");
+    sig = DetectEngineAppendSig(de_ctx,
+            "alert tcp any !21:902 -> any any (msg:\"Testing sigordering\"; "
+            "content:\"220\"; offset:11; depth:4; pcre:\"/220[- ]/\"; rev:4; sid:12;)");
     FAIL_IF_NULL(sig);
 
     sig = DetectEngineAppendSig(de_ctx,
@@ -931,10 +931,10 @@ static int SCSigOrderingTest02(void)
             "priority:2; flowbits:isnotset,TEST.two; sid:13;)");
     FAIL_IF_NULL(sig);
 
-    sig = DetectEngineAppendSig(
-            de_ctx, "alert tcp any !21:902 -> any any (msg:\"Testing sigordering\"; "
-                    "content:\"220\"; offset:12; depth:4; pcre:\"/220[- ]/\"; rev:4; priority:2; "
-                    "flowbits:set,TEST.two; sid:14;)");
+    sig = DetectEngineAppendSig(de_ctx,
+            "alert tcp any !21:902 -> any any (msg:\"Testing sigordering\"; "
+            "content:\"220\"; offset:12; depth:4; pcre:\"/220[- ]/\"; rev:4; priority:2; "
+            "flowbits:set,TEST.two; sid:14;)");
     FAIL_IF_NULL(sig);
 
     SCSigRegisterSignatureOrderingFunc(de_ctx, SCSigOrderByActionCompare);

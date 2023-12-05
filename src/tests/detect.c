@@ -226,9 +226,9 @@ static int SigTest04(void)
 
     de_ctx->flags |= DE_QUIET;
 
-    de_ctx->sig_list = SigInit(
-            de_ctx, "alert tcp any any -> any any (msg:\"HTTP TEST\"; content:\"Host:\"; "
-                    "offset:20; depth:25; content:\"Host:\"; distance:42; within:47; sid:1;)");
+    de_ctx->sig_list = SigInit(de_ctx,
+            "alert tcp any any -> any any (msg:\"HTTP TEST\"; content:\"Host:\"; "
+            "offset:20; depth:25; content:\"Host:\"; distance:42; within:47; sid:1;)");
     if (de_ctx->sig_list == NULL) {
         result = 0;
         goto end;
@@ -276,9 +276,9 @@ static int SigTest05(void)
 
     de_ctx->flags |= DE_QUIET;
 
-    de_ctx->sig_list = SigInit(
-            de_ctx, "alert tcp any any -> any any (msg:\"HTTP TEST\"; content:\"Host:\"; "
-                    "offset:20; depth:25; content:\"Host:\"; distance:48; within:52; sid:1;)");
+    de_ctx->sig_list = SigInit(de_ctx,
+            "alert tcp any any -> any any (msg:\"HTTP TEST\"; content:\"Host:\"; "
+            "offset:20; depth:25; content:\"Host:\"; distance:48; within:52; sid:1;)");
     if (de_ctx->sig_list == NULL) {
         printf("sig parse failed: ");
         goto end;
@@ -503,9 +503,9 @@ static int SigTest08(void)
 
     de_ctx->flags |= DE_QUIET;
 
-    de_ctx->sig_list = SigInit(
-            de_ctx, "alert tcp any any -> any any (msg:\"HTTP URI cap\"; content:\"GET \"; "
-                    "depth:4; pcre:\"/GET (?P<pkt_http_uri>.*) HTTP\\/1\\.0\\r\\n/G\"; sid:1;)");
+    de_ctx->sig_list = SigInit(de_ctx,
+            "alert tcp any any -> any any (msg:\"HTTP URI cap\"; content:\"GET \"; "
+            "depth:4; pcre:\"/GET (?P<pkt_http_uri>.*) HTTP\\/1\\.0\\r\\n/G\"; sid:1;)");
     if (de_ctx->sig_list == NULL) {
         result = 0;
         goto end;
@@ -592,9 +592,9 @@ static int SigTest09(void)
 
     de_ctx->flags |= DE_QUIET;
 
-    de_ctx->sig_list = SigInit(
-            de_ctx, "alert tcp any any -> any any (msg:\"HTTP URI cap\"; content:\"GET \"; "
-                    "depth:4; pcre:\"/GET (?P<pkt_http_uri>.*) HTTP\\/1\\.0\\r\\n/G\"; sid:1;)");
+    de_ctx->sig_list = SigInit(de_ctx,
+            "alert tcp any any -> any any (msg:\"HTTP URI cap\"; content:\"GET \"; "
+            "depth:4; pcre:\"/GET (?P<pkt_http_uri>.*) HTTP\\/1\\.0\\r\\n/G\"; sid:1;)");
     if (de_ctx->sig_list == NULL) {
         result = 0;
         goto end;
@@ -812,9 +812,9 @@ static int SigTest12(void)
 
     de_ctx->flags |= DE_QUIET;
 
-    de_ctx->sig_list = SigInit(
-            de_ctx, "alert tcp any any -> any any (msg:\"Content order test\"; "
-                    "content:\"ABCDEFGHIJ\"; content:\"klmnop\"; content:\"1234\"; sid:1;)");
+    de_ctx->sig_list = SigInit(de_ctx,
+            "alert tcp any any -> any any (msg:\"Content order test\"; "
+            "content:\"ABCDEFGHIJ\"; content:\"klmnop\"; content:\"1234\"; sid:1;)");
     if (de_ctx->sig_list == NULL) {
         result = 0;
         goto end;
@@ -869,9 +869,9 @@ static int SigTest13(void)
 
     de_ctx->flags |= DE_QUIET;
 
-    de_ctx->sig_list = SigInit(
-            de_ctx, "alert tcp any any -> any any (msg:\"Content order test\"; "
-                    "content:\"ABCDEFGHIJ\"; content:\"1234\"; content:\"klmnop\"; sid:1;)");
+    de_ctx->sig_list = SigInit(de_ctx,
+            "alert tcp any any -> any any (msg:\"Content order test\"; "
+            "content:\"ABCDEFGHIJ\"; content:\"1234\"; content:\"klmnop\"; sid:1;)");
     if (de_ctx->sig_list == NULL) {
         result = 0;
         goto end;
@@ -3420,9 +3420,9 @@ static int SigTest36ContentAndIsdataatKeywords01(void)
 
     de_ctx->flags |= DE_QUIET;
 
-    de_ctx->sig_list = SigInit(
-            de_ctx, "alert tcp any any -> any any (msg:\"SigTest36ContentAndIsdataatKeywords01 \"; "
-                    "content:\"HTTP\"; isdataat:404, relative; sid:101;)");
+    de_ctx->sig_list = SigInit(de_ctx,
+            "alert tcp any any -> any any (msg:\"SigTest36ContentAndIsdataatKeywords01 \"; "
+            "content:\"HTTP\"; isdataat:404, relative; sid:101;)");
     if (de_ctx->sig_list == NULL) {
         result = 0;
         goto end;
@@ -3538,9 +3538,9 @@ static int SigTest37ContentAndIsdataatKeywords02(void)
 
     de_ctx->flags |= DE_QUIET;
 
-    Signature *s = de_ctx->sig_list = SigInit(
-            de_ctx, "alert tcp any any -> any any (msg:\"SigTest37ContentAndIsdataatKeywords01 \"; "
-                    "content:\"HTTP\"; isdataat:500, relative; sid:101;)");
+    Signature *s = de_ctx->sig_list = SigInit(de_ctx,
+            "alert tcp any any -> any any (msg:\"SigTest37ContentAndIsdataatKeywords01 \"; "
+            "content:\"HTTP\"; isdataat:500, relative; sid:101;)");
     if (de_ctx->sig_list == NULL) {
         printf("sig parse failed: ");
         result = 0;
@@ -4019,10 +4019,10 @@ static int SigTestContent04(void)
 
     de_ctx->flags |= DE_QUIET;
 
-    de_ctx->sig_list = SigInit(
-            de_ctx, "alert tcp any any -> any any (msg:\"Test 32\"; "
-                    "content:\"01234567890123456789012345678901\"; "
-                    "content:\"abcdefghijklmnopqrstuvwxyzABCDEF\"; distance:0; within:32; sid:1;)");
+    de_ctx->sig_list = SigInit(de_ctx,
+            "alert tcp any any -> any any (msg:\"Test 32\"; "
+            "content:\"01234567890123456789012345678901\"; "
+            "content:\"abcdefghijklmnopqrstuvwxyzABCDEF\"; distance:0; within:32; sid:1;)");
     if (de_ctx->sig_list == NULL) {
         result = 0;
         goto end;
@@ -4069,18 +4069,18 @@ static int SigTestContent05(void)
 
     de_ctx->flags |= DE_QUIET;
 
-    de_ctx->sig_list = SigInit(
-            de_ctx, "alert tcp any any -> any any (msg:\"Test 32\"; "
-                    "content:\"01234567890123456789012345678901\"; "
-                    "content:\"abcdefghijklmnopqrstuvwxyzABCDEF\"; distance:0; within:32; sid:1;)");
+    de_ctx->sig_list = SigInit(de_ctx,
+            "alert tcp any any -> any any (msg:\"Test 32\"; "
+            "content:\"01234567890123456789012345678901\"; "
+            "content:\"abcdefghijklmnopqrstuvwxyzABCDEF\"; distance:0; within:32; sid:1;)");
     if (de_ctx->sig_list == NULL) {
         printf("sig1 parse failed: ");
         goto end;
     }
-    de_ctx->sig_list->next = SigInit(
-            de_ctx, "alert tcp any any -> any any (msg:\"Test 32\"; "
-                    "content:\"01234567890123456789012345678901\"; "
-                    "content:\"abcdefghijklmnopqrstuvwxyzABCDEF\"; distance:1; within:32; sid:2;)");
+    de_ctx->sig_list->next = SigInit(de_ctx,
+            "alert tcp any any -> any any (msg:\"Test 32\"; "
+            "content:\"01234567890123456789012345678901\"; "
+            "content:\"abcdefghijklmnopqrstuvwxyzABCDEF\"; distance:1; within:32; sid:2;)");
     if (de_ctx->sig_list->next == NULL) {
         printf("sig2 parse failed: ");
         goto end;
@@ -4136,17 +4136,17 @@ static int SigTestContent06(void)
 
     de_ctx->flags |= DE_QUIET;
 
-    de_ctx->sig_list = SigInit(
-            de_ctx, "alert ip any any -> any any (msg:\"Test 32 sig1\"; "
-                    "content:\"01234567890123456789012345678901\"; "
-                    "content:\"abcdefghijklmnopqrstuvwxyzABCDEF\"; distance:0; within:32; sid:1;)");
+    de_ctx->sig_list = SigInit(de_ctx,
+            "alert ip any any -> any any (msg:\"Test 32 sig1\"; "
+            "content:\"01234567890123456789012345678901\"; "
+            "content:\"abcdefghijklmnopqrstuvwxyzABCDEF\"; distance:0; within:32; sid:1;)");
     if (de_ctx->sig_list == NULL) {
         result = 0;
         goto end;
     }
-    de_ctx->sig_list->next = SigInit(
-            de_ctx, "alert ip any any -> any any (msg:\"Test 32 sig2\"; "
-                    "content:\"01234567890123456789012345678901\"; content:\"abcdefg\"; sid:2;)");
+    de_ctx->sig_list->next = SigInit(de_ctx,
+            "alert ip any any -> any any (msg:\"Test 32 sig2\"; "
+            "content:\"01234567890123456789012345678901\"; content:\"abcdefg\"; sid:2;)");
     if (de_ctx->sig_list->next == NULL) {
         result = 0;
         goto end;
