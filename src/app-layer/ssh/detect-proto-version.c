@@ -49,8 +49,8 @@
 
 #include "app-layer.h"
 #include "app-layer-parser.h"
-#include "app-layer-ssh.h"
-#include "detect-ssh-proto-version.h"
+#include "app-layer/ssh/parser.h"
+#include "app-layer/ssh/detect-proto-version.h"
 #include "rust.h"
 
 #include "stream-tcp.h"

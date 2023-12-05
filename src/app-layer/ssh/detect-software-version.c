@@ -53,8 +53,8 @@
 
 #include "app-layer.h"
 #include "app-layer-parser.h"
-#include "app-layer-ssh.h"
-#include "detect-ssh-software-version.h"
+#include "app-layer/ssh/parser.h"
+#include "app-layer/ssh/detect-software-version.h"
 #include "rust.h"
 
 #include "stream-tcp.h"
