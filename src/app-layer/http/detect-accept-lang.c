@@ -38,8 +38,8 @@
 #define KEYWORD_ID          DETECT_AL_HTTP_HEADER_ACCEPT_LANG
 #define KEYWORD_TOSERVER    1
 
-#include "detect-http-headers-stub.h"
-#include "detect-http-accept-lang.h"
+#include "app-layer/http/detect-headers-stub.h"
+#include "app-layer/http/detect-accept-lang.h"
 
 void RegisterHttpHeadersAcceptLang(void)
 {

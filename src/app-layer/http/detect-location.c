@@ -26,24 +26,24 @@
  *
  * \author Jeff Lucovsky <jeff@lucovsky.org>
  *
- * Implements http.server sticky buffer
+ * Implements http.location sticky buffer
  *
- * "Server" is an HTTP response-header field containing information about the software
- * used by the origin server to handle the request.
+ * "Location" is an HTTP response-header field used to redirect the recipient to
+ * a location other than the Request-URI for request completion.
  */
 
-#define KEYWORD_NAME     "http.server"
-#define KEYWORD_DOC      "http-keywords.html#http-server"
-#define BUFFER_NAME      "http.server"
-#define BUFFER_DESC      "http server header"
-#define HEADER_NAME      "Server"
-#define KEYWORD_ID       DETECT_AL_HTTP_HEADER_SERVER
+#define KEYWORD_NAME     "http.location"
+#define KEYWORD_DOC      "http-keywords.html#http-location"
+#define BUFFER_NAME      "http.location"
+#define BUFFER_DESC      "http location header"
+#define HEADER_NAME      "Location"
+#define KEYWORD_ID       DETECT_AL_HTTP_HEADER_LOCATION
 #define KEYWORD_TOCLIENT 1
 
-#include "detect-http-headers-stub.h"
-#include "detect-http-server.h"
+#include "app-layer/http/detect-headers-stub.h"
+#include "app-layer/http/detect-location.h"
 
-void RegisterHttpHeadersServer(void)
+void RegisterHttpHeadersLocation(void)
 {
     DetectHttpHeadersRegisterStub();
 }
