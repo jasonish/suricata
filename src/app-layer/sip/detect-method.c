@@ -19,7 +19,7 @@
  *
  * \author Giuseppe Longo <giuseppe@glongo.it>
  *
- * Implements the sip.uri sticky buffer
+ * Implements the sip.method sticky buffer
  *
  */
 
@@ -34,7 +34,6 @@
 #include "detect-engine-prefilter.h"
 #include "detect-content.h"
 #include "detect-pcre.h"
-#include "detect-urilen.h"
 
 #include "flow.h"
 #include "flow-var.h"
@@ -48,30 +47,19 @@
 #include "app-layer.h"
 #include "app-layer-parser.h"
 
-#include "detect-sip-uri.h"
+#include "app-layer/sip/detect-method.h"
 #include "stream-tcp.h"
 
 #include "rust.h"
-#include "app-layer-sip.h"
+#include "app-layer/sip/parser.h"
 
-#define KEYWORD_NAME "sip.uri"
-#define KEYWORD_DOC  "sip-keywords.html#sip-uri"
-#define BUFFER_NAME  "sip.uri"
-#define BUFFER_DESC  "sip request uri"
+#define KEYWORD_NAME "sip.method"
+#define KEYWORD_DOC  "sip-keywords.html#sip-method"
+#define BUFFER_NAME  "sip.method"
+#define BUFFER_DESC  "sip request method"
 static int g_buffer_id = 0;
 
-static bool DetectSipUriValidateCallback(const Signature *s, const char **sigerror)
-{
-    return DetectUrilenValidateContent(s, g_buffer_id, sigerror);
-}
-
-static void DetectSipUriSetupCallback(const DetectEngineCtx *de_ctx, Signature *s)
-{
-    SCLogDebug("callback invoked by %u", s->id);
-    DetectUrilenApplyToContent(s, g_buffer_id);
-}
-
-static int DetectSipUriSetup(DetectEngineCtx *de_ctx, Signature *s, const char *str)
+static int DetectSipMethodSetup(DetectEngineCtx *de_ctx, Signature *s, const char *str)
 {
     if (DetectBufferSetActiveList(de_ctx, s, g_buffer_id) < 0)
         return -1;
@@ -80,6 +68,40 @@ static int DetectSipUriSetup(DetectEngineCtx *de_ctx, Signature *s, const char *
         return -1;
 
     return 0;
+}
+
+static bool DetectSipMethodValidateCallback(const Signature *s, const char **sigerror)
+{
+    for (uint32_t x = 0; x < s->init_data->buffer_index; x++) {
+        if (s->init_data->buffers[x].id != (uint32_t)g_buffer_id)
+            continue;
+        const SigMatch *sm = s->init_data->buffers[x].head;
+        for (; sm != NULL; sm = sm->next) {
+            if (sm->type != DETECT_CONTENT)
+                continue;
+            const DetectContentData *cd = (const DetectContentData *)sm->ctx;
+            if (cd->content && cd->content_len) {
+                if (cd->content[cd->content_len - 1] == 0x20) {
+                    *sigerror = "sip.method pattern with trailing space";
+                    SCLogError("%s", *sigerror);
+                    return true;
+                } else if (cd->content[0] == 0x20) {
+                    *sigerror = "sip.method pattern with leading space";
+                    SCLogError("%s", *sigerror);
+                    return true;
+                } else if (cd->content[cd->content_len - 1] == 0x09) {
+                    *sigerror = "sip.method pattern with trailing tab";
+                    SCLogError("%s", *sigerror);
+                    return true;
+                } else if (cd->content[0] == 0x09) {
+                    *sigerror = "sip.method pattern with leading tab";
+                    SCLogError("%s", *sigerror);
+                    return true;
+                }
+            }
+        }
+    }
+    return true;
 }
 
 static InspectionBuffer *GetData(DetectEngineThreadCtx *det_ctx,
@@ -91,7 +113,7 @@ static InspectionBuffer *GetData(DetectEngineThreadCtx *det_ctx,
         const uint8_t *b = NULL;
         uint32_t b_len = 0;
 
-        if (rs_sip_tx_get_uri(txv, &b, &b_len) != 1)
+        if (rs_sip_tx_get_method(txv, &b, &b_len) != 1)
             return NULL;
         if (b == NULL || b_len == 0)
             return NULL;
@@ -103,13 +125,14 @@ static InspectionBuffer *GetData(DetectEngineThreadCtx *det_ctx,
     return buffer;
 }
 
-void DetectSipUriRegister(void)
+void DetectSipMethodRegister(void)
 {
-    sigmatch_table[DETECT_AL_SIP_URI].name = KEYWORD_NAME;
-    sigmatch_table[DETECT_AL_SIP_URI].desc = "sticky buffer to match on the SIP URI";
-    sigmatch_table[DETECT_AL_SIP_URI].url = "/rules/" KEYWORD_DOC;
-    sigmatch_table[DETECT_AL_SIP_URI].Setup = DetectSipUriSetup;
-    sigmatch_table[DETECT_AL_SIP_URI].flags |= SIGMATCH_NOOPT;
+    /* sip.method sticky buffer */
+    sigmatch_table[DETECT_AL_SIP_METHOD].name = KEYWORD_NAME;
+    sigmatch_table[DETECT_AL_SIP_METHOD].desc = "sticky buffer to match on the SIP method buffer";
+    sigmatch_table[DETECT_AL_SIP_METHOD].url = "/rules/" KEYWORD_DOC;
+    sigmatch_table[DETECT_AL_SIP_METHOD].Setup = DetectSipMethodSetup;
+    sigmatch_table[DETECT_AL_SIP_METHOD].flags |= SIGMATCH_NOOPT;
 
     DetectAppLayerInspectEngineRegister2(BUFFER_NAME, ALPROTO_SIP, SIG_FLAG_TOSERVER, 0,
             DetectEngineInspectBufferGeneric, GetData);
@@ -119,9 +142,7 @@ void DetectSipUriRegister(void)
 
     DetectBufferTypeSetDescriptionByName(BUFFER_NAME, BUFFER_DESC);
 
-    DetectBufferTypeRegisterSetupCallback(BUFFER_NAME, DetectSipUriSetupCallback);
-
-    DetectBufferTypeRegisterValidateCallback(BUFFER_NAME, DetectSipUriValidateCallback);
+    DetectBufferTypeRegisterValidateCallback(BUFFER_NAME, DetectSipMethodValidateCallback);
 
     g_buffer_id = DetectBufferTypeGetByName(BUFFER_NAME);
 
