@@ -25,8 +25,8 @@
 #define __DETECT_BYTEJUMP_H__
 
 /** Bytejump Base */
-#define DETECT_BYTEJUMP_BASE_UNSET 0  /**< Unset type value string (automatic)*/
-#define DETECT_BYTEJUMP_BASE_OCT   8  /**< "oct" type value string */
+#define DETECT_BYTEJUMP_BASE_UNSET 0 /**< Unset type value string (automatic)*/
+#define DETECT_BYTEJUMP_BASE_OCT   8 /**< "oct" type value string */
 #define DETECT_BYTEJUMP_BASE_DEC   10 /**< "dec" type value string */
 #define DETECT_BYTEJUMP_BASE_HEX   16 /**< "hex" type value string */
 

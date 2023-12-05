@@ -586,10 +586,10 @@ static int DeStateSigTest02(void)
 
     de_ctx->flags |= DE_QUIET;
 
-    Signature *s = DetectEngineAppendSig(
-            de_ctx, "alert tcp any any -> any any (flow:to_server; content:\"POST\"; http_method; "
-                    "content:\"/\"; http_uri; content:\"Mozilla\"; http_header; content:\"dummy\"; "
-                    "http_cookie; content:\"body\"; nocase; http_client_body; sid:1; rev:1;)");
+    Signature *s = DetectEngineAppendSig(de_ctx,
+            "alert tcp any any -> any any (flow:to_server; content:\"POST\"; http_method; "
+            "content:\"/\"; http_uri; content:\"Mozilla\"; http_header; content:\"dummy\"; "
+            "http_cookie; content:\"body\"; nocase; http_client_body; sid:1; rev:1;)");
     FAIL_IF_NULL(s);
     s = DetectEngineAppendSig(de_ctx,
             "alert tcp any any -> any any (flow:to_server; content:\"GET\"; http_method; "
@@ -689,9 +689,9 @@ static int DeStateSigTest03(void)
 
     de_ctx->flags |= DE_QUIET;
 
-    Signature *s = DetectEngineAppendSig(
-            de_ctx, "alert http any any -> any any (flow:to_server; content:\"POST\"; http_method; "
-                    "content:\"upload.cgi\"; http_uri; filestore; sid:1; rev:1;)");
+    Signature *s = DetectEngineAppendSig(de_ctx,
+            "alert http any any -> any any (flow:to_server; content:\"POST\"; http_method; "
+            "content:\"upload.cgi\"; http_uri; filestore; sid:1; rev:1;)");
     FAIL_IF_NULL(s);
 
     SigGroupBuild(de_ctx);
@@ -774,9 +774,9 @@ static int DeStateSigTest04(void)
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
-    Signature *s = DetectEngineAppendSig(
-            de_ctx, "alert http any any -> any any (content:\"GET\"; http_method; "
-                    "content:\"upload.cgi\"; http_uri; filestore; sid:1; rev:1;)");
+    Signature *s = DetectEngineAppendSig(de_ctx,
+            "alert http any any -> any any (content:\"GET\"; http_method; "
+            "content:\"upload.cgi\"; http_uri; filestore; sid:1; rev:1;)");
     FAIL_IF_NULL(s);
 
     SigGroupBuild(de_ctx);
@@ -857,9 +857,9 @@ static int DeStateSigTest05(void)
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
-    Signature *s = DetectEngineAppendSig(
-            de_ctx, "alert http any any -> any any (content:\"GET\"; http_method; "
-                    "content:\"upload.cgi\"; http_uri; filename:\"nomatch\"; sid:1; rev:1;)");
+    Signature *s = DetectEngineAppendSig(de_ctx,
+            "alert http any any -> any any (content:\"GET\"; http_method; "
+            "content:\"upload.cgi\"; http_uri; filename:\"nomatch\"; sid:1; rev:1;)");
     FAIL_IF_NULL(s);
 
     SigGroupBuild(de_ctx);
@@ -1030,9 +1030,9 @@ static int DeStateSigTest07(void)
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
-    Signature *s = DetectEngineAppendSig(
-            de_ctx, "alert http any any -> any any (content:\"GET\"; http_method; "
-                    "content:\"upload.cgi\"; http_uri; filestore; sid:1; rev:1;)");
+    Signature *s = DetectEngineAppendSig(de_ctx,
+            "alert http any any -> any any (content:\"GET\"; http_method; "
+            "content:\"upload.cgi\"; http_uri; filestore; sid:1; rev:1;)");
     FAIL_IF_NULL(s);
 
     SigGroupBuild(de_ctx);

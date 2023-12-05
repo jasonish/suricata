@@ -123,9 +123,9 @@ static int DetectHTTP2settingsParseTest01(void)
     DetectEngineCtx *de_ctx = DetectEngineCtxInit();
     FAIL_IF_NULL(de_ctx);
 
-    Signature *sig = DetectEngineAppendSig(
-            de_ctx, "alert http2 any any -> any any (http2.settings:SETTINGS_MAX_HEADER_LIST_SIZE "
-                    ">1024; sid:1; rev:1;)");
+    Signature *sig = DetectEngineAppendSig(de_ctx,
+            "alert http2 any any -> any any (http2.settings:SETTINGS_MAX_HEADER_LIST_SIZE "
+            ">1024; sid:1; rev:1;)");
     FAIL_IF_NULL(sig);
 
     DetectEngineCtxFree(de_ctx);

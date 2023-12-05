@@ -5159,7 +5159,7 @@ static int StreamTcpPacketIsBadWindowUpdate(TcpSession *ssn, Packet *p)
             SCLogDebug("%" PRIu64 ", pkt_win %u, stream win %u", p->pcap_cnt, pkt_win,
                     ostream->window);
             SCLogDebug("%" PRIu64 ", seq %u ack %u ostream->next_seq %u ostream->last_ack %u, "
-                                  "ostream->next_win %u, diff %u (%u)",
+                       "ostream->next_win %u, diff %u (%u)",
                     p->pcap_cnt, seq, ack, ostream->next_seq, ostream->last_ack, ostream->next_win,
                     ostream->next_seq - ostream->last_ack, stream->next_seq - stream->last_ack);
 
