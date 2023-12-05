@@ -217,7 +217,7 @@ type
 dataset-lookup
 ~~~~~~~~~~~~~~
 
-Unix Socket command to test if data is in a set. 
+Unix Socket command to test if data is in a set.
 
 Syntax::
 

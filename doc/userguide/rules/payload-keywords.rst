@@ -393,7 +393,7 @@ Format::
 +----------------+------------------------------------------------------------------------------+
 | [relative]	 | Offset relative to last content match					|
 +----------------+------------------------------------------------------------------------------+
-| [endian]	 | Type of number being read:							|	
+| [endian]	 | Type of number being read:							|
 |		 | - big (Most significant byte at lowest address)				|
 |		 | - little (Most significant byte at the highest address)			|
 +----------------+------------------------------------------------------------------------------+
@@ -422,7 +422,7 @@ Example::
 	 (msg:"Byte_Test Example - Num != Value"; content:"|00 01 00 02|"; \
 	 byte_test:2,!=,0x06;)
 
-  alert tcp any any -> any any \ 
+  alert tcp any any -> any any \
          (msg:"Byte_Test Example - Detect Large Values"; content:"|00 01 00 02|"; \
          byte_test:2,>,1000,relative;)
 
@@ -616,13 +616,13 @@ Format::
 
 
 ==============	==================================
- Keyword	Modifier 
+ Keyword	Modifier
 ============== 	==================================
- content	offset,depth,distance,within	
- byte_test	offset,value		     	
+ content	offset,depth,distance,within
+ byte_test	offset,value
  byte_math	rvalue
- byte_jump	offset			     	
- isdataat	offset				
+ byte_jump	offset
+ isdataat	offset
 ==============	==================================
 
 Example::
@@ -841,4 +841,3 @@ PCRE expressions.
   ``PCRE2_ERROR_UNSET`` instead of ``pcre_copy_substring`` returning
   no error and giving an empty string. If the behavior of some use
   case is no longer the expected one, please let us know.
-

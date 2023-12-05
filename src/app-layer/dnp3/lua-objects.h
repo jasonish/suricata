@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Open Information Security Foundation
+/* Copyright (C) 2015 Open Information Security Foundation
  *
  * You can copy, redistribute or modify this Program under the terms of
  * the GNU General Public License version 2 as published by the Free
@@ -15,11 +15,9 @@
  * 02110-1301, USA.
  */
 
-#ifndef __OUTPUT_JSON_DNP3_OBJECTS_H__
-#define __OUTPUT_JSON_DNP3_OBJECTS_H__
+#ifndef __UTIL_LUA_DNP3_OBJECTS_H__
+#define __UTIL_LUA_DNP3_OBJECTS_H__
 
-#include "rust-bindings.h"
+void DNP3PushPoint(lua_State *luastate, DNP3Object *object, DNP3Point *item);
 
-void OutputJsonDNP3SetItem(JsonBuilder *js, DNP3Object *object, DNP3Point *item);
-
-#endif /* __OUTPUT_JSON_DNP3_OBJECTS_H__ */
+#endif /* ! __UTIL_LUA_DNP3_OBJECTS_H__ */

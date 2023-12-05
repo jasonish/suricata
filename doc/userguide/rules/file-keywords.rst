@@ -8,7 +8,7 @@ properties. They depend on properly configured
 file.data
 ---------
 
-The ``file.data`` sticky buffer matches on contents of files that are 
+The ``file.data`` sticky buffer matches on contents of files that are
 seen in flows that Suricata evaluates. The various payload keywords can
 be used (e.g. ``startswith``, ``nocase`` and ``bsize``) with ``file.data``.
 

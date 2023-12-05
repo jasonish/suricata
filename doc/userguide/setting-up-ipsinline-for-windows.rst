@@ -11,7 +11,7 @@ This documentation has not yet been updated with WinDivert information, so make
 sure to add the following flags before configuring Suricata with ``configure``:
 
 ::
-  
+
   --enable-windivert=yes --with-windivert-include=<include-dir> --with-windivert-libraries=<libraries-dir>
 
 WinDivert.dll and WinDivert.sys must be in the same directory as the Suricata
@@ -22,7 +22,7 @@ To check if you have WinDivert enabled in your Suricata, enter the following
 command in an elevated command prompt or terminal:
 
 ::
-  
+
   suricata -c suricata.yaml --windivert [filter string]
 
 For information on the WinDivert filter language, see
@@ -43,7 +43,7 @@ A quick start is to examine all traffic, in which case you can use the following
 command:
 
 ::
-  
+
   suricata -c suricata.yaml --windivert[-forward] true
 
 A few additional examples:

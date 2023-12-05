@@ -27,7 +27,7 @@ Example::
     dnf -y install libxdp-devel libbpf-devel
 
 This feature is enabled provided the libraries above are installed, the user
-does not need to add any additional command line options. 
+does not need to add any additional command line options.
 
 The command line option ``--disable-af-xdp`` can be used to disable this
 feature.
@@ -143,7 +143,7 @@ Memory assigned per socket/thread is 16MB, so each worker thread requires at lea
 OS to confirm with ``cat /proc/meminfo``.
 
 Example ::
-  
+
     8 worker threads * 16Mb = 128Mb
     hugepages = 2048 kB
     so: pages required = 62.5 (63) pages
@@ -244,9 +244,9 @@ Follow these instructions closely for desired result::
 
 Enable symmetric hashing ::
 
- ifconfig eth3 down 
+ ifconfig eth3 down
  ethtool -L eth3 combined 16 # if you have at least 16 cores
- ethtool -K eth3 rxhash on 
+ ethtool -K eth3 rxhash on
  ethtool -K eth3 ntuple on
  ifconfig eth3 up
  ./set_irq_affinity 0-15 eth3
@@ -276,8 +276,8 @@ Balance as much as you can
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Try to use the network card's flow balancing as much as possible ::
- 
- for proto in tcp4 udp4 ah4 esp4 sctp4 tcp6 udp6 ah6 esp6 sctp6; do 
+
+ for proto in tcp4 udp4 ah4 esp4 sctp4 tcp6 udp6 ah6 esp6 sctp6; do
     /sbin/ethtool -N eth3 rx-flow-hash $proto sd
  done
 

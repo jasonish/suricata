@@ -46,4 +46,3 @@ Suricata can still write to its log files which are usually located in
   mkdir -p /var/log/suricata
   chown -R root:suri /var/log/suricata
   chmod -R 775 /var/log/suricata
-
