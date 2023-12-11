@@ -1,0 +1,19 @@
+name: Convert to draft on push to open pull request
+
+on:
+  pull_request:
+
+jobs:
+  convert-to-draft:
+    name: Convert PR to draft
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Convert to Draft"
+        uses: actions/github-script@v6
+        script: |
+          await github.rest.pulls.update({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            pull_number: context.issue.number,
+            draft: true
+          })
