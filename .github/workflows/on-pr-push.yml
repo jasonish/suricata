@@ -10,10 +10,11 @@ jobs:
     steps:
       - name: "Convert to Draft"
         uses: actions/github-script@v6
-        script: |
-          await github.rest.pulls.update({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            pull_number: context.issue.number,
-            draft: true
-          })
+        with:
+          script: |
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              draft: true
+            })
