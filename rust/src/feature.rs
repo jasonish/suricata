@@ -16,26 +16,10 @@
  */
 
 //! Rust bindings to the "feature" API.
-//!
-//! As this feature module is a binding to a Suricata C module it is
-//! not available to Rust unit tests. Instead when running Rust unit
-//! tests and "mock" version is provided that will return true for any
-//! feature starting with "true" and false for any other feature name.
 
-#[cfg(test)]
-mod mock {
-    /// Check for a feature returning true if found.
-    ///
-    /// This a "mock" variant of `requires` that will return true for
-    /// any feature starting with string `true`, and false for
-    /// anything else.
-    pub fn requires(feature: &str) -> bool {
-        return feature.starts_with("true");
-    }
-}
-
+/// Check for a feature returning true if found.
 #[cfg(not(test))]
-mod real {
+pub fn requires(feature: &str) -> bool {
     use std::ffi::CString;
     use std::os::raw::c_char;
 
@@ -43,18 +27,18 @@ mod real {
         fn RequiresFeature(feature: *const c_char) -> bool;
     }
 
-    /// Check for a feature returning true if found.
-    pub fn requires(feature: &str) -> bool {
-        if let Ok(feature) = CString::new(feature) {
-            unsafe { RequiresFeature(feature.as_ptr()) }
-        } else {
-            false
-        }
+    if let Ok(feature) = CString::new(feature) {
+        unsafe { RequiresFeature(feature.as_ptr()) }
+    } else {
+        false
     }
 }
 
-#[cfg(not(test))]
-pub use real::*;
-
+/// Mock version of requires for Rust unit tests.
+///
+/// Any feature starting with "true" will be returned as true,
+/// otherwise false is returned.
 #[cfg(test)]
-pub use mock::*;
+pub fn requires(feature: &str) -> bool {
+    return feature.starts_with("true");
+}
