@@ -18,7 +18,7 @@ jobs:
     container: almalinux:9
     steps:
       - name: Cache rust
-        uses: actions/cache@v3.3.1
+        uses: actions/cache@v4.0.0
         with:
           path: ~/.cargo
           key: check-rust
