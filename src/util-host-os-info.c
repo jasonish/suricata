@@ -1379,8 +1379,6 @@ host-os-policy:\n\
   linux: [10.0.0.5/32]\n\
 \n";
 
-    int result = 0;
-
     SCHInfoCreateContextBackup();
 
     ConfCreateContextBackup();
@@ -1388,24 +1386,17 @@ host-os-policy:\n\
     ConfYamlLoadString(config, strlen(config));
 
     SCHInfoLoadFromConfig();
-    if (SCHInfoGetHostOSFlavour("10.0.0.4") != OS_POLICY_WINDOWS)
-        goto end;
-    if (SCHInfoGetHostOSFlavour("10.0.0.5") != OS_POLICY_LINUX)
-        goto end;
-    if (SCHInfoGetHostOSFlavour("192.168.1.1") != OS_POLICY_WINDOWS)
-        goto end;
-    if (SCHInfoGetHostOSFlavour("172.168.1.1") != OS_POLICY_BSD)
-        goto end;
+    FAIL_IF(SCHInfoGetHostOSFlavour("10.0.0.4") != OS_POLICY_WINDOWS);
+    FAIL_IF(SCHInfoGetHostOSFlavour("10.0.0.5") != OS_POLICY_LINUX);
+    FAIL_IF(SCHInfoGetHostOSFlavour("192.168.1.1") != OS_POLICY_WINDOWS);
+    FAIL_IF(SCHInfoGetHostOSFlavour("172.168.1.1") != OS_POLICY_BSD);
 
-    result = 1;
-
- end:
     ConfDeInit();
     ConfRestoreContextBackup();
 
     SCHInfoRestoreContextBackup();
 
-    return result;
+    PASS;
 }
 
 /**
@@ -1424,8 +1415,6 @@ host-os-policy:\n\
   nine_ten_eleven: [10.0.0.5/32]\n\
 \n";
 
-    int result = 0;
-
     SCHInfoCreateContextBackup();
 
     ConfCreateContextBackup();
@@ -1433,8 +1422,7 @@ host-os-policy:\n\
     ConfYamlLoadString(config, strlen(config));
 
     ConfNode *root = ConfGetNode("host-os-policy");
-    if (root == NULL)
-        goto end;
+    FAIL_IF_NULL(root);
 
     int count = 0;
 
@@ -1442,38 +1430,29 @@ host-os-policy:\n\
     TAILQ_FOREACH(policy, &root->head, next) {
         switch (count) {
             case 0:
-                if (strcmp("one-two", policy->name) != 0)
-                    goto end;
+                FAIL_IF(strcmp("one-two", policy->name) != 0);
                 break;
             case 1:
-                if (strcmp("one-two-three", policy->name) != 0)
-                    goto end;
+                FAIL_IF(strcmp("one-two-three", policy->name) != 0);
                 break;
             case 2:
-                if (strcmp("four-five", policy->name) != 0)
-                    goto end;
+                FAIL_IF(strcmp("four-five", policy->name) != 0);
                 break;
             case 3:
-                if (strcmp("six-seven-eight", policy->name) != 0)
-                    goto end;
+                FAIL_IF(strcmp("six-seven-eight", policy->name) != 0);
                 break;
             case 4:
-                if (strcmp("nine-ten-eleven", policy->name) != 0)
-                    goto end;
+                FAIL_IF(strcmp("nine-ten-eleven", policy->name) != 0);
                 break;
         }
         count++;
     }
 
-    result = 1;
-
- end:
     ConfDeInit();
     ConfRestoreContextBackup();
-
     SCHInfoRestoreContextBackup();
 
-    return result;
+    PASS;
 }
 
 /**
@@ -1492,8 +1471,6 @@ host-os-policy:\n\
   vista: [0.0.0.5]\n\
 \n";
 
-    int result = 0;
-
     SCHInfoCreateContextBackup();
 
     ConfCreateContextBackup();
@@ -1501,25 +1478,18 @@ host-os-policy:\n\
     ConfYamlLoadString(config, strlen(config));
 
     ConfNode *root = ConfGetNode("host-os-policy");
-    if (root == NULL)
-        goto end;
+    FAIL_IF_NULL(root);
 
     ConfNode *policy;
     TAILQ_FOREACH(policy, &root->head, next) {
-        if (SCMapEnumNameToValue(policy->name, sc_hinfo_os_policy_map) == -1) {
-            printf("Invalid enum map inside\n");
-            goto end;
-        }
+        FAIL_IF(SCMapEnumNameToValue(policy->name, sc_hinfo_os_policy_map) == -1);
     }
 
-    result = 1;
-
- end:
     ConfDeInit();
     ConfRestoreContextBackup();
 
     SCHInfoRestoreContextBackup();
-    return result;
+    PASS;
 }
 
 /**
@@ -1538,8 +1508,6 @@ host-os-policy:\n\
   vista: [0.0.0.5]\n\
 \n";
 
-    int result = 0;
-
     SCHInfoCreateContextBackup();
 
     ConfCreateContextBackup();
@@ -1547,25 +1515,18 @@ host-os-policy:\n\
     ConfYamlLoadString(config, strlen(config));
 
     ConfNode *root = ConfGetNode("host-os-policy");
-    if (root == NULL)
-        goto end;
+    FAIL_IF_NULL(root);
 
     ConfNode *policy;
     TAILQ_FOREACH(policy, &root->head, next) {
-        if (SCMapEnumNameToValue(policy->name, sc_hinfo_os_policy_map) == -1) {
-            printf("Invalid enum map inside\n");
-            goto end;
-        }
+        FAIL_IF(SCMapEnumNameToValue(policy->name, sc_hinfo_os_policy_map) == -1);
     }
 
-    result = 1;
-
- end:
     ConfDeInit();
     ConfRestoreContextBackup();
 
     SCHInfoRestoreContextBackup();
-    return result;
+    PASS;
 }
 
 /**

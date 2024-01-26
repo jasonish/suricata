@@ -1973,7 +1973,6 @@ static int StreamTcpTest18(void)
     Packet *p = PacketGetFromAlloc();
     FAIL_IF_NULL(p);
     IPV4Hdr ipv4h;
-    int ret = 0;
 
     memset(&addr, 0, sizeof(addr));
     memset(&stream, 0, sizeof(stream));
@@ -1997,16 +1996,13 @@ static int StreamTcpTest18(void)
     p->dst.address.address_un_data32[0] = addr.s_addr;
     StreamTcpSetOSPolicy(&stream, p);
 
-    if (stream.os_policy != OS_POLICY_WINDOWS)
-        goto end;
+    FAIL_IF(stream.os_policy != OS_POLICY_WINDOWS);
 
-    ret = 1;
-end:
     ConfDeInit();
     ConfRestoreContextBackup();
     SCFree(p);
     StreamTcpUTDeinit(stt.ra_ctx);
-    return ret;
+    PASS;
 }
 /** \test   Test the various OS policies based on different IP addresses from
             configuration defined in 'dummy_conf_string1' */
