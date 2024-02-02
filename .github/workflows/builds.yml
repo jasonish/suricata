@@ -798,7 +798,7 @@ jobs:
                 zlib-devel
       # packaged Rust version has no profiler support built in, so get from rustup
       - name: Install Rust
-        run: curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain 1.63.0 -y
+        run: curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain ${{ env.RUST_VERSION_MIN }} -y
       - run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
       - uses: actions/checkout@v3.5.3
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
@@ -1410,7 +1410,7 @@ jobs:
                 dpdk-dev
       # packaged Rust version is too old for coverage, so get from rustup
       - name: Install Rust
-        run: curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain 1.63.0 -y
+        run: curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain ${{ env.RUST_VERSION_MIN }} -y
       - uses: actions/checkout@v3.5.3
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
@@ -1528,7 +1528,7 @@ jobs:
                 dpdk-dev
       # packaged Rust version is too old for coverage, so get from rustup
       - name: Install Rust
-        run: curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain 1.63.0 -y
+        run: curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain ${{ env.RUST_VERSION_MIN }} -y
       - uses: actions/checkout@v3.5.3
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
