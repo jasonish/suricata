@@ -2048,7 +2048,6 @@ jobs:
               autoconf \
               automake \
               build-essential \
-              cargo \
               cbindgen \
               cmake \
               curl \
@@ -2078,7 +2077,6 @@ jobs:
               pkg-config \
               python3 \
               python3-yaml \
-              rustc \
               sphinx-doc \
               sphinx-common \
               texlive-latex-base \
@@ -2087,6 +2085,9 @@ jobs:
               texlive-latex-extra \
               zlib1g \
               zlib1g-dev
+      - name: Install Rust
+        run: curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain ${{ env.RUST_VERSION_MIN }} -y
+      - run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
       - uses: actions/checkout@v3.5.3
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
@@ -2133,7 +2134,6 @@ jobs:
               autoconf \
               automake \
               build-essential \
-              cargo \
               cbindgen \
               cmake \
               curl \
@@ -2159,7 +2159,6 @@ jobs:
               pkg-config \
               python3 \
               python3-yaml \
-              rustc \
               sphinx-doc \
               sphinx-common \
               texlive-latex-base \
@@ -2168,6 +2167,9 @@ jobs:
               texlive-latex-extra \
               zlib1g \
               zlib1g-dev
+      - name: Install Rust
+        run: curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain ${{ env.RUST_VERSION_MIN }} -y
+      - run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
       - uses: actions/checkout@v3.5.3
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
