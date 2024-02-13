@@ -5,6 +5,8 @@ on:
     workflows: [New Authors Check]
     types: [completed]
 
+permissions: read-all
+
 jobs:
   comment:
     runs-on: ubuntu-latest
