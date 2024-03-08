@@ -51,6 +51,12 @@ Major changes
 - Application layer's ``sip`` counter has been split into ``sip_tcp`` and ``sip_udp``
   for the ``stats`` event.
 
+API changes
+~~~~~~~~~~~
+- EVE filetypes now have the ``ThreadInit`` function called in
+  *threaded* and *non-threaded* modes to limit the differences between
+  filetype setup in those modes. See the examples for more information.
+
 Upgrading 6.0 to 7.0
 --------------------
 
