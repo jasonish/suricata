@@ -895,6 +895,43 @@ pub unsafe extern "C" fn SCDnsTxGetAnswerName(
     false
 }
 
+/// Get the DNS response answer name and index i.
+#[no_mangle]
+pub unsafe extern "C" fn SCDnsTxGetAnswerDataBytes(
+    tx: &mut DNSTransaction, to_client: bool, i: u32, buf: *mut *const u8, len: *mut u32,
+    rtype: u16,
+) -> bool {
+    let answers = if to_client {
+        tx.response.as_ref().map(|response| &response.answers)
+    } else {
+        tx.request.as_ref().map(|request| &request.answers)
+    };
+    let index = i as usize;
+
+    if let Some(answers) = answers {
+        if let Some(answer) = answers.get(index) {
+            let data = match &answer.data {
+                DNSRData::A(data) if rtype == DNS_RECORD_TYPE_A => data,
+                DNSRData::AAAA(data) if rtype == DNS_RECORD_TYPE_AAAA => data,
+                DNSRData::CNAME(data) if rtype == DNS_RECORD_TYPE_CNAME => data,
+                DNSRData::PTR(data) if rtype == DNS_RECORD_TYPE_PTR => data,
+                DNSRData::MX(data) if rtype == DNS_RECORD_TYPE_MX => data,
+                DNSRData::NS(data) if rtype == DNS_RECORD_TYPE_NS => data,
+                DNSRData::TXT(data) if rtype == DNS_RECORD_TYPE_TXT => data,
+                DNSRData::NULL(data) if rtype == DNS_RECORD_TYPE_NULL => data,
+		_ => {
+		    return false;
+		}
+            };
+	    *buf = data.as_ptr();
+	    *len = data.len() as u32;
+	    return true;
+        }
+    }
+
+    false
+}
+
 /// Get the DNS transaction ID of a transaction.
 //
 /// extern uint16_t rs_dns_tx_get_tx_id(RSDNSTransaction *);

@@ -52,6 +52,7 @@
 #include "detect-dns-rrtype.h"
 #include "detect-dns-query.h"
 #include "detect-dns-answer-name.h"
+#include "detect-dns-answer-rdata.h"
 #include "detect-dns-query-name.h"
 #include "detect-tls-sni.h"
 #include "detect-tls-certs.h"
@@ -527,6 +528,7 @@ void SigTableSetup(void)
     DetectDnsRcodeRegister();
     DetectDnsRrtypeRegister();
     DetectDnsAnswerNameRegister();
+    DetectDnsAnswerRdataRegister();
     DetectDnsQueryNameRegister();
     DetectModbusRegister();
     DetectCipServiceRegister();

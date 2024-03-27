@@ -380,7 +380,11 @@ static SigTableElmt *SigTableGet(char *name)
                 return st;
             if (st->alias != NULL && strcasecmp(name,st->alias) == 0)
                 return st;
-        }
+        } else if (st->prefix != NULL) {
+	    if (strncasecmp(name, st->prefix, strlen(st->prefix)) == 0) {
+		return st;
+	    }
+	}
     }
 
     return NULL;
@@ -1028,7 +1032,7 @@ static int SigParseOptions(DetectEngineCtx *de_ctx, Signature *s, char *optstr, 
         setup_ret = st->Setup(de_ctx, s, ptr);
     } else {
         /* setup may or may not add a new SigMatch to the list */
-        setup_ret = st->Setup(de_ctx, s, NULL);
+        setup_ret = st->Setup(de_ctx, s, optname);
     }
     if (setup_ret < 0) {
         SCLogDebug("\"%s\" failed to setup", st->name);

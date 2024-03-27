@@ -1276,6 +1276,7 @@ typedef struct SigTableElmt_ {
 
     /** keyword setup function pointer */
     int (*Setup)(DetectEngineCtx *, Signature *, const char *);
+    int (*SetupPrefix)(DetectEngineCtx *, Signature *, const char *, const char *);
 
     bool (*SupportsPrefilter)(const Signature *s);
     int (*SetupPrefilter)(DetectEngineCtx *de_ctx, struct SigGroupHead_ *sgh);
@@ -1294,6 +1295,9 @@ typedef struct SigTableElmt_ {
     const char *alias;    /**< name alias */
     const char *desc;
     const char *url;
+
+    const char *prefix;
+    const char **keywords;
 
 } SigTableElmt;
 

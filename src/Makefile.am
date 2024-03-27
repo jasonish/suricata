@@ -120,6 +120,7 @@ noinst_HEADERS = \
 	detect-distance.h \
 	detect-dnp3.h \
 	detect-dns-answer-name.h \
+	detect-dns-answer-rdata.h \
 	detect-dns-opcode.h \
 	detect-dns-rcode.h \
 	detect-dns-rrtype.h \
@@ -745,6 +746,7 @@ libsuricata_c_a_SOURCES = \
 	detect-distance.c \
 	detect-dnp3.c \
 	detect-dns-answer-name.c \
+	detect-dns-answer-rdata.c \
 	detect-dns-opcode.c \
 	detect-dns-rcode.c \
 	detect-dns-rrtype.c \
