@@ -90,6 +90,7 @@
 #include "source-nfq-prototypes.h"
 #include "source-nflog.h"
 #include "source-ipfw.h"
+#include "source-lib.h"
 #include "source-pcap.h"
 #include "source-pcap-file.h"
 #include "source-pcap-file-helper.h"
@@ -960,6 +961,9 @@ void RegisterAllModules(void)
     /* Dpdk */
     TmModuleReceiveDPDKRegister();
     TmModuleDecodeDPDKRegister();
+
+    /* Library */
+    TmModuleDecodeLibRegister();
 }
 
 TmEcode SCLoadYamlConfig(void)
@@ -3073,4 +3077,9 @@ void SuricataPostInit(void)
         SystemHugepageSnapshotDestroy(postrun_snap);
     }
     SCPledge();
+}
+
+void SuricataSetLibRunmode(void)
+{
+    suricata.run_mode = RUNMODE_LIB;
 }
