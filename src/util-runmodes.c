@@ -290,11 +290,12 @@ static int RunModeSetLiveCaptureWorkersForDevice(ConfigIfaceThreadsCountFunc Mod
         }
         TmSlotSetFuncAppend(tv, tm_module, aconf);
 
+        /* While migrating away from decode thread module, allow it to
+         * not exist and only use it if it does. */
         tm_module = TmModuleGetByName(decode_mod_name);
-        if (tm_module == NULL) {
-            FatalError("TmModuleGetByName %s failed", decode_mod_name);
+        if (tm_module != NULL) {
+            TmSlotSetFuncAppend(tv, tm_module, NULL);
         }
-        TmSlotSetFuncAppend(tv, tm_module, NULL);
 
         tm_module = TmModuleGetByName("FlowWorker");
         if (tm_module == NULL) {

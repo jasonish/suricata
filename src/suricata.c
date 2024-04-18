@@ -916,7 +916,6 @@ void RegisterAllModules(void)
     TmModuleDecodePcapFileRegister();
     /* af-packet */
     TmModuleReceiveAFPRegister();
-    TmModuleDecodeAFPRegister();
     /* af-xdp */
     TmModuleReceiveAFXDPRegister();
     TmModuleDecodeAFXDPRegister();

@@ -136,20 +136,6 @@ void TmModuleReceiveAFPRegister (void)
 }
 
 /**
- * \brief Registration Function for DecodeAFP.
- */
-void TmModuleDecodeAFPRegister (void)
-{
-    tmm_modules[TMM_DECODEAFP].name = "DecodeAFP";
-    tmm_modules[TMM_DECODEAFP].ThreadInit = NoAFPSupportExit;
-    tmm_modules[TMM_DECODEAFP].Func = NULL;
-    tmm_modules[TMM_DECODEAFP].ThreadExitPrintStats = NULL;
-    tmm_modules[TMM_DECODEAFP].ThreadDeinit = NULL;
-    tmm_modules[TMM_DECODEAFP].cap_flags = 0;
-    tmm_modules[TMM_DECODEAFP].flags = TM_FLAG_DECODE_TM;
-}
-
-/**
  * \brief this function prints an error message and exits.
  */
 TmEcode NoAFPSupportExit(ThreadVars *tv, const void *initdata, void **data)
@@ -272,6 +258,7 @@ typedef struct AFPThreadVars_
     uint64_t pkts;
 
     ThreadVars *tv;
+    DecodeThreadVars *dtv;
     TmSlot *slot;
     LiveDevice *livedev;
     /* data link type for the thread */
@@ -366,9 +353,7 @@ static void ReceiveAFPThreadExitStats(ThreadVars *, void *);
 static TmEcode ReceiveAFPThreadDeinit(ThreadVars *, void *);
 static TmEcode ReceiveAFPLoop(ThreadVars *tv, void *data, void *slot);
 
-static TmEcode DecodeAFPThreadInit(ThreadVars *, const void *, void **);
-static TmEcode DecodeAFPThreadDeinit(ThreadVars *tv, void *data);
-static TmEcode DecodeAFP(ThreadVars *, Packet *, void *);
+static TmEcode DecodeAFP(ThreadVars *, Packet *, DecodeThreadVars *);
 
 static TmEcode AFPSetBPFFilter(AFPThreadVars *ptv);
 static int AFPGetIfnumByDev(int fd, const char *ifname, int verbose);
@@ -594,22 +579,6 @@ void AFPPeersListClean(void)
 /**
  * @}
  */
-
-/**
- * \brief Registration Function for DecodeAFP.
- * \todo Unit tests are needed for this module.
- */
-void TmModuleDecodeAFPRegister (void)
-{
-    tmm_modules[TMM_DECODEAFP].name = "DecodeAFP";
-    tmm_modules[TMM_DECODEAFP].ThreadInit = DecodeAFPThreadInit;
-    tmm_modules[TMM_DECODEAFP].Func = DecodeAFP;
-    tmm_modules[TMM_DECODEAFP].ThreadExitPrintStats = NULL;
-    tmm_modules[TMM_DECODEAFP].ThreadDeinit = DecodeAFPThreadDeinit;
-    tmm_modules[TMM_DECODEAFP].cap_flags = 0;
-    tmm_modules[TMM_DECODEAFP].flags = TM_FLAG_DECODE_TM;
-}
-
 
 static int AFPCreateSocket(AFPThreadVars *ptv, char *devname, int verbose);
 
@@ -936,6 +905,10 @@ static int AFPReadFromRing(AFPThreadVars *ptv)
         }
         AFPReadFromRingSetupPacket(ptv, h, tp_status, p);
 
+        if (DecodeAFP(ptv->tv, p, ptv->dtv) != TM_ECODE_OK) {
+            return AFPSuriFailure(ptv, h);
+        }
+
         if (TmThreadsSlotProcessPkt(ptv->tv, ptv->slot, p) != TM_ECODE_OK) {
             return AFPSuriFailure(ptv, h);
         }
@@ -1007,6 +980,10 @@ static inline int AFPParsePacketV3(AFPThreadVars *ptv, struct tpacket_block_desc
         if (ppd->tp_status & TP_STATUS_CSUMNOTREADY) {
             p->flags |= PKT_IGNORE_CHECKSUM;
         }
+    }
+
+    if (DecodeAFP(ptv->tv, p, ptv->dtv) != TM_ECODE_OK) {
+        SCReturnInt(AFP_SURI_FAILURE);
     }
 
     if (TmThreadsSlotProcessPkt(ptv->tv, ptv->slot, p) != TM_ECODE_OK) {
@@ -2504,6 +2481,14 @@ TmEcode ReceiveAFPThreadInit(ThreadVars *tv, const void *initdata, void **data)
 
     ptv->tv = tv;
 
+    ptv->dtv = DecodeThreadVarsAlloc(tv);
+    if (ptv->dtv == NULL) {
+        SCLogError("Failed to allocated decode thread vars");
+        SCFree(ptv);
+        SCReturnInt(TM_ECODE_FAILED);
+    }
+    DecodeRegisterPerfCounters(ptv->dtv, tv);
+
     strlcpy(ptv->iface, afpconfig->iface, AFP_IFACE_NAME_LENGTH);
     ptv->iface[AFP_IFACE_NAME_LENGTH - 1]= '\0';
 
@@ -2658,6 +2643,10 @@ TmEcode ReceiveAFPThreadDeinit(ThreadVars *tv, void *data)
             SCFree(ptv->ring.v2);
     }
 
+    if (ptv->dtv != NULL) {
+        DecodeThreadVarsFree(tv, ptv->dtv);
+    }
+
     SCFree(ptv);
     SCReturnInt(TM_ECODE_OK);
 }
@@ -2700,12 +2689,11 @@ static void UpdateRawDataForVLANHdr(Packet *p)
  * \param p pointer to the current packet
  * \param data pointer that gets cast into AFPThreadVars for ptv
  */
-TmEcode DecodeAFP(ThreadVars *tv, Packet *p, void *data)
+static TmEcode DecodeAFP(ThreadVars *tv, Packet *p, DecodeThreadVars *dtv)
 {
     SCEnter();
 
     const bool afp_vlan_hdr = p->vlan_idx != 0;
-    DecodeThreadVars *dtv = (DecodeThreadVars *)data;
 
     DEBUG_VALIDATE_BUG_ON(PKT_IS_PSEUDOPKT(p));
 
@@ -2722,27 +2710,6 @@ TmEcode DecodeAFP(ThreadVars *tv, Packet *p, void *data)
 
     PacketDecodeFinalize(tv, dtv, p);
 
-    SCReturnInt(TM_ECODE_OK);
-}
-
-TmEcode DecodeAFPThreadInit(ThreadVars *tv, const void *initdata, void **data)
-{
-    SCEnter();
-    DecodeThreadVars *dtv = DecodeThreadVarsAlloc(tv);
-    if (dtv == NULL)
-        SCReturnInt(TM_ECODE_FAILED);
-
-    DecodeRegisterPerfCounters(dtv, tv);
-
-    *data = (void *)dtv;
-
-    SCReturnInt(TM_ECODE_OK);
-}
-
-TmEcode DecodeAFPThreadDeinit(ThreadVars *tv, void *data)
-{
-    if (data != NULL)
-        DecodeThreadVarsFree(tv, data);
     SCReturnInt(TM_ECODE_OK);
 }
 
