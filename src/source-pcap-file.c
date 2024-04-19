@@ -23,11 +23,11 @@
  * File based pcap packet acquisition support
  */
 
+#include "decode.h"
 #include "suricata-common.h"
 #include "source-pcap-file.h"
 #include "source-pcap-file-helper.h"
 #include "source-pcap-file-directory-helper.h"
-#include "flow-manager.h"
 #include "util-checksum.h"
 #include "runmode-unix-socket.h"
 #include "suricata.h"
@@ -61,9 +61,11 @@ static TmEcode ReceivePcapFileThreadInit(ThreadVars *, const void *, void **);
 static void ReceivePcapFileThreadExitStats(ThreadVars *, void *);
 static TmEcode ReceivePcapFileThreadDeinit(ThreadVars *, void *);
 
+#if 0
 static TmEcode DecodePcapFile(ThreadVars *, Packet *, void *);
 static TmEcode DecodePcapFileThreadInit(ThreadVars *, const void *, void **);
 static TmEcode DecodePcapFileThreadDeinit(ThreadVars *tv, void *data);
+#endif
 
 static void CleanupPcapDirectoryFromThreadVars(PcapFileThreadVars *tv,
                                                PcapFileDirectoryVars *ptv);
@@ -105,6 +107,10 @@ void CleanupPcapFileThreadVars(PcapFileThreadVars *ptv)
             SCFree(ptv->shared.bpf_string);
             ptv->shared.bpf_string = NULL;
         }
+	if (ptv->shared.dtv != NULL) {
+	    DecodeThreadVarsFree(ptv->shared.tv, ptv->shared.dtv);
+	    ptv->shared.dtv = NULL;
+	}
         SCFree(ptv);
     }
 }
@@ -125,6 +131,7 @@ void TmModuleReceivePcapFileRegister (void)
     tmm_modules[TMM_RECEIVEPCAPFILE].flags = TM_FLAG_RECEIVE_TM;
 }
 
+#if 0
 void TmModuleDecodePcapFileRegister (void)
 {
     tmm_modules[TMM_DECODEPCAPFILE].name = "DecodePcapFile";
@@ -135,6 +142,7 @@ void TmModuleDecodePcapFileRegister (void)
     tmm_modules[TMM_DECODEPCAPFILE].cap_flags = 0;
     tmm_modules[TMM_DECODEPCAPFILE].flags = TM_FLAG_DECODE_TM;
 }
+#endif
 
 void PcapFileGlobalInit(void)
 {
@@ -211,6 +219,12 @@ TmEcode ReceivePcapFileThreadInit(ThreadVars *tv, const void *initdata, void **d
         SCReturnInt(TM_ECODE_OK);
     }
     memset(&ptv->shared.last_processed, 0, sizeof(struct timespec));
+
+    ptv->shared.dtv = DecodeThreadVarsAlloc(tv);
+    if (ptv->shared.dtv == NULL) {
+	CleanupPcapFileThreadVars(ptv);
+	SCReturnInt(TM_ECODE_OK);
+    }
 
     intmax_t tenant = 0;
     if (ConfGetInt("pcap-file.tenant-id", &tenant) == 1) {
@@ -401,6 +415,7 @@ TmEcode ReceivePcapFileThreadDeinit(ThreadVars *tv, void *data)
     SCReturnInt(TM_ECODE_OK);
 }
 
+#if 0
 static TmEcode DecodePcapFile(ThreadVars *tv, Packet *p, void *data)
 {
     SCEnter();
@@ -428,7 +443,9 @@ static TmEcode DecodePcapFile(ThreadVars *tv, Packet *p, void *data)
         SCReturnInt(TM_ECODE_FAILED);
     }
 }
+#endif
 
+#if 0
 TmEcode DecodePcapFileThreadInit(ThreadVars *tv, const void *initdata, void **data)
 {
     SCEnter();
@@ -444,13 +461,16 @@ TmEcode DecodePcapFileThreadInit(ThreadVars *tv, const void *initdata, void **da
 
     SCReturnInt(TM_ECODE_OK);
 }
+#endif
 
+#if 0
 TmEcode DecodePcapFileThreadDeinit(ThreadVars *tv, void *data)
 {
     if (data != NULL)
         DecodeThreadVarsFree(tv, data);
     SCReturnInt(TM_ECODE_OK);
 }
+#endif
 
 void PcapIncreaseInvalidChecksum(void)
 {

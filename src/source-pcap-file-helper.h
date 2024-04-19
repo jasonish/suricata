@@ -48,6 +48,7 @@ typedef struct PcapFileSharedVars_
     bool should_delete;
 
     ThreadVars *tv;
+    DecodeThreadVars *dtv;
     TmSlot *slot;
 
     /* counters */
