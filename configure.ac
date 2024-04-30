@@ -6,7 +6,7 @@
     AM_INIT_AUTOMAKE([tar-ustar subdir-objects])
 
     AC_LANG([C])
-    LT_INIT
+    #LT_INIT
     PKG_PROG_PKG_CONFIG
 
     dnl Taken from https://llvm.org/svn/llvm-project/llvm/trunk/autoconf/configure.ac
@@ -1608,7 +1608,7 @@
             AC_CONFIG_SUBDIRS([libhtp])
             HTP_DIR="libhtp"
             AC_SUBST(HTP_DIR)
-            HTP_LDADD="../libhtp/htp/libhtp.la"
+            HTP_LDADD="../libhtp/htp/.libs/libhtp.a"
             AC_SUBST(HTP_LDADD)
             # make sure libhtp is added to the includes
             CPPFLAGS="-I\${srcdir}/../libhtp/ ${CPPFLAGS}"
