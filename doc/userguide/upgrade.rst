@@ -62,6 +62,9 @@ Major changes
   reassembly earlier.
 - New transform ``from_base64`` that base64 decodes a buffer and passes the
   decoded buffer. It's recommended that ``from_base64`` be used instead of ``base64_decode``
+- DNS logging has been modified to be more consistent across requests,
+  responses and alerts. See :doc:`DNS Logging Changes for 8.0
+  <upgrade/8.0-dns-logging-changes>`.
 
 Upgrading 6.0 to 7.0
 --------------------
