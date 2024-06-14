@@ -1,12 +1,15 @@
 [package]
 name = "suricata"
-version = "@PACKAGE_VERSION@"
+version.workspace = true
 edition = "2021"
 rust-version = "1.63.0"
 description = "The Suricata network IDS and NSM engine Rust code"
 license = "GPL-2.0-only"
 repository = "https://github.com/OISF/suricata.git"
 @cargo_publish_comment@publish = false
+
+[workspace.package]
+version = "@PACKAGE_VERSION@"
 
 [workspace]
 members = [".", "./derive"]

@@ -1,6 +1,6 @@
 [package]
 name = "suricata-derive"
-version = "@PACKAGE_VERSION@"
+version.workspace = true
 edition = "2021"
 description = "Derive macros for Suricata"
 license = "GPL-2.0-only"
