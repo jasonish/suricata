@@ -22,6 +22,11 @@ use std::string::String;
 use crate::dns::dns::*;
 use crate::jsonbuilder::{JsonBuilder, JsonError};
 
+pub const DNS_LOG_VERSION_1: u8 = 1;
+pub const DNS_LOG_VERSION_2: u8 = 2;
+pub const DNS_LOG_VERSION_3: u8 = 3;
+pub const DNS_LOG_VERSION_DEFAULT: u8 = DNS_LOG_VERSION_3;
+
 pub const LOG_A: u64 = BIT_U64!(2);
 pub const LOG_NS: u64 = BIT_U64!(3);
 pub const LOG_MD: u64 = BIT_U64!(4);

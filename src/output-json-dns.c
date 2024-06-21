@@ -237,6 +237,7 @@ static struct {
 };
 
 typedef struct LogDnsFileCtx_ {
+    uint8_t version;
     uint64_t flags; /** Store mode */
     OutputJsonCtx *eve_ctx;
 } LogDnsFileCtx;
@@ -475,10 +476,10 @@ static void JsonDnsLogParseConfig(LogDnsFileCtx *dnslog_ctx, ConfNode *conf,
     }
 }
 
-static void JsonDnsCheckVersion(ConfNode *conf)
+static uint8_t JsonDnsCheckVersion(ConfNode *conf)
 {
     if (conf == NULL) {
-        return;
+        return DNS_LOG_VERSION_3;
     }
 
     static bool v1_deprecation_warned = false;
@@ -488,9 +489,11 @@ static void JsonDnsCheckVersion(ConfNode *conf)
         intmax_t config_version;
         if (ConfGetChildValueInt(conf, "version", &config_version)) {
             switch(config_version) {
-                case 2:
-                    break;
-                case 1:
+                case DNS_LOG_VERSION_3:
+                    return DNS_LOG_VERSION_3;
+                case DNS_LOG_VERSION_2:
+                    return DNS_LOG_VERSION_2;
+                case DNS_LOG_VERSION_1:
                     if (!v1_deprecation_warned) {
                         SCLogWarning("DNS EVE v1 logging has been removed, will use v2");
                         v1_deprecation_warned = true;
@@ -504,9 +507,11 @@ static void JsonDnsCheckVersion(ConfNode *conf)
             invalid = true;
         }
         if (invalid) {
-            SCLogWarning("Invalid EVE DNS version \"%s\", will use v2", has_version->val);
+            SCLogWarning("Invalid EVE DNS version \"%s\", will use v3", has_version->val);
         }
     }
+
+    return DNS_LOG_VERSION_3;
 }
 
 static void JsonDnsLogInitFilters(LogDnsFileCtx *dnslog_ctx, ConfNode *conf)
@@ -551,10 +556,6 @@ static OutputInitResult JsonDnsLogInitCtxSub(ConfNode *conf, OutputCtx *parent_c
         return result;
     }
 
-    /* As only a single version of logging is supported, this exists to warn about
-     * unsupported versions. */
-    JsonDnsCheckVersion(conf);
-
     OutputJsonCtx *ojc = parent_ctx->data;
 
     LogDnsFileCtx *dnslog_ctx = SCCalloc(1, sizeof(LogDnsFileCtx));
@@ -562,6 +563,7 @@ static OutputInitResult JsonDnsLogInitCtxSub(ConfNode *conf, OutputCtx *parent_c
         return result;
     }
 
+    dnslog_ctx->version = JsonDnsCheckVersion(conf);
     dnslog_ctx->eve_ctx = ojc;
 
     OutputCtx *output_ctx = SCCalloc(1, sizeof(OutputCtx));

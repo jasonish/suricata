@@ -233,7 +233,7 @@ outputs:
 
             # As of Suricata 5.0, version 2 of the eve dns output
             # format is the default.
-            #version: 2
+            version: 1
 
             # Enable/disable this logger. Default: enabled.
             #enabled: yes
