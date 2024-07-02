@@ -2152,6 +2152,13 @@ fi
     [])
     AC_MSG_RESULT(yes)
 
+    # Set the version of the "time" dependency based on what version
+    # of Rust we have.
+    AS_VERSION_COMPARE([$rustc_version], [1.67.0],
+        [AC_SUBST([RUST_TIME_VERSION], [=0.3.20])],
+        [AC_SUBST([RUST_TIME_VERSION], [=0.3.35])],
+        [AC_SUBST([RUST_TIME_VERSION], [=0.3.35])])
+
     RUST_FEATURES=""
 
     rust_vendor_comment="# "

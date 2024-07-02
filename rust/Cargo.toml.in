@@ -62,8 +62,11 @@ base64 = "~0.13.0"
 bendy = { version = "~0.3.3", default-features = false }
 asn1-rs = { version = "~0.6.1" }
 
-# last version to work with MSRV 1.63
-time = "=0.3.20"
+# The version of the time crate will be set by configure based on the
+# version of rustc.
+# - 0.3.20 for rust older than 1.67.
+# - something newer for newer rust
+time = "@RUST_TIME_VERSION@"
 
 suricata-derive = { path = "./derive", version = "@PACKAGE_VERSION@" }
 
