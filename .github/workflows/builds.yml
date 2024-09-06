@@ -3105,6 +3105,13 @@ jobs:
         with:
           path: ~/.cargo
           key: ${{ github.job }}-cargo
+      - name: Cache npcap
+        uses: actions/cache@13aacd865c20de90d75de3b17ebe84f7a17d57d2
+        with:
+          path: |
+            npcap*zip
+            npcap*exe
+          key: ${{ github.job }}-npcap
       - uses: msys2/setup-msys2@v2
         with:
           msystem: MINGW64
@@ -3114,7 +3121,29 @@ jobs:
       # preinstalled one to be picked up by configure
       - name: cbindgen
         run: cargo install --root /usr --force --debug --version 0.24.3 cbindgen
+      - name: Download Npcap DLL
+        run: |
+          ls -l
+          if ! test -e npcap-1.00.exe; then
+              echo "Downloading npcap"
+              curl -sL -O https://nmap.org/npcap/dist/npcap-1.00.exe
+          else
+              echo "Using cached npcap"
+          fi
+          7z -y x -o/npcap-bin npcap-1.00.exe
+      - name: Download Npcap SDK
+        run: |
+          if ! test -e npcap-sdk-1.06.zip; then
+              echo "Downloading npcap-sdk"
+              curl -sL -O https://nmap.org/npcap/dist/npcap-sdk-1.06.zip
+          else
+              echo "Using cached npcap-sdk"
+          fi
+          unzip npcap-sdk-1.06.zip -d /npcap
+          cp /npcap/Lib/x64/* /usr/lib/
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+      - name: hack, place npcap dlls in suricata directory
+        run: cp /npcap-bin/*.dll .
       - run: git config --global --add safe.directory /__w/suricata/suricata
       - uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16
         with:
@@ -3122,17 +3151,6 @@ jobs:
           path: prep
       - run: tar xf prep/libhtp.tar.gz
       - run: tar xf prep/suricata-update.tar.gz
-      - name: Npcap DLL
-        run: |
-          curl -sL -O https://nmap.org/npcap/dist/npcap-1.00.exe
-          7z -y x -o/npcap-bin npcap-1.00.exe
-          # hack: place dlls in cwd
-          cp /npcap-bin/*.dll .
-      - name: Npcap SDK
-        run: |
-          curl -sL -O https://nmap.org/npcap/dist/npcap-sdk-1.06.zip
-          unzip npcap-sdk-1.06.zip -d /npcap
-          cp /npcap/Lib/x64/* /usr/lib/
       - run: tar xf prep/suricata-verify.tar.gz
       - name: Build
         run: |
