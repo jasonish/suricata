@@ -3273,8 +3273,11 @@ jobs:
       - name: Cache RPMs
         uses: actions/cache@13aacd865c20de90d75de3b17ebe84f7a17d57d2
         with:
-          path: /var/cache/dnf
-          key: ${{ github.job }}-dnf
+          path: |
+            /var/cache/dnf
+            /etc/yum.repos.d/ntop.repo
+            /etc/pki/rpm-gpg/RPM-GPG-KEY-deri
+          key: ${{ github.job }}-pfring-dnf
       - run: echo "keepcache=1" >> /etc/dnf/dnf.conf
 
       - name: Determine number of CPUs
@@ -3319,7 +3322,9 @@ jobs:
 
       - name: Install PF_RING
         run: |
-          curl https://packages.ntop.org/centos-stable/ntop.repo > /etc/yum.repos.d/ntop.repo
+          if ! test -e /etc/yum.repos.d/ntop.repo; then
+              curl https://packages.ntop.org/centos-stable/ntop.repo > /etc/yum.repos.d/ntop.repo
+          fi
           dnf install -y pfring
 
       - name: Download suricata.tar.gz
