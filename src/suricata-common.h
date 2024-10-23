@@ -60,10 +60,6 @@
 #include <dirent.h>
 #endif
 
-#if HAVE_STDIO_H
-#include <stdio.h>
-#endif
-
 #if HAVE_STDDEF_H
 #include <stddef.h>
 #endif
