@@ -2,6 +2,7 @@ EXTRA_DIST =	src derive \
 		.cargo/config.toml.in \
 		cbindgen.toml \
 		dist/rust-bindings.h \
+		dist/rust-config.h \
 		vendor \
 		Cargo.toml Cargo.lock \
 		derive/Cargo.toml
@@ -60,6 +61,7 @@ endif
 			$(RUST_SURICATA_LIBDIR)/${RUST_SURICATA_LIBNAME}; \
 	fi
 	$(MAKE) gen/rust-bindings.h
+	rm -f gen/rust-config.h && $(MAKE) gen/rust-config.h
 
 install-library:
 	$(MKDIR_P) "$(DESTDIR)$(libdir)"
@@ -88,6 +90,9 @@ gen/rust-bindings.h: $(RUST_SURICATA_LIB)
 	cd $(abs_top_srcdir)/rust && \
 		cbindgen --config $(abs_top_srcdir)/rust/cbindgen.toml \
 		--quiet --verify --output $(abs_top_builddir)/rust/gen/rust-bindings.h || true
+gen/rust-config.h: $(RUST_SURICATA_LIB)
+	cbindgen --config $(abs_top_srcdir)/rust/config/cbindgen.toml \
+		--quiet --verify --output $(abs_top_builddir)/rust/$@ config || true
 else
 gen/rust-bindings.h:
 endif

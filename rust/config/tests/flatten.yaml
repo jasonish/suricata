@@ -1,0 +1,14 @@
+foo:
+  one: two
+  child:
+    first: thing1
+  child.second: thing2
+foo.two: three
+
+new.child: value
+
+list:
+  - zero
+
+list.1: one
+list.9: nine

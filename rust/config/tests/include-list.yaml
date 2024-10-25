@@ -1,0 +1,4 @@
+# Test a list of includes.
+include:
+  - ./one.yaml
+  - two.yaml

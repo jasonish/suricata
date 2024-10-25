@@ -1,0 +1,3 @@
+# Test flat includes.
+include: one.yaml
+include: two.yaml

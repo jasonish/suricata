@@ -30,6 +30,7 @@
 #include "util-path.h"
 #include "util-debug.h"
 #include "util-unittest.h"
+#include "rust-config.h"
 
 #define YAML_VERSION_MAJOR 1
 #define YAML_VERSION_MINOR 1
@@ -479,6 +480,12 @@ ConfYamlLoadFile(const char *filename)
     yaml_parser_t parser;
     int ret;
     ConfNode *root = ConfGetRootNode();
+
+    Yaml *yaml = SuriConfigLoadFromFile(filename);
+    if (yaml == NULL) {
+        SCLogError("[rust-config] %s", SuriConfigLastErr());
+    }
+    SuriConfigSetGlobal(yaml);
 
     if (yaml_parser_initialize(&parser) != 1) {
         SCLogError("failed to initialize yaml parser.");

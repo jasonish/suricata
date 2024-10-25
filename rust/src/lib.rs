@@ -135,3 +135,5 @@ pub mod ldap;
 
 #[allow(unused_imports)]
 pub use suricata_lua_sys;
+
+pub use suricata_config;

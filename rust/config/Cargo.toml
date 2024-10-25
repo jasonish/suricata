@@ -1,0 +1,15 @@
+[package]
+name = "suricata-config"
+version = "0.1.0"
+edition = "2021"
+
+# Saphyr requires 1.70.0
+rust-version = "1.70.0"
+
+[dependencies]
+# Need to keep hashlink's version in check with saphyr.
+hashlink = "0.8.4"
+lazy_static = "1.4.0"
+
+saphyr = { git = "https://github.com/saphyr-rs/saphyr" }
+saphyr-parser = { git = "https://github.com/saphyr-rs/saphyr" }

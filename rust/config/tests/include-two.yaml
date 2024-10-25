@@ -1,0 +1,7 @@
+child-of-two: foobar-two
+
+foo:
+  bar: foo
+
+foo.bob: alice
+

@@ -1,0 +1,2 @@
+one: !include include-one.yaml
+
