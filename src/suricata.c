@@ -3053,3 +3053,4 @@ void SuricataPostInit(void)
     }
     SCPledge();
 }
+
