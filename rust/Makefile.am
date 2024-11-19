@@ -50,7 +50,7 @@ all-local: Cargo.toml
 	mkdir -p $(abs_top_builddir)/rust/gen
 	cd $(abs_top_srcdir)/rust && \
 		$(CARGO_ENV) \
-		$(CARGO) build $(RELEASE) $(NIGHTLY_ARGS) \
+		$(CARGO) build -v $(RELEASE) $(NIGHTLY_ARGS) \
 			--features "$(RUST_FEATURES)" $(RUST_TARGET)
 	if test -e $(RUST_SURICATA_LIBDIR)/suricata.lib; then \
 		cp -a $(RUST_SURICATA_LIBDIR)/suricata.lib \
