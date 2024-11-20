@@ -3154,7 +3154,7 @@ jobs:
       - name: Build
         run: |
           ./autogen.sh
-          CFLAGS="-ggdb -Werror" ./configure --enable-warnings --enable-unittests --enable-gccprotect --disable-gccmarch-native --disable-shared --with-libpcap-includes=/npcap/Include --with-libpcap-libraries=/npcap/Lib/x64
+          CFLAGS="-ggdb -Werror" ./configure --enable-warnings --enable-unittests --enable-gccprotect --disable-gccmarch-native --disable-shared --with-libpcap-includes=$(cygpath -am /npcap/Include) --with-libpcap-libraries=$(cygpath /npcap/Lib/x64)
           make -j3
       - name: Run
         run: |
