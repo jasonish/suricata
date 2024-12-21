@@ -6,7 +6,6 @@ license = "GPL-2.0-only"
 
 [[bin]]
 name = "suricatactl"
-path = "@e_rustdir@/suricatactl/src/main.rs"
 
 [dependencies]
 regex = "~1.5.5"

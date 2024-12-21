@@ -7,7 +7,7 @@ EXTRA_DIST =	src derive \
 		dist/rust-bindings.h \
 		vendor \
 		Cargo.toml Cargo.lock \
-		derive/Cargo.toml
+		derive/Cargo.toml \
 		suricatactl \
 		suricatasc
 

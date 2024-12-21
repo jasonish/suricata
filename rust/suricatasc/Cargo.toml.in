@@ -8,7 +8,6 @@ readme = "README.md"
 
 [[bin]]
 name = "suricatasc"
-path = "@e_rustdir@/suricatasc/src/main.rs"
 
 [dependencies]
 getopts = "0.2.21"
