@@ -24,7 +24,7 @@ fi
 if [ -e ./rust/target/release/suricatasc ]; then
     SURICATASC=./rust/target/release/suricatasc
 else
-    SURICATASC=./rust/debug/release/suricatasc
+    SURICATASC=./rust/target/debug/suricatasc
 fi
 
 RES=0
