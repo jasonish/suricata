@@ -19,6 +19,7 @@
 
 //! PostgreSQL parser
 
+use super::parser::PgsqlParseError;
 use super::parser::{self, ConsolidatedDataRowPacket, PgsqlBEMessage, PgsqlFEMessage};
 use crate::applayer::*;
 use crate::conf::*;
@@ -289,7 +290,7 @@ impl PgsqlState {
 
     fn state_based_req_parsing(
         state: PgsqlStateProgress, input: &[u8],
-    ) -> IResult<&[u8], parser::PgsqlFEMessage> {
+    ) -> IResult<&[u8], parser::PgsqlFEMessage, PgsqlParseError<&[u8]>> {
         match state {
             PgsqlStateProgress::SASLAuthenticationReceived => {
                 parser::parse_sasl_initial_response(input)
@@ -398,14 +399,20 @@ impl PgsqlState {
                     );
                     return AppLayerResult::incomplete(consumed as u32, needed_estimation as u32);
                 }
-                Err(Err::Error(Error{code:ErrorKind::Verify, ..})) => {
-                    SCLogDebug!("PgsqlEvent::InvalidLength");
-                    AppLayerResult::ok();
+                Err(Err::Error(err)) => {
+                    match err {
+                        PgsqlParseError::InvalidLength => todo!(),
+                        PgsqlParseError::Nom(_, error_kind) => todo!(),
+                    }
                 }
-                Err(Err::Error(Error{code:ErrorKind::Switch, ..})) => {
-                    SCLogDebug!("PgsqlEvent::MalformedData");
-                    return AppLayerResult::ok();
-                }
+                // Err(Err::Error(Error{code:ErrorKind::Verify, ..})) => {
+                //     SCLogDebug!("PgsqlEvent::InvalidLength");
+                //     AppLayerResult::ok();
+                // }
+                // Err(Err::Error(Error{code:ErrorKind::Switch, ..})) => {
+                //     SCLogDebug!("PgsqlEvent::MalformedData");
+                //     return AppLayerResult::ok();
+                // }
                 Err(_) => {
                     SCLogDebug!("Error while parsing PGSQL request");
                     return AppLayerResult::ok();
@@ -482,7 +489,7 @@ impl PgsqlState {
 
     fn state_based_resp_parsing(
         state: PgsqlStateProgress, input: &[u8],
-    ) -> IResult<&[u8], parser::PgsqlBEMessage> {
+    ) -> IResult<&[u8], parser::PgsqlBEMessage, PgsqlParseError<&[u8]>> {
         if state == PgsqlStateProgress::SSLRequestReceived {
             parser::parse_ssl_response(input)
         } else {
@@ -581,14 +588,14 @@ impl PgsqlState {
                     );
                     return AppLayerResult::incomplete(consumed as u32, needed_estimation as u32);
                 }
-                Err(Err::Error(Error{code:ErrorKind::Verify, ..})) => {
-                    SCLogDebug!("PgsqlEvent::InvalidLength");
-                    return AppLayerResult::ok();
-                }
-                Err(Err::Error(Error{code:ErrorKind::Switch, ..})) => {
-                    SCLogDebug!("PgsqlEvent::MalformedData");
-                    return AppLayerResult::ok();
-                }
+                // Err(Err::Error(Error{code:ErrorKind::Verify, ..})) => {
+                //     SCLogDebug!("PgsqlEvent::InvalidLength");
+                //     return AppLayerResult::ok();
+                // }
+                // Err(Err::Error(Error{code:ErrorKind::Switch, ..})) => {
+                //     SCLogDebug!("PgsqlEvent::MalformedData");
+                //     return AppLayerResult::ok();
+                // }
                 Err(_) => {
                     SCLogDebug!("Error while parsing PGSQL response");
                     return AppLayerResult::ok();
