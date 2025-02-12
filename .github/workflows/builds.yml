@@ -441,8 +441,8 @@ jobs:
               exit 1
            fi
       - run: |
-          cd suricata-rpms/devel
           git clone https://github.com/jasonish/suricata-rpms
+          cd suricata-rpms/devel
           make update-release update-sources
           dnf -y install $(rpmspec -q --buildrequires ./suricata.spec)
           mv ../../suricata-*.tar.gz .
