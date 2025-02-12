@@ -421,8 +421,6 @@ jobs:
         with:
           name: dist
 
-      - run: env
-
       - name: Install packages
         if: ${{ env.skip != 'true' }}
         run: |
@@ -445,7 +443,8 @@ jobs:
               echo "ERROR: Unsupported distribution for RPM building"
               exit 1
            fi
-      - run: |
+      - if: ${{ env.skip != 'true' }}
+        run: |
           git clone https://github.com/jasonish/suricata-rpms
           cd suricata-rpms/devel
           make update-release update-sources
@@ -458,12 +457,14 @@ jobs:
       # container name directly in an artifact, as artifacts can't
       # have ':' in the name.
       - if: matrix.container == 'fedora:40'
+        if: ${{ env.skip != 'true' }}
         uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
         name: Uploading RPMs
         with:
           name: rpms-fedora-40
           path: suricata-rpms/devel/rpms
       - if: matrix.container == 'almalinux:9'
+        if: ${{ env.skip != 'true' }}
         uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
         name: Uploading RPMs
         with:
