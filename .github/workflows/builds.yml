@@ -400,6 +400,8 @@ jobs:
         container:
           - almalinux:9
           - fedora:40
+    env:
+      skip: true
     steps:
       - name: Cache cargo registry
         uses: actions/cache@13aacd865c20de90d75de3b17ebe84f7a17d57d2
@@ -420,6 +422,7 @@ jobs:
           name: dist
 
       - name: Install packages
+        if: ${{ env.skip != true }}
         run: |
           if test -e /etc/almalinux-release; then
               dnf -y install \
