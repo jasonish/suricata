@@ -424,7 +424,7 @@ jobs:
       - run: env
 
       - name: Install packages
-        if: ${{ env.skip != "true" }}
+        if: ${{ env.skip != 'true' }}
         run: |
           if test -e /etc/almalinux-release; then
               dnf -y install \
