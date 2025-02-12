@@ -421,6 +421,8 @@ jobs:
         with:
           name: dist
 
+      - run: env
+
       - name: Install packages
         if: ${{ env.skip != true }}
         run: |
