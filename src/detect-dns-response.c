@@ -1,4 +1,4 @@
-/* Copyright (C) 2024 Open Information Security Foundation
+/* Copyright (C) 2025 Open Information Security Foundation
  *
  * You can copy, redistribute or modify this Program under the terms of
  * the GNU General Public License version 2 as published by the Free
@@ -37,7 +37,7 @@ typedef struct PrefilterMpm {
     const DetectEngineTransforms *transforms;
 } PrefilterMpm;
 
-typedef enum DnsResponseSection_ {
+enum DnsResponseSection {
     DNS_RESPONSE_QUERY = 0,
     DNS_RESPONSE_ANSWER,
     DNS_RESPONSE_AUTHORITY,
@@ -45,12 +45,12 @@ typedef enum DnsResponseSection_ {
 
     /* always last */
     DNS_RESPONSE_MAX,
-} DnsResponseSection;
+};
 
 struct DnsResponseGetDataArgs {
-    DnsResponseSection response_section; /**< query, answer, authority, additional */
-    uint32_t response_id;                /**< index into response resource records */
-    uint32_t local_id;                   /**< used as index into thread inspect array */
+    enum DnsResponseSection response_section; /**< query, answer, authority, additional */
+    uint32_t response_id;                     /**< index into response resource records */
+    uint32_t local_id;                        /**< used as index into thread inspect array */
 };
 
 static int DetectSetup(DetectEngineCtx *de_ctx, Signature *s, const char *str)
@@ -144,6 +144,107 @@ static InspectionBuffer *GetBuffer(DetectEngineThreadCtx *det_ctx, uint8_t flags
     return buffer;
 }
 
+static inline uint8_t CheckSectionRecords(DetectEngineCtx *de_ctx, DetectEngineThreadCtx *det_ctx,
+        const struct DetectEngineAppInspectionEngine_ *engine, const Signature *s, Flow *f,
+        uint8_t flags, void *txv, const DetectEngineTransforms *transforms, uint32_t *local_id,
+        enum DnsResponseSection section)
+{
+    uint32_t response_id = 0;
+
+    /* loop through each record in DNS response section inspecting "name" and "rdata" */
+    while (1) {
+        struct DnsResponseGetDataArgs cbdata = { section, response_id, *local_id };
+
+        /* do inspection for resource record "name" */
+        InspectionBuffer *buffer =
+                GetBuffer(det_ctx, flags, transforms, txv, &cbdata, engine->sm_list, false);
+        if (buffer == NULL || buffer->inspect == NULL) {
+            (*local_id)++;
+            break;
+        }
+
+        if (DetectEngineContentInspectionBuffer(de_ctx, det_ctx, s, engine->smd, NULL, f, buffer,
+                    DETECT_ENGINE_CONTENT_INSPECTION_MODE_STATE)) {
+            return DETECT_ENGINE_INSPECT_SIG_MATCH;
+        }
+
+        (*local_id)++;
+        if (section == DNS_RESPONSE_QUERY) {
+            /* no rdata to inspect for query section, move on to next record */
+            response_id++;
+            continue;
+        }
+
+        /* do inspection for resource record "rdata" */
+        cbdata.local_id = *local_id;
+        buffer = GetBuffer(det_ctx, flags, transforms, txv, &cbdata, engine->sm_list, true);
+        if (buffer == NULL || buffer->inspect == NULL) {
+            (*local_id)++;
+            response_id++;
+            continue;
+        }
+
+        if (DetectEngineContentInspectionBuffer(de_ctx, det_ctx, s, engine->smd, NULL, f, buffer,
+                    DETECT_ENGINE_CONTENT_INSPECTION_MODE_STATE)) {
+            return DETECT_ENGINE_INSPECT_SIG_MATCH;
+        }
+        (*local_id)++;
+        response_id++;
+    }
+    return DETECT_ENGINE_INSPECT_SIG_NO_MATCH;
+}
+
+static inline void CheckSectionRecordsPrefilter(DetectEngineThreadCtx *det_ctx, const void *pectx,
+        void *txv, const uint8_t flags, uint32_t *local_id, enum DnsResponseSection section)
+{
+    const PrefilterMpm *ctx = (const PrefilterMpm *)pectx;
+    const MpmCtx *mpm_ctx = ctx->mpm_ctx;
+    const int list_id = ctx->list_id;
+    uint32_t response_id = 0;
+
+    while (1) {
+        struct DnsResponseGetDataArgs cbdata = { section, response_id, *local_id };
+
+        /* extract resource record "name" */
+        InspectionBuffer *buffer =
+                GetBuffer(det_ctx, flags, ctx->transforms, txv, &cbdata, list_id, false);
+        if (buffer == NULL) {
+            (*local_id)++;
+            break;
+        }
+
+        if (buffer->inspect_len >= mpm_ctx->minlen) {
+            (void)mpm_table[mpm_ctx->mpm_type].Search(
+                    mpm_ctx, &det_ctx->mtc, &det_ctx->pmq, buffer->inspect, buffer->inspect_len);
+            PREFILTER_PROFILING_ADD_BYTES(det_ctx, buffer->inspect_len);
+        }
+
+        (*local_id)++;
+        if (section == DNS_RESPONSE_QUERY) {
+            /* no rdata to inspect for query section, move on to next name entry */
+            response_id++;
+            continue;
+        }
+
+        /* extract resource record "rdata" */
+        cbdata.local_id = *local_id;
+        buffer = GetBuffer(det_ctx, flags, ctx->transforms, txv, &cbdata, list_id, true);
+        if (buffer == NULL) {
+            (*local_id)++;
+            response_id++;
+            continue;
+        }
+
+        if (buffer->inspect_len >= mpm_ctx->minlen) {
+            (void)mpm_table[mpm_ctx->mpm_type].Search(
+                    mpm_ctx, &det_ctx->mtc, &det_ctx->pmq, buffer->inspect, buffer->inspect_len);
+            PREFILTER_PROFILING_ADD_BYTES(det_ctx, buffer->inspect_len);
+        }
+        (*local_id)++;
+        response_id++;
+    }
+}
+
 static uint8_t DetectEngineInspectCb(DetectEngineCtx *de_ctx, DetectEngineThreadCtx *det_ctx,
         const struct DetectEngineAppInspectionEngine_ *engine, const Signature *s, Flow *f,
         uint8_t flags, void *alstate, void *txv, uint64_t tx_id)
@@ -154,54 +255,18 @@ static uint8_t DetectEngineInspectCb(DetectEngineCtx *de_ctx, DetectEngineThread
     }
 
     uint32_t local_id = 0;
+    uint8_t ret_match = DETECT_ENGINE_INSPECT_SIG_NO_MATCH;
+
     /* loop through each possible DNS response section */
-    for (uint8_t section = DNS_RESPONSE_QUERY; section < DNS_RESPONSE_MAX; section++) {
-        uint32_t response_id = 0;
-        /* loop through each record in section inspecting "name" and "rdata" */
-        while (1) {
-            struct DnsResponseGetDataArgs cbdata = { section, response_id, local_id };
+    for (enum DnsResponseSection section = DNS_RESPONSE_QUERY;
+            section < DNS_RESPONSE_MAX && ret_match == DETECT_ENGINE_INSPECT_SIG_NO_MATCH;
+            section++) {
 
-            /* do inspection for resource record "name" */
-            InspectionBuffer *buffer =
-                    GetBuffer(det_ctx, flags, transforms, txv, &cbdata, engine->sm_list, false);
-            if (buffer == NULL || buffer->inspect == NULL) {
-                local_id++;
-                break;
-            }
-
-            bool match = DetectEngineContentInspectionBuffer(de_ctx, det_ctx, s, engine->smd, NULL,
-                    f, buffer, DETECT_ENGINE_CONTENT_INSPECTION_MODE_STATE);
-            if (match) {
-                return DETECT_ENGINE_INSPECT_SIG_MATCH;
-            }
-
-            local_id++;
-            if (section == DNS_RESPONSE_QUERY) {
-                /* no rdata to inspect for query section, move on to next record */
-                response_id++;
-                continue;
-            }
-
-            /* do inspection for resource record "rdata" */
-            cbdata.local_id = local_id;
-            buffer = GetBuffer(det_ctx, flags, transforms, txv, &cbdata, engine->sm_list, true);
-            if (buffer == NULL || buffer->inspect == NULL) {
-                local_id++;
-                response_id++;
-                continue;
-            }
-
-            match = DetectEngineContentInspectionBuffer(de_ctx, det_ctx, s, engine->smd, NULL, f,
-                    buffer, DETECT_ENGINE_CONTENT_INSPECTION_MODE_STATE);
-            if (match) {
-                return DETECT_ENGINE_INSPECT_SIG_MATCH;
-            }
-            local_id++;
-            response_id++;
-        }
+        /* check each record in section inspecting "name" and "rdata" */
+        ret_match = CheckSectionRecords(
+                de_ctx, det_ctx, engine, s, f, flags, txv, transforms, &local_id, section);
     }
-
-    return DETECT_ENGINE_INSPECT_SIG_NO_MATCH;
+    return ret_match;
 }
 
 static void DetectDnsResponsePrefilterTx(DetectEngineThreadCtx *det_ctx, const void *pectx,
@@ -210,56 +275,12 @@ static void DetectDnsResponsePrefilterTx(DetectEngineThreadCtx *det_ctx, const v
 {
     SCEnter();
 
-    const PrefilterMpm *ctx = (const PrefilterMpm *)pectx;
-    const MpmCtx *mpm_ctx = ctx->mpm_ctx;
-    const int list_id = ctx->list_id;
-
     uint32_t local_id = 0;
     /* loop through each possible DNS response section */
-    for (uint8_t section = DNS_RESPONSE_QUERY; section < DNS_RESPONSE_MAX; section++) {
-        uint32_t response_id = 0;
-        /* loop through each record in section inspecting "name" and "rdata" */
-        while (1) {
-            struct DnsResponseGetDataArgs cbdata = { section, response_id, local_id };
-
-            /* extract resource record "name" */
-            InspectionBuffer *buffer =
-                    GetBuffer(det_ctx, flags, ctx->transforms, txv, &cbdata, list_id, false);
-            if (buffer == NULL) {
-                local_id++;
-                break;
-            }
-
-            if (buffer->inspect_len >= mpm_ctx->minlen) {
-                (void)mpm_table[mpm_ctx->mpm_type].Search(mpm_ctx, &det_ctx->mtc, &det_ctx->pmq,
-                        buffer->inspect, buffer->inspect_len);
-                PREFILTER_PROFILING_ADD_BYTES(det_ctx, buffer->inspect_len);
-            }
-
-            local_id++;
-            if (section == DNS_RESPONSE_QUERY) {
-                /* no rdata to inspect for query section, move on to next name entry */
-                response_id++;
-                continue;
-            }
-
-            /* extract resource record "rdata" */
-            cbdata.local_id = local_id;
-            buffer = GetBuffer(det_ctx, flags, ctx->transforms, txv, &cbdata, list_id, true);
-            if (buffer == NULL) {
-                local_id++;
-                response_id++;
-                continue;
-            }
-
-            if (buffer->inspect_len >= mpm_ctx->minlen) {
-                (void)mpm_table[mpm_ctx->mpm_type].Search(mpm_ctx, &det_ctx->mtc, &det_ctx->pmq,
-                        buffer->inspect, buffer->inspect_len);
-                PREFILTER_PROFILING_ADD_BYTES(det_ctx, buffer->inspect_len);
-            }
-            local_id++;
-            response_id++;
-        }
+    for (enum DnsResponseSection section = DNS_RESPONSE_QUERY; section < DNS_RESPONSE_MAX;
+            section++) {
+        /* check each record in section inspecting "name" and "rdata" */
+        CheckSectionRecordsPrefilter(det_ctx, pectx, txv, flags, &local_id, section);
     }
 }
 
