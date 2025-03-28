@@ -16,6 +16,7 @@ if [ $# -ne "1" ]; then
 fi
 
 RUNMODE=$1
+TESTDIR=`dirname "$(readlink -f "$0")"`
 
 # dump some info
 uname -a
@@ -28,8 +29,11 @@ fi
 
 if [ -e ./rust/target/release/suricatasc ]; then
     SURICATASC=./rust/target/release/suricatasc
-else
+elif [ -e ./rust/target/debug/suricatasc ]; then
     SURICATASC=./rust/target/debug/suricatasc
+else
+    export PYTHONPATH=python/
+    SURICATASC="python3 python/bin/suricatasc"
 fi
 
 RES=0
@@ -45,7 +49,7 @@ ping $GW &
 PINGPID=$!
 
 # set first rule file
-cp .github/workflows/live/icmp.rules suricata.rules
+cp $TESTDIR/icmp.rules suricata.rules
 
 # Start Suricata, SIGINT after 120 secords. Will close it earlier through
 # the unix socket.
@@ -107,7 +111,7 @@ fi
 echo "SURIPID $SURIPID PINGPID $PINGPID"
 
 # set second rule file for the reload
-cp .github/workflows/live/icmp2.rules suricata.rules
+cp $TESTDIR/icmp2.rules suricata.rules
 
 # trigger the reload
 JSON=$(${SURICATASC} -c "iface-list" /var/run/suricata/suricata-command.socket)
