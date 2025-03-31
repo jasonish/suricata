@@ -45,7 +45,7 @@ static void DetectTransformDomainRegisterTests(void);
 static void DetectTransformTLDRegisterTests(void);
 #endif
 static void TransformDomain(DetectEngineThreadCtx *, InspectionBuffer *buffer, void *options);
-static void TransformTLD(InspectionBuffer *buffer, void *options);
+static void TransformTLD(DetectEngineThreadCtx *, InspectionBuffer *buffer, void *options);
 
 void DetectTransformDomainRegister(void)
 {
@@ -125,7 +125,7 @@ static int DetectTransformTLDSetup(DetectEngineCtx *de_ctx, Signature *s, const 
  * \brief Return the domain, if any, in the last pattern match.
  *
  */
-static void TransformTLD(InspectionBuffer *buffer, void *options)
+static void TransformTLD(DetectEngineThreadCtx *, InspectionBuffer *buffer, void *options)
 {
     const size_t input_len = buffer->inspect_len;
     uint64_t output_len = 0;
@@ -219,7 +219,7 @@ static int DetectTransformTLDTest01(void)
     InspectionBufferInit(&buffer, input_len);
     InspectionBufferSetup(NULL, -1, &buffer, input, input_len);
     PrintRawDataFp(stdout, buffer.inspect, buffer.inspect_len);
-    TransformTLD(&buffer, NULL);
+    TransformTLD(NULL, &buffer, NULL);
     PrintRawDataFp(stdout, buffer.inspect, buffer.inspect_len);
     FAIL_IF_NOT(buffer.inspect_len == result_len);
     FAIL_IF_NOT(strncmp(result, (const char *)buffer.inspect, result_len) == 0);
@@ -239,7 +239,7 @@ static int DetectTransformTLDTest02(void)
     InspectionBufferInit(&buffer, input_len);
     InspectionBufferSetup(NULL, -1, &buffer, input, input_len);
     PrintRawDataFp(stdout, buffer.inspect, buffer.inspect_len);
-    TransformTLD(&buffer, NULL);
+    TransformTLD(NULL, &buffer, NULL);
     PrintRawDataFp(stdout, buffer.inspect, buffer.inspect_len);
     FAIL_IF_NOT(buffer.inspect_len == result_len);
     FAIL_IF_NOT(strncmp(result, (const char *)buffer.inspect, result_len) == 0);
