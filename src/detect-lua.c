@@ -481,13 +481,6 @@ static void *DetectLuaThreadInit(void *data)
 
     LuaRegisterExtensions(t->luastate);
 
-    lua_pushinteger(t->luastate, (lua_Integer)(lua->sid));
-    lua_setglobal(t->luastate, "SCRuleSid");
-    lua_pushinteger(t->luastate, (lua_Integer)(lua->rev));
-    lua_setglobal(t->luastate, "SCRuleRev");
-    lua_pushinteger(t->luastate, (lua_Integer)(lua->gid));
-    lua_setglobal(t->luastate, "SCRuleGid");
-
     /* hackish, needed to allow unittests to pass buffers as scripts instead of files */
 #ifdef UNITTESTS
     if (ut_script != NULL) {
