@@ -991,27 +991,6 @@ error:
     return -1;
 }
 
-/** \brief post-sig parse function to set the sid,rev,gid into the
- *         ctx, as this isn't available yet during parsing.
- */
-void DetectLuaPostSetup(Signature *s)
-{
-    int i;
-    SigMatch *sm;
-
-    for (i = 0; i < DETECT_SM_LIST_MAX; i++) {
-        for (sm = s->init_data->smlists[i]; sm != NULL; sm = sm->next) {
-            if (sm->type != DETECT_LUA)
-                continue;
-
-            DetectLuaData *ld = (DetectLuaData *)sm->ctx;
-            ld->sid = s->id;
-            ld->rev = s->rev;
-            ld->gid = s->gid;
-        }
-    }
-}
-
 /**
  * \brief this function will free memory associated with DetectLuaData
  *
