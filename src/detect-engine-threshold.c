@@ -952,6 +952,10 @@ int PacketAlertThreshold(const DetectEngineCtx *de_ctx, DetectEngineThreadCtx *d
 {
     SCEnter();
 
+    /* Keep original action, the rate filter callback will only be called if the
+     * action is changed. */
+    const uint8_t original_action = pa->action;
+
     int ret = 0;
     if (td == NULL) {
         SCReturnInt(0);
@@ -985,6 +989,12 @@ int PacketAlertThreshold(const DetectEngineCtx *de_ctx, DetectEngineThreadCtx *d
         if (p->flow) {
             ret = ThresholdHandlePacketFlow(p->flow, p, td, s->id, s->gid, s->rev, pa);
         }
+    }
+
+    /* If a rate filter, and the action was modified, call the callback so the
+     * user can further customize, or reset the action. */
+    if (de_ctx->RateFilterCallback && td->type == TYPE_RATE && original_action != pa->action) {
+        (*de_ctx->RateFilterCallback)(s, p, original_action, pa, de_ctx->rate_filter_callback_arg);
     }
 
     SCReturnInt(ret);
