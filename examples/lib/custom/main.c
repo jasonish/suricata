@@ -146,6 +146,8 @@ done:
 
 int main(int argc, char **argv)
 {
+    bool is_ips = false;
+
     SuricataPreInit(argv[0]);
 
     /* Parse command line options. This is optional, you could
@@ -190,6 +192,12 @@ int main(int argc, char **argv)
      * may be programmatically configuration Suricata. */
     if (SCLoadYamlConfig() != TM_ECODE_OK) {
         exit(EXIT_FAILURE);
+    }
+
+    /* If creating an IPS, this is where you might tell Suricata it is
+     * running inline. */
+    if (is_ips) {
+        EngineModeSetIPS();
     }
 
     /* Set "offline" runmode to replay a pcap in library mode. */
