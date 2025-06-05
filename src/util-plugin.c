@@ -49,7 +49,23 @@ static TAILQ_HEAD(, PluginListNode_) plugins = TAILQ_HEAD_INITIALIZER(plugins);
 
 static TAILQ_HEAD(, SCCapturePlugin_) capture_plugins = TAILQ_HEAD_INITIALIZER(capture_plugins);
 
-bool RegisterPlugin(SCPlugin *plugin, void *lib)
+/**
+ * List entries for callbacks registered to be called when the logging system is
+ * ready. A plugin's Init() function is called too early for application
+ * transaction loggers to be registered.
+ */
+typedef struct OnLoggingReadyCallbackNode_ {
+    SCPluginOnLoggingReadyCallback callback;
+    TAILQ_ENTRY(OnLoggingReadyCallbackNode_) entries;
+} OnLoggingReadyCallbackNode;
+
+/**
+ * The list of callbacks to be called when logging is ready.
+ */
+static TAILQ_HEAD(, OnLoggingReadyCallbackNode_)
+        on_logging_ready_callbacks = TAILQ_HEAD_INITIALIZER(on_logging_ready_callbacks);
+
+static bool RegisterPlugin(SCPlugin *plugin, void *lib)
 {
     if (plugin->version != SC_API_VERSION) {
         SCLogError("Suricata and plugin versions differ: plugin has %" PRIx64
@@ -75,6 +91,16 @@ bool RegisterPlugin(SCPlugin *plugin, void *lib)
             plugin->suricata_version);
     (*plugin->Init)();
     return true;
+}
+
+void SCPluginOnLoggingReady(void)
+{
+    OnLoggingReadyCallbackNode *node = NULL;
+    TAILQ_FOREACH (node, &on_logging_ready_callbacks, entries) {
+        if (node->callback) {
+            (*node->callback)();
+        }
+    }
 }
 
 static void InitPlugin(char *path)
@@ -187,6 +213,20 @@ int SCPluginRegisterAppLayer(SCAppLayerPlugin *plugin)
             return 1;
         }
     }
+    return 0;
+}
+
+int SCPluginRegisterOnLoggingReady(SCPluginOnLoggingReadyCallback callback)
+{
+    OnLoggingReadyCallbackNode *node = SCCalloc(1, sizeof(*node));
+    if (node == NULL) {
+        SCLogError("Failed to allocate memory for callback node");
+        return -1;
+    }
+
+    node->callback = callback;
+    TAILQ_INSERT_TAIL(&on_logging_ready_callbacks, node, entries);
+
     return 0;
 }
 #endif

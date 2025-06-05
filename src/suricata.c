@@ -2991,6 +2991,10 @@ void SuricataInit(void)
 
     PreRunPostPrivsDropInit(suricata.run_mode);
 
+#ifdef HAVE_PLUGINS
+    SCPluginOnLoggingReady();
+#endif
+
     LandlockSandboxing(&suricata);
 
     PostConfLoadedDetectSetup(&suricata);
@@ -3013,6 +3017,7 @@ void SuricataInit(void)
     }
     RunModeDispatch(suricata.run_mode, suricata.runmode_custom_mode, suricata.capture_plugin_name,
             suricata.capture_plugin_args);
+
     return;
 
 out:

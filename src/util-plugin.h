@@ -22,7 +22,9 @@
 
 void SCPluginsLoad(const char *capture_plugin_name, const char *capture_plugin_args);
 SCCapturePlugin *SCPluginFindCaptureByName(const char *name);
+void SCPluginOnLoggingReady(void);
 
-bool RegisterPlugin(SCPlugin *, void *);
+typedef void (*SCPluginOnLoggingReadyCallback)(void);
+int SCPluginRegisterOnLoggingReady(SCPluginOnLoggingReadyCallback callback);
 
 #endif /* SURICATA_UTIL_PLUGIN_H */
