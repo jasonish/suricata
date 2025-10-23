@@ -1,6 +1,10 @@
 Output
 ======
 
+.. toctree::
+
+   eve-filetype-plugins
+
 Low Level Logging
 -----------------
 

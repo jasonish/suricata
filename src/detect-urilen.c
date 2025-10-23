@@ -475,8 +475,7 @@ static int DetectUrilenSetpTest01(void)
     Signature *sig = NULL;
     DetectEngineCtx *de_ctx = NULL;
 
-    res = DetectUrilenInitTest(&de_ctx, &sig, &urilend, "1 <> 2 ");
-    if (res == 0) {
+    if (!DetectUrilenInitTest(&de_ctx, &sig, &urilend, "1 <> 3 ")) {
         goto end;
     }
 
@@ -484,7 +483,7 @@ static int DetectUrilenSetpTest01(void)
         goto cleanup;
 
     if (urilend != NULL) {
-        if (urilend->du16.arg1 == 1 && urilend->du16.arg2 == 2 &&
+        if (urilend->du16.arg1 == 1 && urilend->du16.arg2 == 3 &&
                 urilend->du16.mode == DETECT_UINT_RA)
             res = 1;
     }
