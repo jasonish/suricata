@@ -17,9 +17,7 @@
 
 // written by Victor Julien
 
-use nom7::bytes::streaming::take;
-use nom7::number::streaming::be_u32;
-use nom7::{Err, IResult};
+use nom8::Err;
 
 use crate::direction::Direction;
 use crate::nfs::nfs::*;
@@ -31,11 +29,21 @@ use crate::nfs::types::*;
 
 use crate::kerberos::{parse_kerberos5_request, Kerberos5Ticket, SecBlobError};
 
-fn parse_req_gssapi(i: &[u8]) -> IResult<&[u8], Kerberos5Ticket, SecBlobError> {
-    let (i, len) = be_u32(i)?;
-    let (i, buf) = take(len as usize)(i)?;
-    let (_, ap) = parse_kerberos5_request(buf)?;
-    Ok((i, ap))
+fn parse_req_gssapi(i: &[u8]) -> Result<Kerberos5Ticket, SecBlobError> {
+    // Manually parse to avoid mixing nom7 (kerberos) and nom8 (nfs) parsers
+    if i.len() < 4 {
+        return Err(SecBlobError::KrbFmtError);
+    }
+    let len = u32::from_be_bytes([i[0], i[1], i[2], i[3]]) as usize;
+    let i = &i[4..];
+
+    if i.len() < len {
+        return Err(SecBlobError::KrbFmtError);
+    }
+    let buf = &i[..len];
+
+    let (_, ap) = parse_kerberos5_request(buf).map_err(|_| SecBlobError::KrbFmtError)?;
+    Ok(ap)
 }
 
 impl NFSState {

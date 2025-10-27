@@ -18,10 +18,10 @@
 //! Nom parsers for NFSv2 records
 
 use crate::nfs::nfs_records::*;
-use nom7::bytes::streaming::take;
-use nom7::combinator::{cond, rest};
-use nom7::number::streaming::be_u32;
-use nom7::IResult;
+use nom8::bytes::streaming::take;
+use nom8::combinator::{cond, rest};
+use nom8::number::streaming::be_u32;
+use nom8::{IResult, Parser};
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Nfs2Handle<'a> {
@@ -29,7 +29,7 @@ pub struct Nfs2Handle<'a> {
 }
 
 pub fn parse_nfs2_handle(i: &[u8]) -> IResult<&[u8], Nfs2Handle<'_>> {
-    let (i, value) = take(32_usize)(i)?;
+    let (i, value) = take(32_usize).parse(i)?;
     Ok((i, Nfs2Handle { value }))
 }
 
@@ -41,9 +41,9 @@ pub struct Nfs2RequestLookup<'a> {
 
 pub fn parse_nfs2_request_lookup(i: &[u8]) -> IResult<&[u8], Nfs2RequestLookup<'_>> {
     let (i, handle) = parse_nfs2_handle(i)?;
-    let (i, name_len) = be_u32(i)?;
-    let (i, name_contents) = take(name_len as usize)(i)?;
-    let (i, _name_padding) = rest(i)?;
+    let (i, name_len) = be_u32.parse(i)?;
+    let (i, name_contents) = take(name_len as usize).parse(i)?;
+    let (i, _name_padding) = rest.parse(i)?;
     let req = Nfs2RequestLookup {
         handle,
         name_vec: name_contents.to_vec(),
@@ -59,19 +59,19 @@ pub struct Nfs2RequestRead<'a> {
 
 pub fn parse_nfs2_request_read(i: &[u8]) -> IResult<&[u8], Nfs2RequestRead<'_>> {
     let (i, handle) = parse_nfs2_handle(i)?;
-    let (i, offset) = be_u32(i)?;
-    let (i, _count) = be_u32(i)?;
+    let (i, offset) = be_u32.parse(i)?;
+    let (i, _count) = be_u32.parse(i)?;
     let req = Nfs2RequestRead { handle, offset };
     Ok((i, req))
 }
 
 pub fn parse_nfs2_reply_read(i: &[u8]) -> IResult<&[u8], NfsReplyRead<'_>> {
-    let (i, status) = be_u32(i)?;
-    let (i, attr_blob) = take(68_usize)(i)?;
-    let (i, data_len) = be_u32(i)?;
-    let (i, data_contents) = take(data_len)(i)?;
+    let (i, status) = be_u32.parse(i)?;
+    let (i, attr_blob) = take(68_usize).parse(i)?;
+    let (i, data_len) = be_u32.parse(i)?;
+    let (i, data_contents) = take(data_len).parse(i)?;
     let fill_bytes = 4 - (data_len % 4);
-    let (i, _) = cond(fill_bytes != 0, take(fill_bytes))(i)?;
+    let (i, _) = cond(fill_bytes != 0, take(fill_bytes)).parse(i)?;
     let reply = NfsReplyRead {
         status,
         attr_follows: 1,
@@ -91,10 +91,10 @@ pub struct Nfs2Attributes {
 }
 
 pub fn parse_nfs2_attribs(i: &[u8]) -> IResult<&[u8], Nfs2Attributes> {
-    let (i, atype) = be_u32(i)?;
-    let (i, _blob1) = take(16_usize)(i)?;
-    let (i, asize) = be_u32(i)?;
-    let (i, _blob2) = take(44_usize)(i)?;
+    let (i, atype) = be_u32.parse(i)?;
+    let (i, _blob1) = take(16_usize).parse(i)?;
+    let (i, asize) = be_u32.parse(i)?;
+    let (i, _blob2) = take(44_usize).parse(i)?;
     let attrs = Nfs2Attributes { atype, asize };
     Ok((i, attrs))
 }

@@ -17,15 +17,14 @@
 
 //! Nom parsers for RPCv2
 
-use crate::common::nom7::bits;
-use nom7::bits::streaming::take as take_bits;
-use nom7::bytes::streaming::take;
-use nom7::combinator::{cond, rest, verify};
-use nom7::error::{make_error, ErrorKind};
-use nom7::multi::length_data;
-use nom7::number::streaming::be_u32;
-use nom7::sequence::tuple;
-use nom7::{Err, IResult};
+use crate::common::nom8::bits;
+use nom8::bits::streaming::take as take_bits;
+use nom8::bytes::streaming::take;
+use nom8::combinator::{cond, rest, verify};
+use nom8::error::{make_error, ErrorKind};
+use nom8::multi::length_data;
+use nom8::number::streaming::be_u32;
+use nom8::{Err, IResult, Parser};
 
 pub const RPC_MAX_MACHINE_SIZE: u32 = 256; // Linux kernel defines 64.
 pub const RPC_MAX_CREDS_SIZE: u32 = 4096; // Linux kernel defines 400.
@@ -54,11 +53,11 @@ pub struct RpcRequestCredsUnix<'a> {
 //);
 
 fn parse_rpc_request_creds_unix(i: &[u8]) -> IResult<&[u8], RpcRequestCreds<'_>> {
-    let (i, stamp) = be_u32(i)?;
-    let (i, machine_name_len) = verify(be_u32, |&size| size < RPC_MAX_MACHINE_SIZE)(i)?;
-    let (i, machine_name_buf) = take(machine_name_len as usize)(i)?;
-    let (i, uid) = be_u32(i)?;
-    let (i, gid) = be_u32(i)?;
+    let (i, stamp) = be_u32.parse(i)?;
+    let (i, machine_name_len) = verify(be_u32, |&size| size < RPC_MAX_MACHINE_SIZE).parse(i)?;
+    let (i, machine_name_buf) = take(machine_name_len as usize).parse(i)?;
+    let (i, uid) = be_u32.parse(i)?;
+    let (i, gid) = be_u32.parse(i)?;
     // let (i, aux_gids) = parse_rpc_creds_unix_aux_gids(i)?;
     let creds = RpcRequestCreds::Unix(RpcRequestCredsUnix {
         stamp,
@@ -82,11 +81,11 @@ pub struct RpcRequestCredsGssApi<'a> {
 }
 
 fn parse_rpc_request_creds_gssapi(i: &[u8]) -> IResult<&[u8], RpcRequestCreds<'_>> {
-    let (i, version) = be_u32(i)?;
-    let (i, procedure) = be_u32(i)?;
-    let (i, seq_num) = be_u32(i)?;
-    let (i, service) = be_u32(i)?;
-    let (i, ctx) = length_data(be_u32)(i)?;
+    let (i, version) = be_u32.parse(i)?;
+    let (i, procedure) = be_u32.parse(i)?;
+    let (i, seq_num) = be_u32.parse(i)?;
+    let (i, service) = be_u32.parse(i)?;
+    let (i, ctx) = length_data(be_u32).parse(i)?;
     let creds = RpcRequestCreds::GssApi(RpcRequestCredsGssApi {
         version,
         procedure,
@@ -110,9 +109,9 @@ pub struct RpcGssApiIntegrity<'a> {
 // Parse the GSSAPI Integrity envelope to get to the
 // data we care about.
 pub fn parse_rpc_gssapi_integrity(i: &[u8]) -> IResult<&[u8], RpcGssApiIntegrity<'_>> {
-    let (i, len) = verify(be_u32, |&size| size < RPC_MAX_CREDS_SIZE)(i)?;
-    let (i, seq_num) = be_u32(i)?;
-    let (i, data) = take(len as usize)(i)?;
+    let (i, len) = verify(be_u32, |&size| size < RPC_MAX_CREDS_SIZE).parse(i)?;
+    let (i, seq_num) = be_u32.parse(i)?;
+    let (i, data) = take(len as usize).parse(i)?;
     let res = RpcGssApiIntegrity { seq_num, data };
     Ok((i, res))
 }
@@ -126,16 +125,15 @@ pub struct RpcPacketHeader {
 }
 
 fn parse_bits(i: &[u8]) -> IResult<&[u8], (u8, u32)> {
-    bits(tuple((
-        take_bits(1u8),   // is_last
-        take_bits(31u32), // len
-    )))(i)
+    bits(|input| {
+        (take_bits(1u8), take_bits(31u32)).parse(input)
+    }).parse(i)
 }
 
 pub fn parse_rpc_packet_header(i: &[u8]) -> IResult<&[u8], RpcPacketHeader> {
-    let (i, fraghdr) = verify(parse_bits, |v: &(u8, u32)| v.1 >= 24)(i)?;
-    let (i, xid) = be_u32(i)?;
-    let (i, msgtype) = verify(be_u32, |&v| v <= 1)(i)?;
+    let (i, fraghdr) = verify(parse_bits, |v: &(u8, u32)| v.1 >= 24).parse(i)?;
+    let (i, xid) = be_u32.parse(i)?;
+    let (i, msgtype) = verify(be_u32, |&v| v <= 1).parse(i)?;
     let hdr = RpcPacketHeader {
         frag_is_last: fraghdr.0 == 1,
         frag_len: fraghdr.1,
@@ -173,10 +171,10 @@ pub struct RpcRequestPacketPartial {
 
 pub fn parse_rpc_request_partial(i: &[u8]) -> IResult<&[u8], RpcRequestPacketPartial> {
     let (i, hdr) = parse_rpc_packet_header(i)?;
-    let (i, rpcver) = be_u32(i)?;
-    let (i, program) = be_u32(i)?;
-    let (i, progver) = be_u32(i)?;
-    let (i, procedure) = be_u32(i)?;
+    let (i, rpcver) = be_u32.parse(i)?;
+    let (i, program) = be_u32.parse(i)?;
+    let (i, progver) = be_u32.parse(i)?;
+    let (i, procedure) = be_u32.parse(i)?;
     let req = RpcRequestPacketPartial {
         hdr,
         rpcver,
@@ -221,23 +219,23 @@ pub fn parse_rpc(start_i: &[u8], complete: bool) -> IResult<&[u8], RpcPacket<'_>
     let (i, hdr) = parse_rpc_packet_header(start_i)?;
     let rec_size = hdr.frag_len as usize + 4;
 
-    let (i, rpcver) = be_u32(i)?;
-    let (i, program) = be_u32(i)?;
-    let (i, progver) = be_u32(i)?;
-    let (i, procedure) = be_u32(i)?;
+    let (i, rpcver) = be_u32.parse(i)?;
+    let (i, program) = be_u32.parse(i)?;
+    let (i, progver) = be_u32.parse(i)?;
+    let (i, procedure) = be_u32.parse(i)?;
 
-    let (i, creds_flavor) = be_u32(i)?;
-    let (i, creds_len) = verify(be_u32, |&size| size < RPC_MAX_CREDS_SIZE)(i)?;
-    let (i, creds_buf) = take(creds_len as usize)(i)?;
+    let (i, creds_flavor) = be_u32.parse(i)?;
+    let (i, creds_len) = verify(be_u32, |&size| size < RPC_MAX_CREDS_SIZE).parse(i)?;
+    let (i, creds_buf) = take(creds_len as usize).parse(i)?;
     let (_, creds) = match creds_flavor {
         1 => parse_rpc_request_creds_unix(creds_buf)?,
         6 => parse_rpc_request_creds_gssapi(creds_buf)?,
         _ => parse_rpc_request_creds_unknown(creds_buf)?,
     };
 
-    let (i, verifier_flavor) = be_u32(i)?;
-    let (i, verifier_len) = verify(be_u32, |&size| size < RPC_MAX_VERIFIER_SIZE)(i)?;
-    let (i, verifier) = take(verifier_len as usize)(i)?;
+    let (i, verifier_flavor) = be_u32.parse(i)?;
+    let (i, verifier_len) = verify(be_u32, |&size| size < RPC_MAX_VERIFIER_SIZE).parse(i)?;
+    let (i, verifier) = take(verifier_len as usize).parse(i)?;
 
     let consumed = start_i.len() - i.len();
     if consumed > rec_size {
@@ -246,9 +244,9 @@ pub fn parse_rpc(start_i: &[u8], complete: bool) -> IResult<&[u8], RpcPacket<'_>
 
     let data_size: u32 = (rec_size - consumed) as u32;
     let (i, prog_data) = if !complete {
-        rest(i)?
+        rest.parse(i)?
     } else {
-        take(data_size)(i)?
+        take(data_size).parse(i)?
     };
 
     let packet = RpcPacket {
@@ -286,13 +284,13 @@ pub fn parse_rpc_reply(start_i: &[u8], complete: bool) -> IResult<&[u8], RpcRepl
     let (i, hdr) = parse_rpc_packet_header(start_i)?;
     let rec_size = hdr.frag_len + 4;
 
-    let (i, reply_state) = verify(be_u32, |&v| v <= 1)(i)?;
+    let (i, reply_state) = verify(be_u32, |&v| v <= 1).parse(i)?;
 
-    let (i, verifier_flavor) = be_u32(i)?;
-    let (i, verifier_len) = verify(be_u32, |&size| size < RPC_MAX_VERIFIER_SIZE)(i)?;
-    let (i, verifier) = cond(verifier_len > 0, take(verifier_len as usize))(i)?;
+    let (i, verifier_flavor) = be_u32.parse(i)?;
+    let (i, verifier_len) = verify(be_u32, |&size| size < RPC_MAX_VERIFIER_SIZE).parse(i)?;
+    let (i, verifier) = cond(verifier_len > 0, take(verifier_len as usize)).parse(i)?;
 
-    let (i, accept_state) = be_u32(i)?;
+    let (i, accept_state) = be_u32.parse(i)?;
 
     let consumed = start_i.len() - i.len();
     if consumed > rec_size as usize {
@@ -301,9 +299,9 @@ pub fn parse_rpc_reply(start_i: &[u8], complete: bool) -> IResult<&[u8], RpcRepl
 
     let data_size: u32 = (rec_size as usize - consumed) as u32;
     let (i, prog_data) = if !complete {
-        rest(i)?
+        rest.parse(i)?
     } else {
-        take(data_size)(i)?
+        take(data_size).parse(i)?
     };
     let packet = RpcReplyPacket {
         hdr,
@@ -322,8 +320,8 @@ pub fn parse_rpc_reply(start_i: &[u8], complete: bool) -> IResult<&[u8], RpcRepl
 }
 
 pub fn parse_rpc_udp_packet_header(i: &[u8]) -> IResult<&[u8], RpcPacketHeader> {
-    let (i, xid) = be_u32(i)?;
-    let (i, msgtype) = verify(be_u32, |&v| v <= 1)(i)?;
+    let (i, xid) = be_u32.parse(i)?;
+    let (i, msgtype) = verify(be_u32, |&v| v <= 1).parse(i)?;
     let hdr = RpcPacketHeader {
         frag_is_last: false,
         frag_len: 0,
@@ -337,26 +335,26 @@ pub fn parse_rpc_udp_packet_header(i: &[u8]) -> IResult<&[u8], RpcPacketHeader> 
 pub fn parse_rpc_udp_request(i: &[u8]) -> IResult<&[u8], RpcPacket<'_>> {
     let (i, hdr) = parse_rpc_udp_packet_header(i)?;
 
-    let (i, rpcver) = be_u32(i)?;
-    let (i, program) = be_u32(i)?;
-    let (i, progver) = be_u32(i)?;
-    let (i, procedure) = be_u32(i)?;
+    let (i, rpcver) = be_u32.parse(i)?;
+    let (i, program) = be_u32.parse(i)?;
+    let (i, progver) = be_u32.parse(i)?;
+    let (i, procedure) = be_u32.parse(i)?;
 
-    let (i, creds_flavor) = be_u32(i)?;
-    let (i, creds_len) = verify(be_u32, |&size| size < RPC_MAX_CREDS_SIZE)(i)?;
-    let (i, creds_buf) = take(creds_len as usize)(i)?;
+    let (i, creds_flavor) = be_u32.parse(i)?;
+    let (i, creds_len) = verify(be_u32, |&size| size < RPC_MAX_CREDS_SIZE).parse(i)?;
+    let (i, creds_buf) = take(creds_len as usize).parse(i)?;
     let (_, creds) = match creds_flavor {
         1 => parse_rpc_request_creds_unix(creds_buf)?,
         6 => parse_rpc_request_creds_gssapi(creds_buf)?,
         _ => parse_rpc_request_creds_unknown(creds_buf)?,
     };
 
-    let (i, verifier_flavor) = be_u32(i)?;
-    let (i, verifier_len) = verify(be_u32, |&size| size < RPC_MAX_VERIFIER_SIZE)(i)?;
-    let (i, verifier) = take(verifier_len as usize)(i)?;
+    let (i, verifier_flavor) = be_u32.parse(i)?;
+    let (i, verifier_len) = verify(be_u32, |&size| size < RPC_MAX_VERIFIER_SIZE).parse(i)?;
+    let (i, verifier) = take(verifier_len as usize).parse(i)?;
 
     let data_size: u32 = i.len() as u32;
-    let (i, prog_data) = rest(i)?;
+    let (i, prog_data) = rest.parse(i)?;
     let packet = RpcPacket {
         hdr,
 
@@ -382,15 +380,15 @@ pub fn parse_rpc_udp_request(i: &[u8]) -> IResult<&[u8], RpcPacket<'_>> {
 pub fn parse_rpc_udp_reply(i: &[u8]) -> IResult<&[u8], RpcReplyPacket<'_>> {
     let (i, hdr) = parse_rpc_udp_packet_header(i)?;
 
-    let (i, verifier_flavor) = be_u32(i)?;
-    let (i, verifier_len) = verify(be_u32, |&size| size < RPC_MAX_VERIFIER_SIZE)(i)?;
-    let (i, verifier) = cond(verifier_len > 0, take(verifier_len as usize))(i)?;
+    let (i, verifier_flavor) = be_u32.parse(i)?;
+    let (i, verifier_len) = verify(be_u32, |&size| size < RPC_MAX_VERIFIER_SIZE).parse(i)?;
+    let (i, verifier) = cond(verifier_len > 0, take(verifier_len as usize)).parse(i)?;
 
-    let (i, reply_state) = verify(be_u32, |&v| v <= 1)(i)?;
-    let (i, accept_state) = be_u32(i)?;
+    let (i, reply_state) = verify(be_u32, |&v| v <= 1).parse(i)?;
+    let (i, accept_state) = be_u32.parse(i)?;
 
     let data_size: u32 = i.len() as u32;
-    let (i, prog_data) = rest(i)?;
+    let (i, prog_data) = rest.parse(i)?;
     let packet = RpcReplyPacket {
         hdr,
 
@@ -410,8 +408,8 @@ pub fn parse_rpc_udp_reply(i: &[u8]) -> IResult<&[u8], RpcReplyPacket<'_>> {
 #[cfg(test)]
 mod tests {
     use crate::nfs::rpc_records::*;
-    use nom7::Err::Incomplete;
-    use nom7::Needed;
+    use nom8::Err::Incomplete;
+    use nom8::Needed;
 
     #[test]
     fn test_partial_input_too_short() {

@@ -24,8 +24,8 @@ use crate::nfs::nfs3_records::*;
 use crate::nfs::rpc_records::*;
 use crate::nfs::types::*;
 
-use nom7::number::streaming::be_u32;
-use nom7::IResult;
+use nom8::number::streaming::be_u32;
+use nom8::{IResult, Parser};
 
 impl NFSState {
     /// complete NFS3 request record
@@ -269,7 +269,7 @@ impl NFSState {
         }
         // for all other record types only parse the status
         else {
-            let stat: u32 = match be_u32(r.prog_data) as IResult<&[u8], _> {
+            let stat: u32 = match be_u32.parse(r.prog_data) as IResult<&[u8], _> {
                 Ok((_, stat)) => stat,
                 _ => 0,
             };

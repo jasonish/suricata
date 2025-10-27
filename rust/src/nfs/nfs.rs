@@ -22,7 +22,7 @@ use std::cmp;
 use std::collections::HashMap;
 use std::ffi::CString;
 
-use nom7::{Err, Needed};
+use nom8::{Err, Needed};
 use suricata_sys::sys::{
     AppLayerParserState, AppProto, SCAppLayerParserConfParserEnabled,
     SCAppLayerProtoDetectConfProtoDetectionEnabled, SCAppLayerProtoDetectPPParseConfPorts,
