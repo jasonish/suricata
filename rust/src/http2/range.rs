@@ -23,12 +23,12 @@ use crate::flow::Flow;
 use crate::http2::http2::HTTP2Transaction;
 use crate::http2::http2::SURICATA_HTTP2_FILE_CONFIG;
 
-use nom7::branch::alt;
-use nom7::bytes::streaming::{take_till, take_while};
-use nom7::character::complete::{char, digit1};
-use nom7::combinator::{map_res, value};
-use nom7::error::{make_error, ErrorKind};
-use nom7::{Err, IResult};
+use nom8::branch::alt;
+use nom8::bytes::streaming::{take_till, take_while};
+use nom8::character::complete::{char, digit1};
+use nom8::combinator::{map_res, value};
+use nom8::error::{make_error, ErrorKind};
+use nom8::{Err, IResult, Parser};
 use std::str::FromStr;
 use suricata_sys::sys::{HttpRangeContainerBlock, SCHttpRangeContainerOpenFile, SCHttpRangeAppendData};
 
@@ -69,7 +69,7 @@ pub struct HTTPContentRange {
 pub fn http2_parse_content_range_star(input: &[u8]) -> IResult<&[u8], HTTPContentRange> {
     let (i2, _) = char('*')(input)?;
     let (i2, _) = char('/')(i2)?;
-    let (i2, size) = map_res(map_res(digit1, std::str::from_utf8), i64::from_str)(i2)?;
+    let (i2, size) = map_res(map_res(digit1, std::str::from_utf8), i64::from_str).parse(i2)?;
     return Ok((
         i2,
         HTTPContentRange {
@@ -81,14 +81,14 @@ pub fn http2_parse_content_range_star(input: &[u8]) -> IResult<&[u8], HTTPConten
 }
 
 pub fn http2_parse_content_range_def(input: &[u8]) -> IResult<&[u8], HTTPContentRange> {
-    let (i2, start) = map_res(map_res(digit1, std::str::from_utf8), i64::from_str)(input)?;
+    let (i2, start) = map_res(map_res(digit1, std::str::from_utf8), i64::from_str).parse(input)?;
     let (i2, _) = char('-')(i2)?;
-    let (i2, end) = map_res(map_res(digit1, std::str::from_utf8), i64::from_str)(i2)?;
+    let (i2, end) = map_res(map_res(digit1, std::str::from_utf8), i64::from_str).parse(i2)?;
     let (i2, _) = char('/')(i2)?;
     let (i2, size) = alt((
         value(-1, char('*')),
         map_res(map_res(digit1, std::str::from_utf8), i64::from_str),
-    ))(i2)?;
+    )).parse(i2)?;
     return Ok((i2, HTTPContentRange { start, end, size }));
 }
 
@@ -99,7 +99,7 @@ fn http2_parse_content_range(input: &[u8]) -> IResult<&[u8], HTTPContentRange> {
     return alt((
         http2_parse_content_range_star,
         http2_parse_content_range_def,
-    ))(i2);
+    )).parse(i2);
 }
 
 pub fn http2_parse_check_content_range(input: &[u8]) -> IResult<&[u8], HTTPContentRange> {
