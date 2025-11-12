@@ -28,6 +28,8 @@
 #include "packet.h"
 #include "util-device.h"
 
+extern SCInstance g_suricata;
+
 static int worker_id = 1;
 
 /**
@@ -158,9 +160,11 @@ int main(int argc, char **argv)
 {
     SuricataPreInit(argv[0]);
 
+    SCInstance *suri = &g_suricata;
+
     /* Parse command line options. This is optional, you could
      * directly configure Suricata through the Conf API. */
-    SCParseCommandLine(argc, argv);
+    SCParseCommandLine(suri, argc, argv);
 
     /* Find our list of pcap files, after the "--". */
     while (argc) {
@@ -181,14 +185,14 @@ int main(int argc, char **argv)
     SCRunmodeSet(RUNMODE_LIB);
 
     /* Validate/finalize the runmode. */
-    if (SCFinalizeRunMode() != TM_ECODE_OK) {
+    if (SCFinalizeRunMode(suri) != TM_ECODE_OK) {
         exit(EXIT_FAILURE);
     }
 
     /* Handle internal runmodes. Typically you wouldn't do this as a
      * library user, however this example is showing how to replicate
      * the Suricata application with the library. */
-    switch (SCStartInternalRunMode(argc, argv)) {
+    switch (SCStartInternalRunMode(suri, argc, argv)) {
         case TM_ECODE_DONE:
             exit(EXIT_SUCCESS);
         case TM_ECODE_FAILED:
@@ -198,7 +202,7 @@ int main(int argc, char **argv)
     /* Load configuration file, could be done earlier but must be done
      * before SuricataInit, but even then its still optional as you
      * may be programmatically configuration Suricata. */
-    if (SCLoadYamlConfig() != TM_ECODE_OK) {
+    if (SCLoadYamlConfig(suri) != TM_ECODE_OK) {
         exit(EXIT_FAILURE);
     }
 
@@ -221,7 +225,7 @@ int main(int argc, char **argv)
         exit(1);
     }
 
-    SuricataInit();
+    SuricataInit(suri);
 
     SCDetectEngineRegisterRateFilterCallback(RateFilterCallback, NULL);
 
@@ -246,7 +250,7 @@ int main(int argc, char **argv)
     /* Run the main loop, this just waits for the worker thread to
      * call EngineStop signalling Suricata that it is done reading the
      * pcap. */
-    SuricataMainLoop();
+    SuricataMainLoop(suri);
 
     /* Shutdown engine. */
     SCLogNotice("Shutting down");
@@ -254,7 +258,7 @@ int main(int argc, char **argv)
     /* Note that there is some thread synchronization between this
      * function and SCTmThreadsSlotPacketLoopFinish that require them
      * to be run concurrently at this time. */
-    SuricataShutdown();
+    SuricataShutdown(suri);
 
     GlobalsDestroy();
 

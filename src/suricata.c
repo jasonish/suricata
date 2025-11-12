@@ -1009,11 +1009,9 @@ void RegisterAllModules(void)
     TmModuleDecodeLibRegister();
 }
 
-TmEcode SCLoadYamlConfig(void)
+TmEcode SCLoadYamlConfig(SCInstance *suri)
 {
     SCEnter();
-
-    SCInstance *suri = &g_suricata;
 
     if (suri->conf_filename == NULL)
         suri->conf_filename = DEFAULT_CONF_FILE;
@@ -1366,9 +1364,8 @@ static bool IsLogDirectoryWritable(const char* str)
 
 extern int g_skip_prefilter;
 
-TmEcode SCParseCommandLine(int argc, char **argv)
+TmEcode SCParseCommandLine(SCInstance *suri, int argc, char **argv)
 {
-    SCInstance *suri = &g_suricata;
     int opt;
 
     int dump_config = 0;
@@ -2386,9 +2383,8 @@ void PostRunDeinit(const int runmode, struct timeval *start_time)
 #endif
 }
 
-int SCStartInternalRunMode(int argc, char **argv)
+int SCStartInternalRunMode(SCInstance *suri, int argc, char **argv)
 {
-    SCInstance *suri = &g_suricata;
     /* Treat internal running mode */
     switch (suri->run_mode) {
         case RUNMODE_LIST_KEYWORDS:
@@ -2448,9 +2444,8 @@ int SCStartInternalRunMode(int argc, char **argv)
     return TM_ECODE_OK;
 }
 
-int SCFinalizeRunMode(void)
+int SCFinalizeRunMode(SCInstance *suri)
 {
-    SCInstance *suri = &g_suricata;
     switch (suri->run_mode) {
         case RUNMODE_UNKNOWN:
             PrintUsage(suri->progname);
@@ -2919,9 +2914,8 @@ int PostConfLoadedSetup(SCInstance *suri)
     SCReturnInt(TM_ECODE_OK);
 }
 
-void SuricataMainLoop(void)
+void SuricataMainLoop(SCInstance *suri)
 {
-    SCInstance *suri = &g_suricata;
     while(1) {
         if (sigterm_count || sigint_count) {
             suricata_ctl_flags |= SURICATA_STOP;
@@ -3007,12 +3001,12 @@ void SuricataPreInit(const char *progname)
     }
 }
 
-void SuricataInit(void)
+void SuricataInit(SCInstance *suri)
 {
     /* Initializations for global vars, queues, etc (memsets, mutex init..) */
     GlobalsInitPreConfig();
 
-    if (g_suricata.run_mode == RUNMODE_DUMP_CONFIG) {
+    if (suri->run_mode == RUNMODE_DUMP_CONFIG) {
         SCConfDump();
         exit(EXIT_SUCCESS);
     }
@@ -3031,63 +3025,63 @@ void SuricataInit(void)
         /* Ignore recursion level when comparing flows. */
         g_recurlvl_mask = 0x00;
     }
-    SetupUserMode(&g_suricata);
-    InitRunAs(&g_suricata);
+    SetupUserMode(suri);
+    InitRunAs(suri);
 
     /* Since our config is now loaded we can finish configurating the
      * logging module. */
-    SCLogLoadConfig(g_suricata.daemon, g_suricata.verbose, g_suricata.userid, g_suricata.groupid);
+    SCLogLoadConfig(suri->daemon, suri->verbose, suri->userid, suri->groupid);
 
-    LogVersion(&g_suricata);
+    LogVersion(suri);
     UtilCpuPrintSummary();
     RunModeInitializeThreadSettings();
 
-    if (g_suricata.run_mode == RUNMODE_CONF_TEST)
+    if (suri->run_mode == RUNMODE_CONF_TEST)
         SCLogInfo("Running suricata under test mode");
 
-    if (ParseInterfacesList(g_suricata.aux_run_mode, g_suricata.pcap_dev) != TM_ECODE_OK) {
+    if (ParseInterfacesList(suri->aux_run_mode, suri->pcap_dev) != TM_ECODE_OK) {
         exit(EXIT_FAILURE);
     }
 
-    if (PostConfLoadedSetup(&g_suricata) != TM_ECODE_OK) {
+    if (PostConfLoadedSetup(suri) != TM_ECODE_OK) {
         exit(EXIT_FAILURE);
     }
 
-    SCDropMainThreadCaps(g_suricata.userid, g_suricata.groupid);
+    SCDropMainThreadCaps(suri->userid, suri->groupid);
 
     /* Re-enable coredumps after privileges are dropped. */
     CoredumpEnable();
 
-    if (g_suricata.run_mode != RUNMODE_UNIX_SOCKET && !g_suricata.disabled_detect) {
-        g_suricata.unix_socket_enabled = ConfUnixSocketIsEnable();
+    if (suri->run_mode != RUNMODE_UNIX_SOCKET && !suri->disabled_detect) {
+        suri->unix_socket_enabled = ConfUnixSocketIsEnable();
     }
 
-    PreRunPostPrivsDropInit(g_suricata.run_mode);
+    PreRunPostPrivsDropInit(suri->run_mode);
 
     SCOnLoggingReady();
 
-    LandlockSandboxing(&g_suricata);
+    LandlockSandboxing(suri);
 
-    PostConfLoadedDetectSetup(&g_suricata);
-    if (g_suricata.run_mode == RUNMODE_ENGINE_ANALYSIS) {
+    PostConfLoadedDetectSetup(suri);
+    if (suri->run_mode == RUNMODE_ENGINE_ANALYSIS) {
         goto out;
-    } else if (g_suricata.run_mode == RUNMODE_CONF_TEST) {
+    } else if (suri->run_mode == RUNMODE_CONF_TEST) {
         SCLogNotice("Configuration provided was successfully loaded. Exiting.");
         goto out;
-    } else if (g_suricata.run_mode == RUNMODE_DUMP_FEATURES) {
+    } else if (suri->run_mode == RUNMODE_DUMP_FEATURES) {
         FeatureDump();
         goto out;
     }
 
-    if (g_suricata.run_mode == RUNMODE_DPDK)
+    if (suri->run_mode == RUNMODE_DPDK)
         prerun_snap = SystemHugepageSnapshotCreate();
 
-    SCSetStartTime(&g_suricata);
-    if (g_suricata.run_mode != RUNMODE_UNIX_SOCKET) {
-        UnixManagerThreadSpawnNonRunmode(g_suricata.unix_socket_enabled);
+    SCSetStartTime(suri);
+    if (suri->run_mode != RUNMODE_UNIX_SOCKET) {
+        UnixManagerThreadSpawnNonRunmode(suri->unix_socket_enabled);
     }
-    RunModeDispatch(g_suricata.run_mode, g_suricata.runmode_custom_mode,
-            g_suricata.capture_plugin_name, g_suricata.capture_plugin_args);
+    RunModeDispatch(suri->run_mode, suri->runmode_custom_mode, suri->capture_plugin_name,
+            suri->capture_plugin_args);
     return;
 
 out:
@@ -3095,13 +3089,13 @@ out:
     exit(EXIT_SUCCESS);
 }
 
-void SuricataShutdown(void)
+void SuricataShutdown(SCInstance *suri)
 {
     /* Update the engine stage/status flag */
     SC_ATOMIC_SET(engine_stage, SURICATA_DEINIT);
 
     UnixSocketKillSocketThread();
-    PostRunDeinit(g_suricata.run_mode, &g_suricata.start_time);
+    PostRunDeinit(suri->run_mode, &suri->start_time);
     /* kill remaining threads */
     TmThreadKillThreads();
 }

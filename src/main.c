@@ -17,10 +17,14 @@
 
 #include "suricata.h"
 
+extern SCInstance g_suricata;
+
 int main(int argc, char **argv)
 {
     /* Pre-initialization tasks: initialize global context and variables. */
     SuricataPreInit(argv[0]);
+
+    SCInstance *suri = &g_suricata;
 
 #ifdef OS_WIN32
     /* service initialization */
@@ -29,15 +33,15 @@ int main(int argc, char **argv)
     }
 #endif /* OS_WIN32 */
 
-    if (SCParseCommandLine(argc, argv) != TM_ECODE_OK) {
+    if (SCParseCommandLine(suri, argc, argv) != TM_ECODE_OK) {
         exit(EXIT_FAILURE);
     }
 
-    if (SCFinalizeRunMode() != TM_ECODE_OK) {
+    if (SCFinalizeRunMode(suri) != TM_ECODE_OK) {
         exit(EXIT_FAILURE);
     }
 
-    switch (SCStartInternalRunMode(argc, argv)) {
+    switch (SCStartInternalRunMode(suri, argc, argv)) {
         case TM_ECODE_DONE:
             exit(EXIT_SUCCESS);
         case TM_ECODE_FAILED:
@@ -45,7 +49,7 @@ int main(int argc, char **argv)
     }
 
     /* Load yaml configuration file if provided. */
-    if (SCLoadYamlConfig() != TM_ECODE_OK) {
+    if (SCLoadYamlConfig(suri) != TM_ECODE_OK) {
         exit(EXIT_FAILURE);
     }
 
@@ -54,15 +58,15 @@ int main(int argc, char **argv)
 
     /* Initialization tasks: apply configuration, drop privileges,
      * etc. */
-    SuricataInit();
+    SuricataInit(suri);
 
     /* Post-initialization tasks: wait on thread start/running and get ready for the main loop. */
     SuricataPostInit();
 
-    SuricataMainLoop();
+    SuricataMainLoop(suri);
 
     /* Shutdown engine. */
-    SuricataShutdown();
+    SuricataShutdown(suri);
     GlobalsDestroy();
 
     exit(EXIT_SUCCESS);

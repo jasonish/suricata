@@ -224,18 +224,18 @@ void SCEnableDefaultSignalHandlers(void);
 int SuriHasSigFile(void);
 
 void SuricataPreInit(const char *progname);
-void SuricataInit(void);
+void SuricataInit(SCInstance *suri);
 void SuricataPostInit(void);
-void SuricataMainLoop(void);
-void SuricataShutdown(void);
+void SuricataMainLoop(SCInstance *suri);
+void SuricataShutdown(SCInstance *suri);
 int InitGlobal(void);
 void GlobalsDestroy(void);
 int PostConfLoadedSetup(SCInstance *suri);
 void PostConfLoadedDetectSetup(SCInstance *suri);
-int SCFinalizeRunMode(void);
-TmEcode SCParseCommandLine(int argc, char **argv);
-int SCStartInternalRunMode(int argc, char **argv);
-TmEcode SCLoadYamlConfig(void);
+int SCFinalizeRunMode(SCInstance *suri);
+TmEcode SCParseCommandLine(SCInstance *suri, int argc, char **argv);
+int SCStartInternalRunMode(SCInstance *suri, int argc, char **argv);
+TmEcode SCLoadYamlConfig(SCInstance *suri);
 
 void PreRunInit(const int runmode);
 void PreRunPostPrivsDropInit(const int runmode);
