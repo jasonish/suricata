@@ -72,7 +72,7 @@ static int RunTest(const uint8_t *buf, const uint32_t size, const char *sig_str,
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_unittest_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -537,7 +537,7 @@ static int DetectEngineHttpHHTest25(void)
  */
 static int DetectHttpHHTest01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_unittest_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     Signature *s = DetectEngineAppendSig(de_ctx, "alert tcp any any -> any any ("
@@ -553,7 +553,7 @@ static int DetectHttpHHTest01(void)
  */
 static int DetectHttpHHTest03(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_unittest_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     Signature *s = DetectEngineAppendSig(de_ctx, "alert tcp any any -> any any ("
@@ -569,7 +569,7 @@ static int DetectHttpHHTest03(void)
  */
 static int DetectHttpHHTest04(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_unittest_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     Signature *s = DetectEngineAppendSig(de_ctx, "alert tcp any any -> any any ("
@@ -584,7 +584,7 @@ static int DetectHttpHHTest04(void)
  */
 static int DetectHttpHHTest05(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_unittest_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     Signature *s = DetectEngineAppendSig(de_ctx, "alert tcp any any -> any any ("
@@ -597,7 +597,7 @@ static int DetectHttpHHTest05(void)
 /** \test invalid sig: uppercase content */
 static int DetectHttpHHTest05a(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_unittest_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -674,7 +674,7 @@ static int DetectHttpHHTest07(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_unittest_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -764,7 +764,7 @@ static int DetectHttpHHTest08(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_unittest_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -859,7 +859,7 @@ static int DetectHttpHHTest09(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_unittest_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -956,7 +956,7 @@ static int DetectHttpHHTest10(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(&g_suricata);
+    de_ctx = DetectEngineCtxInit(&g_unittest_suricata);
     if (de_ctx == NULL)
         goto end;
 
@@ -1131,7 +1131,7 @@ static int DetectHttpHHTest14(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_unittest_suricata);
     if (de_ctx == NULL) {
         goto end;
     }
@@ -1340,7 +1340,7 @@ static int DetectHttpHRHTest07(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(&g_suricata);
+    de_ctx = DetectEngineCtxInit(&g_unittest_suricata);
     if (de_ctx == NULL)
         goto end;
 
@@ -1455,7 +1455,7 @@ static int DetectHttpHRHTest08(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(&g_suricata);
+    de_ctx = DetectEngineCtxInit(&g_unittest_suricata);
     if (de_ctx == NULL)
         goto end;
 
@@ -1577,7 +1577,7 @@ static int DetectHttpHRHTest09(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(&g_suricata);
+    de_ctx = DetectEngineCtxInit(&g_unittest_suricata);
     if (de_ctx == NULL)
         goto end;
 
@@ -1699,7 +1699,7 @@ static int DetectHttpHRHTest10(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(&g_suricata);
+    de_ctx = DetectEngineCtxInit(&g_unittest_suricata);
     if (de_ctx == NULL)
         goto end;
 
@@ -1874,7 +1874,7 @@ static int DetectHttpHRHTest14(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_unittest_suricata);
     if (de_ctx == NULL) {
         goto end;
     }
@@ -2067,7 +2067,7 @@ static int DetectHttpHRHTest37(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(&g_suricata);
+    de_ctx = DetectEngineCtxInit(&g_unittest_suricata);
     if (de_ctx == NULL)
         goto end;
 

@@ -29,7 +29,7 @@
 #include "util-unittest-helper.h"
 
 #define TEST_INIT                                                                                  \
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);                                    \
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_unittest_suricata);                           \
     FAIL_IF(de_ctx == NULL);                                                                       \
                                                                                                    \
     Address a;                                                                                     \

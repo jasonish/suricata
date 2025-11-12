@@ -29,7 +29,7 @@
 
 static int DetectTransformPcrexformParseTest01 (void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_unittest_suricata);
     FAIL_IF_NULL(de_ctx);
 
     Signature *sig = DetectEngineAppendSig(de_ctx,
@@ -46,7 +46,7 @@ static int DetectTransformPcrexformParseTest01 (void)
 
 static int DetectTransformPcrexformParseTest02 (void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_unittest_suricata);
     FAIL_IF_NULL(de_ctx);
 
     Signature *sig = DetectEngineAppendSig(de_ctx,
@@ -63,7 +63,7 @@ static int DetectTransformPcrexformParseTest02 (void)
 
 static int DetectTransformPcrexformParseTest03(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_unittest_suricata);
     FAIL_IF_NULL(de_ctx);
 
     Signature *sig = DetectEngineAppendSig(de_ctx,

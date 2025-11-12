@@ -200,6 +200,9 @@ void EngineStop(void);
 void EngineDone(void);
 
 #ifdef UNITTESTS
+/* Unittest-specific global instance. Use this in unit tests instead of g_suricata
+ * to avoid dependencies on production global state. */
+extern SCInstance g_unittest_suricata;
 int RunmodeIsUnittests(void);
 #else
 #define RunmodeIsUnittests() 0

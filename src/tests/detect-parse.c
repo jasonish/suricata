@@ -30,7 +30,7 @@
 
 static int DetectParseTest01 (void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_unittest_suricata);
     FAIL_IF(DetectEngineAppendSig(de_ctx, "alert http any any -> any any (msg:\"sid 1 version 0\"; content:\"dummy1\"; sid:1;)") == NULL);
     DetectEngineAppendSig(de_ctx, "alert http any any -> any any (msg:\"sid 2 version 0\"; content:\"dummy2\"; sid:2;)");
     DetectEngineAppendSig(de_ctx, "alert http any any -> any any (msg:\"sid 1 version 1\"; content:\"dummy1.1\"; sid:1; rev:1;)");
@@ -50,7 +50,7 @@ static int DetectParseTest01 (void)
 
 static int DetectParseTestNoOpt(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_unittest_suricata);
     FAIL_IF(DetectEngineAppendSig(de_ctx,
                     "alert http any any -> any any (msg:\"sid 1 version 0\"; "
                     "content:\"dummy1\"; endswith: reference: ref; sid:1;)") != NULL);
@@ -61,7 +61,7 @@ static int DetectParseTestNoOpt(void)
 
 static int SigParseTestNegationNoWhitespace(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_unittest_suricata);
     FAIL_IF_NULL(de_ctx);
     Signature *s = DetectEngineAppendSig(de_ctx,
             "alert http any [30:50,!45] -> any [30:50,!45] (msg:\"sid 2 version 0\"; "
@@ -82,7 +82,7 @@ static int SigParseTestNegationNoWhitespace(void)
 // // Tests proper Signature is parsed from portstring length < 16 ie [30:50, !45]
 static int SigParseTestWhitespaceLessThan14(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_unittest_suricata);
     FAIL_IF_NULL(de_ctx);
     Signature *s = DetectEngineAppendSig(de_ctx,
             "alert http any [30:50, !45] -> any [30:50,!45] (msg:\"sid 2 version 0\"; "
@@ -102,7 +102,7 @@ static int SigParseTestWhitespaceLessThan14(void)
 
 static int SigParseTestWhitespace14Spaces(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_unittest_suricata);
     FAIL_IF_NULL(de_ctx);
     Signature *s = DetectEngineAppendSig(de_ctx,
             "alert http any [30:50,              !45] -> any [30:50,!45] (msg:\"sid 2 "
@@ -122,7 +122,7 @@ static int SigParseTestWhitespace14Spaces(void)
 
 static int SigParseTestWhitespaceMoreThan14(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_unittest_suricata);
     FAIL_IF_NULL(de_ctx);
     Signature *s = DetectEngineAppendSig(de_ctx,
             "alert http any [30:50,                          !45] -> any [30:50,!45] "

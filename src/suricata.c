@@ -222,6 +222,11 @@ bool g_stats_eps_per_app_proto_errors = false;
 /** Suricata instance */
 SCInstance g_suricata;
 
+#ifdef UNITTESTS
+/** Unittest-specific Suricata instance */
+SCInstance g_unittest_suricata;
+#endif
+
 int SuriHasSigFile(void)
 {
     return (g_suricata.sig_file != NULL);
