@@ -931,7 +931,7 @@ typedef uint8_t (*SCDetectRateFilterFunc)(const Packet *p, uint32_t sid, uint32_
 
 /** \brief main detection engine ctx */
 typedef struct DetectEngineCtx_ {
-    SCInstance *suri;
+    const SCInstance *suri;
 
     bool failure_fatal;
     uint8_t flags;       /**< only DE_QUIET */

@@ -2482,7 +2482,7 @@ const char *DetectEngineMpmCachingGetPath(void)
 }
 
 static DetectEngineCtx *DetectEngineCtxInitReal(
-        SCInstance *suri, enum DetectEngineType type, const char *prefix, uint32_t tenant_id)
+        const SCInstance *suri, enum DetectEngineType type, const char *prefix, uint32_t tenant_id)
 {
     DetectEngineCtx *de_ctx = SCCalloc(1, sizeof(DetectEngineCtx));
     if (unlikely(de_ctx == NULL))
@@ -2583,23 +2583,23 @@ error:
     return NULL;
 }
 
-DetectEngineCtx *DetectEngineCtxInitStubForMT(SCInstance *suri)
+DetectEngineCtx *DetectEngineCtxInitStubForMT(const SCInstance *suri)
 {
     return DetectEngineCtxInitReal(suri, DETECT_ENGINE_TYPE_MT_STUB, NULL, 0);
 }
 
-DetectEngineCtx *DetectEngineCtxInitStubForDD(SCInstance *suri)
+DetectEngineCtx *DetectEngineCtxInitStubForDD(const SCInstance *suri)
 {
     return DetectEngineCtxInitReal(suri, DETECT_ENGINE_TYPE_DD_STUB, NULL, 0);
 }
 
-DetectEngineCtx *DetectEngineCtxInit(SCInstance *suri)
+DetectEngineCtx *DetectEngineCtxInit(const SCInstance *suri)
 {
     return DetectEngineCtxInitReal(suri, DETECT_ENGINE_TYPE_NORMAL, NULL, 0);
 }
 
 DetectEngineCtx *DetectEngineCtxInitWithPrefix(
-        SCInstance *suri, const char *prefix, uint32_t tenant_id)
+        const SCInstance *suri, const char *prefix, uint32_t tenant_id)
 {
     if (prefix == NULL || strlen(prefix) == 0)
         return DetectEngineCtxInit(suri);
@@ -4838,7 +4838,7 @@ int DetectEngineReload(const SCInstance *suri)
     }
 
     /* get new detection engine */
-    new_de_ctx = DetectEngineCtxInitWithPrefix(&g_suricata, prefix, old_de_ctx->tenant_id);
+    new_de_ctx = DetectEngineCtxInitWithPrefix(suri, prefix, old_de_ctx->tenant_id);
     if (new_de_ctx == NULL) {
         SCLogError("initializing detection engine "
                    "context failed.");
