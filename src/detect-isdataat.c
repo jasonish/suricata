@@ -524,7 +524,7 @@ static int DetectIsdataatTestParse04(void)
 
 static int DetectIsdataatTestParse06(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF(de_ctx == NULL);
     de_ctx->flags |= DE_QUIET;
 
@@ -688,7 +688,7 @@ void DetectIsdataatRegisterTests(void)
 
 static int DetectAbsentTestParse01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF(de_ctx == NULL);
     de_ctx->flags |= DE_QUIET;
 

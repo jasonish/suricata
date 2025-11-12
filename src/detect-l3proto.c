@@ -132,7 +132,7 @@ static int DetectL3protoTestSig1(void)
     p->proto = IPPROTO_TCP;
     UTHSetIPV4Hdr(p, &ip4h);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
@@ -192,7 +192,7 @@ static int DetectL3protoTestSig2(void)
     p->proto = IPPROTO_TCP;
     UTHSetIPV6Hdr(p, &ip6h);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
@@ -252,7 +252,7 @@ static int DetectL3protoTestSig3(void)
     p->proto = IPPROTO_TCP;
     UTHSetIPV6Hdr(p, &ip6h);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;

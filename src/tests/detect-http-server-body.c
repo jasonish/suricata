@@ -97,7 +97,7 @@ static int RunTest(struct TestSteps *steps, const char *sig, const char *yaml)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -888,7 +888,7 @@ static int DetectEngineHttpServerBodyFileDataTest03(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -2299,7 +2299,7 @@ static int DetectHttpServerBodyTest14(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -2416,7 +2416,7 @@ static int DetectHttpServerBodyTest15(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -2758,7 +2758,7 @@ static int DetectHttpServerBodyFileDataTest09(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -2862,7 +2862,7 @@ static int DetectHttpServerBodyFileDataTest10(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 

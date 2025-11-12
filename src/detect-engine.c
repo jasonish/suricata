@@ -2482,7 +2482,7 @@ const char *DetectEngineMpmCachingGetPath(void)
 }
 
 static DetectEngineCtx *DetectEngineCtxInitReal(
-        enum DetectEngineType type, const char *prefix, uint32_t tenant_id)
+        SCInstance *suri, enum DetectEngineType type, const char *prefix, uint32_t tenant_id)
 {
     DetectEngineCtx *de_ctx = SCCalloc(1, sizeof(DetectEngineCtx));
     if (unlikely(de_ctx == NULL))
@@ -2494,6 +2494,7 @@ static DetectEngineCtx *DetectEngineCtxInitReal(
     de_ctx->type = type;
     de_ctx->filemagic_thread_ctx_id = -1;
     de_ctx->tenant_id = tenant_id;
+    de_ctx->suri = suri;
 
     if (type == DETECT_ENGINE_TYPE_DD_STUB || type == DETECT_ENGINE_TYPE_MT_STUB) {
         de_ctx->version = DetectEngineGetVersion();
@@ -2582,27 +2583,28 @@ error:
     return NULL;
 }
 
-DetectEngineCtx *DetectEngineCtxInitStubForMT(void)
+DetectEngineCtx *DetectEngineCtxInitStubForMT(SCInstance *suri)
 {
-    return DetectEngineCtxInitReal(DETECT_ENGINE_TYPE_MT_STUB, NULL, 0);
+    return DetectEngineCtxInitReal(suri, DETECT_ENGINE_TYPE_MT_STUB, NULL, 0);
 }
 
-DetectEngineCtx *DetectEngineCtxInitStubForDD(void)
+DetectEngineCtx *DetectEngineCtxInitStubForDD(SCInstance *suri)
 {
-    return DetectEngineCtxInitReal(DETECT_ENGINE_TYPE_DD_STUB, NULL, 0);
+    return DetectEngineCtxInitReal(suri, DETECT_ENGINE_TYPE_DD_STUB, NULL, 0);
 }
 
-DetectEngineCtx *DetectEngineCtxInit(void)
+DetectEngineCtx *DetectEngineCtxInit(SCInstance *suri)
 {
-    return DetectEngineCtxInitReal(DETECT_ENGINE_TYPE_NORMAL, NULL, 0);
+    return DetectEngineCtxInitReal(suri, DETECT_ENGINE_TYPE_NORMAL, NULL, 0);
 }
 
-DetectEngineCtx *DetectEngineCtxInitWithPrefix(const char *prefix, uint32_t tenant_id)
+DetectEngineCtx *DetectEngineCtxInitWithPrefix(
+        SCInstance *suri, const char *prefix, uint32_t tenant_id)
 {
     if (prefix == NULL || strlen(prefix) == 0)
-        return DetectEngineCtxInit();
+        return DetectEngineCtxInit(suri);
     else
-        return DetectEngineCtxInitReal(DETECT_ENGINE_TYPE_NORMAL, prefix, tenant_id);
+        return DetectEngineCtxInitReal(suri, DETECT_ENGINE_TYPE_NORMAL, prefix, tenant_id);
 }
 
 static void DetectEngineCtxFreeThreadKeywordData(DetectEngineCtx *de_ctx)
@@ -3912,7 +3914,7 @@ static int DetectEngineMultiTenantLoadTenant(uint32_t tenant_id, const char *fil
         goto error;
     }
 
-    de_ctx = DetectEngineCtxInitWithPrefix(prefix, tenant_id);
+    de_ctx = DetectEngineCtxInitWithPrefix(&g_suricata, prefix, tenant_id);
     if (de_ctx == NULL) {
         SCLogError("initializing detection engine "
                    "context failed.");
@@ -3972,7 +3974,7 @@ static int DetectEngineMultiTenantReloadTenant(uint32_t tenant_id, const char *f
         goto error;
     }
 
-    DetectEngineCtx *new_de_ctx = DetectEngineCtxInitWithPrefix(prefix, tenant_id);
+    DetectEngineCtx *new_de_ctx = DetectEngineCtxInitWithPrefix(&g_suricata, prefix, tenant_id);
     if (new_de_ctx == NULL) {
         SCLogError("initializing detection engine "
                    "context failed.");
@@ -4836,7 +4838,7 @@ int DetectEngineReload(const SCInstance *suri)
     }
 
     /* get new detection engine */
-    new_de_ctx = DetectEngineCtxInitWithPrefix(prefix, old_de_ctx->tenant_id);
+    new_de_ctx = DetectEngineCtxInitWithPrefix(&g_suricata, prefix, old_de_ctx->tenant_id);
     if (new_de_ctx == NULL) {
         SCLogError("initializing detection engine "
                    "context failed.");
@@ -4937,7 +4939,7 @@ int DetectEngineMTApply(void)
         }
     }
     if (stub_de_ctx == NULL) {
-        stub_de_ctx = DetectEngineCtxInitStubForMT();
+        stub_de_ctx = DetectEngineCtxInitStubForMT(&g_suricata);
         if (stub_de_ctx == NULL) {
             SCMutexUnlock(&master->lock);
             return -1;
@@ -5129,7 +5131,7 @@ static int DetectEngineTest01(void)
 
     FAIL_IF(DetectEngineInitYamlConf(conf) == -1);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     FAIL_IF_NOT(de_ctx->inspection_recursion_limit == -1);
@@ -5161,7 +5163,7 @@ static int DetectEngineTest02(void)
 
     FAIL_IF(DetectEngineInitYamlConf(conf) == -1);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     FAIL_IF_NOT(
@@ -5193,7 +5195,7 @@ static int DetectEngineTest03(void)
 
     FAIL_IF(DetectEngineInitYamlConf(conf) == -1);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     FAIL_IF_NOT(
@@ -5226,7 +5228,7 @@ static int DetectEngineTest04(void)
 
     FAIL_IF(DetectEngineInitYamlConf(conf) == -1);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     FAIL_IF_NOT(de_ctx->inspection_recursion_limit == 10);
@@ -5251,7 +5253,7 @@ static int DetectEngineTest08(void)
 
     FAIL_IF(DetectEngineInitYamlConf(conf) == -1);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     FAIL_IF_NOT(de_ctx->max_uniq_toclient_groups == 23);
@@ -5279,7 +5281,7 @@ static int DetectEngineTest09(void)
 
     FAIL_IF(DetectEngineInitYamlConf(conf) == -1);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     FAIL_IF_NOT(de_ctx->max_uniq_toclient_groups == 20);

@@ -1430,7 +1430,7 @@ static int FlowBitsTestSig01(void)
     Signature *s = NULL;
     DetectEngineCtx *de_ctx = NULL;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
@@ -1458,7 +1458,7 @@ static int FlowBitsTestSig02(void)
 
     memset(&th_v, 0, sizeof(th_v));
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
@@ -1499,7 +1499,7 @@ static int FlowBitsTestSig03(void)
     Signature *s = NULL;
     DetectEngineCtx *de_ctx = NULL;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
@@ -1524,7 +1524,7 @@ static int FlowBitsTestSig04(void)
     Signature *s = NULL;
     DetectEngineCtx *de_ctx = NULL;
     int idx = 0;
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
@@ -1552,7 +1552,7 @@ static int FlowBitsTestSig05(void)
     Signature *s = NULL;
     DetectEngineCtx *de_ctx = NULL;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
@@ -1607,7 +1607,7 @@ static int FlowBitsTestSig06(void)
     p->flags |= PKT_HAS_FLOW;
     p->flowflags |= (FLOW_PKT_TOSERVER | FLOW_PKT_TOSERVER_FIRST);
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
@@ -1679,7 +1679,7 @@ static int FlowBitsTestSig07(void)
     p->payload_len = buflen;
     p->proto = IPPROTO_TCP;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
@@ -1755,7 +1755,7 @@ static int FlowBitsTestSig08(void)
     p->payload_len = buflen;
     p->proto = IPPROTO_TCP;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;

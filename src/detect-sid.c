@@ -78,7 +78,7 @@ static int DetectSidSetup (DetectEngineCtx *de_ctx, Signature *s, const char *si
 
 static int SidTestParse01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     Signature *s =
@@ -92,7 +92,7 @@ static int SidTestParse01(void)
 
 static int SidTestParse02(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     FAIL_IF_NOT_NULL(
@@ -104,7 +104,7 @@ static int SidTestParse02(void)
 
 static int SidTestParse03(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     FAIL_IF_NOT_NULL(DetectEngineAppendSig(
@@ -116,7 +116,7 @@ static int SidTestParse03(void)
 
 static int SidTestParse04(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     FAIL_IF_NOT_NULL(DetectEngineAppendSig(

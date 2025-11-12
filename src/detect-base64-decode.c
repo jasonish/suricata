@@ -346,7 +346,7 @@ end:
  */
 static int DetectBase64DecodeTestSetup(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     Signature *s = DetectEngineAppendSig(de_ctx, "alert tcp any any -> any any ("
@@ -374,7 +374,7 @@ static int DetectBase64DecodeTestDecode(void)
 
     memset(&tv, 0, sizeof(tv));
 
-    if ((de_ctx = DetectEngineCtxInit()) == NULL) {
+    if ((de_ctx = DetectEngineCtxInit(&g_suricata)) == NULL) {
         goto end;
     }
 
@@ -430,7 +430,7 @@ static int DetectBase64DecodeTestDecodeWithOffset(void)
 
     memset(&tv, 0, sizeof(tv));
 
-    if ((de_ctx = DetectEngineCtxInit()) == NULL) {
+    if ((de_ctx = DetectEngineCtxInit(&g_suricata)) == NULL) {
         goto end;
     }
 
@@ -489,7 +489,7 @@ static int DetectBase64DecodeTestDecodeLargeOffset(void)
 
     memset(&tv, 0, sizeof(tv));
 
-    if ((de_ctx = DetectEngineCtxInit()) == NULL) {
+    if ((de_ctx = DetectEngineCtxInit(&g_suricata)) == NULL) {
         goto end;
     }
 
@@ -546,7 +546,7 @@ static int DetectBase64DecodeTestDecodeRelative(void)
 
     memset(&tv, 0, sizeof(tv));
 
-    if ((de_ctx = DetectEngineCtxInit()) == NULL) {
+    if ((de_ctx = DetectEngineCtxInit(&g_suricata)) == NULL) {
         goto end;
     }
 

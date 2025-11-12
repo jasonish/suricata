@@ -225,7 +225,7 @@ static int DetectFtpdataParseTest01(void)
 
 static int DetectFtpdataSignatureTest01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     Signature *sig = DetectEngineAppendSig(de_ctx, "alert ip any any -> any any (ftpdata_command:stor; sid:1; rev:1;)");

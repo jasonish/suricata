@@ -229,7 +229,7 @@ static int DetectFilesizeInitTest(
     char fullstr[1024];
     *de_ctx = NULL;
 
-    *de_ctx = DetectEngineCtxInit();
+    *de_ctx = DetectEngineCtxInit(&g_suricata);
     (*de_ctx)->flags |= DE_QUIET;
     FAIL_IF_NULL((*de_ctx));
 

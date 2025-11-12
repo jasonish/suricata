@@ -2633,17 +2633,15 @@ void PostConfLoadedDetectSetup(SCInstance *suri)
                        "detection engine contexts failed.");
         }
         if (suri->delayed_detect && suri->run_mode != RUNMODE_CONF_TEST) {
-            de_ctx = DetectEngineCtxInitStubForDD();
+            de_ctx = DetectEngineCtxInitStubForDD(suri);
         } else if (mt_enabled && !default_tenant && suri->run_mode != RUNMODE_CONF_TEST) {
-            de_ctx = DetectEngineCtxInitStubForMT();
+            de_ctx = DetectEngineCtxInitStubForMT(suri);
         } else {
-            de_ctx = DetectEngineCtxInit();
+            de_ctx = DetectEngineCtxInit(suri);
         }
         if (de_ctx == NULL) {
             FatalError("initializing detection engine failed.");
         }
-
-        de_ctx->suri = suri;
 
         if (de_ctx->type == DETECT_ENGINE_TYPE_NORMAL) {
             if (LoadSignatures(de_ctx) != TM_ECODE_OK)

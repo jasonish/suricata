@@ -157,7 +157,7 @@ static int DetectDistanceSetup (DetectEngineCtx *de_ctx, Signature *s,
 
 static int DetectDistanceTest01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 

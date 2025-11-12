@@ -800,7 +800,7 @@ static int DetectBytejumpTestParse09(void)
  */
 static int DetectBytejumpTestParse10(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -884,7 +884,7 @@ static int DetectBytejumpTestParse11(void)
     DetectEngineCtx *de_ctx = NULL;
     Signature *s = NULL;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
@@ -955,7 +955,7 @@ static int DetectBytejumpTestParse11(void)
  */
 static int DetectBytejumpTestParse12(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 

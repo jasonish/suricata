@@ -26,7 +26,7 @@
 
 static int DetectIcmpv4HdrParseTest01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     FAIL_IF_NULL(DetectEngineAppendSig(

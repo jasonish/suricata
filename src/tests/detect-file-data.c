@@ -31,7 +31,7 @@
 
 static int DetectEngineSMTPFiledataTest02(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NOT(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -50,7 +50,7 @@ static int DetectEngineSMTPFiledataTest02(void)
  */
 static int DetectFiledataParseTest04(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     Signature *s = DetectEngineAppendSig(de_ctx,

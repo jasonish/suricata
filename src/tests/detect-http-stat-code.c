@@ -85,7 +85,7 @@ static int DetectEngineHttpStatCodeTest01(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -165,7 +165,7 @@ static int DetectEngineHttpStatCodeTest02(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -248,7 +248,7 @@ static int DetectEngineHttpStatCodeTest03(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -337,7 +337,7 @@ static int DetectEngineHttpStatCodeTest04(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -422,7 +422,7 @@ static int DetectEngineHttpStatCodeTest05(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -507,7 +507,7 @@ static int DetectEngineHttpStatCodeTest06(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -592,7 +592,7 @@ static int DetectEngineHttpStatCodeTest07(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -677,7 +677,7 @@ static int DetectEngineHttpStatCodeTest08(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -762,7 +762,7 @@ static int DetectEngineHttpStatCodeTest09(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -848,7 +848,7 @@ static int DetectEngineHttpStatCodeTest10(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -934,7 +934,7 @@ static int DetectEngineHttpStatCodeTest11(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1020,7 +1020,7 @@ static int DetectEngineHttpStatCodeTest12(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1106,7 +1106,7 @@ static int DetectEngineHttpStatCodeTest13(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1192,7 +1192,7 @@ static int DetectEngineHttpStatCodeTest14(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1278,7 +1278,7 @@ static int DetectEngineHttpStatCodeTest15(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1353,7 +1353,7 @@ static int DetectHttpStatCodeSigTest01(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1420,7 +1420,7 @@ static int DetectHttpStatCodeSigTest02(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1494,7 +1494,7 @@ static int DetectHttpStatCodeSigTest03(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1568,7 +1568,7 @@ static int DetectHttpStatCodeSigTest04(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 

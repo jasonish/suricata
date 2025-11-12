@@ -42,7 +42,7 @@ static int DetectTemplateParseTest01 (void)
 
 static int DetectTemplateSignatureTest01 (void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     Signature *sig = DetectEngineAppendSig(de_ctx, "alert ip any any -> any any (template:1,10; sid:1; rev:1;)");

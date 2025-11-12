@@ -27,7 +27,7 @@
 
 static int DetectTcphdrParseTest01 (void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     Signature *sig = DetectEngineAppendSig(de_ctx,

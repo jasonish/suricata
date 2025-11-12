@@ -73,10 +73,11 @@ void DetectEngineBufferTypeSupportsMpm(DetectEngineCtx *de_ctx, const char *name
 void DetectEngineBufferTypeSupportsTransformations(DetectEngineCtx *de_ctx, const char *name);
 
 /* prototypes */
-DetectEngineCtx *DetectEngineCtxInitWithPrefix(const char *prefix, uint32_t tenant_id);
-DetectEngineCtx *DetectEngineCtxInit(void);
-DetectEngineCtx *DetectEngineCtxInitStubForDD(void);
-DetectEngineCtx *DetectEngineCtxInitStubForMT(void);
+DetectEngineCtx *DetectEngineCtxInitWithPrefix(
+        SCInstance *suri, const char *prefix, uint32_t tenant_id);
+DetectEngineCtx *DetectEngineCtxInit(SCInstance *suri);
+DetectEngineCtx *DetectEngineCtxInitStubForDD(SCInstance *suri);
+DetectEngineCtx *DetectEngineCtxInitStubForMT(SCInstance *suri);
 void DetectEngineCtxFree(DetectEngineCtx *);
 int DetectEngineThreadCtxGetJsonContext(DetectEngineThreadCtx *det_ctx);
 

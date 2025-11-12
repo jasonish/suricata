@@ -120,7 +120,7 @@ static int DetectQuicUaSetup(DetectEngineCtx *de_ctx, Signature *s, const char *
  */
 static int QuicUaTestParse01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     Signature *sig = DetectEngineAppendSig(
@@ -144,7 +144,7 @@ static int QuicUaTestParse01(void)
  */
 static int QuicUaTestParse03(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     Signature *sig =

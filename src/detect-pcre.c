@@ -1081,7 +1081,7 @@ static int DetectPcreParseTest01 (void)
     DetectPcreData *pd = NULL;
     const char *teststring = "/blah/7";
     int list = DETECT_SM_LIST_NOTSET;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     AppProto alproto = ALPROTO_UNKNOWN;
 
@@ -1101,7 +1101,7 @@ static int DetectPcreParseTest02 (void)
     DetectPcreData *pd = NULL;
     const char *teststring = "/blah/Ui$";
     int list = DETECT_SM_LIST_NOTSET;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     AppProto alproto = ALPROTO_UNKNOWN;
 
@@ -1122,7 +1122,7 @@ static int DetectPcreParseTest03 (void)
     DetectPcreData *pd = NULL;
     const char *teststring = "/blah/UNi";
     int list = DETECT_SM_LIST_NOTSET;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     AppProto alproto = ALPROTO_UNKNOWN;
 
@@ -1142,7 +1142,7 @@ static int DetectPcreParseTest04 (void)
     DetectPcreData *pd = NULL;
     const char *teststring = "/b\\\"lah/i";
     int list = DETECT_SM_LIST_NOTSET;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     AppProto alproto = ALPROTO_UNKNOWN;
 
@@ -1164,7 +1164,7 @@ static int DetectPcreParseTest05 (void)
     DetectPcreData *pd = NULL;
     const char *teststring = "/b(l|a)h/";
     int list = DETECT_SM_LIST_NOTSET;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     AppProto alproto = ALPROTO_UNKNOWN;
 
@@ -1186,7 +1186,7 @@ static int DetectPcreParseTest06 (void)
     DetectPcreData *pd = NULL;
     const char *teststring = "/b(l|a)h/smi";
     int list = DETECT_SM_LIST_NOTSET;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     AppProto alproto = ALPROTO_UNKNOWN;
 
@@ -1208,7 +1208,7 @@ static int DetectPcreParseTest07 (void)
     DetectPcreData *pd = NULL;
     const char *teststring = "/blah/Ui";
     int list = DETECT_SM_LIST_NOTSET;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     AppProto alproto = ALPROTO_UNKNOWN;
 
@@ -1230,7 +1230,7 @@ static int DetectPcreParseTest08 (void)
     DetectPcreData *pd = NULL;
     const char *teststring = "/b(l|a)h/O";
     int list = DETECT_SM_LIST_NOTSET;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     AppProto alproto = ALPROTO_UNKNOWN;
 
@@ -1252,7 +1252,7 @@ static int DetectPcreParseTest09 (void)
     DetectPcreData *pd = NULL;
     const char *teststring = "/lala\\\\/";
     int list = DETECT_SM_LIST_NOTSET;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     AppProto alproto = ALPROTO_UNKNOWN;
 
@@ -1270,7 +1270,7 @@ static int DetectPcreParseTest09 (void)
 static int DetectPcreParseTest10(void)
 {
     Signature *s = SigAlloc();
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     FAIL_IF(SCDetectSignatureSetAppProto(s, ALPROTO_DCERPC) < 0);
@@ -1300,7 +1300,7 @@ static int DetectPcreParseTest15(void)
 {
     DetectEngineCtx *de_ctx = NULL;
 
-    FAIL_IF( (de_ctx = DetectEngineCtxInit()) == NULL);
+    FAIL_IF((de_ctx = DetectEngineCtxInit(&g_suricata)) == NULL);
 
     de_ctx->flags |= DE_QUIET;
     de_ctx->sig_list = SigInit(de_ctx,
@@ -1323,7 +1323,7 @@ static int DetectPcreParseTest16(void)
 {
     DetectEngineCtx *de_ctx = NULL;
 
-    FAIL_IF( (de_ctx = DetectEngineCtxInit()) == NULL);
+    FAIL_IF((de_ctx = DetectEngineCtxInit(&g_suricata)) == NULL);
 
     de_ctx->flags |= DE_QUIET;
     de_ctx->sig_list = SigInit(de_ctx,
@@ -1345,7 +1345,7 @@ static int DetectPcreParseTest17(void)
 {
     DetectEngineCtx *de_ctx = NULL;
 
-    FAIL_IF( (de_ctx = DetectEngineCtxInit()) == NULL);
+    FAIL_IF((de_ctx = DetectEngineCtxInit(&g_suricata)) == NULL);
 
     de_ctx->flags |= DE_QUIET;
     de_ctx->sig_list = SigInit(de_ctx,
@@ -1367,7 +1367,7 @@ static int DetectPcreParseTest18(void)
 {
     DetectEngineCtx *de_ctx = NULL;
 
-    FAIL_IF( (de_ctx = DetectEngineCtxInit()) == NULL);
+    FAIL_IF((de_ctx = DetectEngineCtxInit(&g_suricata)) == NULL);
 
     de_ctx->flags |= DE_QUIET;
     de_ctx->sig_list = SigInit(de_ctx,
@@ -1389,7 +1389,7 @@ static int DetectPcreParseTest19(void)
 {
     DetectEngineCtx *de_ctx = NULL;
 
-    FAIL_IF( (de_ctx = DetectEngineCtxInit()) == NULL);
+    FAIL_IF((de_ctx = DetectEngineCtxInit(&g_suricata)) == NULL);
 
     de_ctx->flags |= DE_QUIET;
     de_ctx->sig_list = SigInit(de_ctx,
@@ -1411,7 +1411,7 @@ static int DetectPcreParseTest20(void)
 {
     DetectEngineCtx *de_ctx = NULL;
 
-    FAIL_IF( (de_ctx = DetectEngineCtxInit()) == NULL);
+    FAIL_IF((de_ctx = DetectEngineCtxInit(&g_suricata)) == NULL);
 
     de_ctx->flags |= DE_QUIET;
     de_ctx->sig_list = SigInit(de_ctx,
@@ -1433,7 +1433,7 @@ static int DetectPcreParseTest21(void)
 {
     DetectEngineCtx *de_ctx = NULL;
 
-    FAIL_IF( (de_ctx = DetectEngineCtxInit()) == NULL);
+    FAIL_IF((de_ctx = DetectEngineCtxInit(&g_suricata)) == NULL);
 
     de_ctx->flags |= DE_QUIET;
     de_ctx->sig_list = SigInit(de_ctx,
@@ -1455,7 +1455,7 @@ static int DetectPcreParseTest22(void)
 {
     DetectEngineCtx *de_ctx = NULL;
 
-    FAIL_IF( (de_ctx = DetectEngineCtxInit()) == NULL);
+    FAIL_IF((de_ctx = DetectEngineCtxInit(&g_suricata)) == NULL);
 
     de_ctx->flags |= DE_QUIET;
     de_ctx->sig_list = SigInit(de_ctx,
@@ -1477,7 +1477,7 @@ static int DetectPcreParseTest23(void)
 {
     DetectEngineCtx *de_ctx = NULL;
 
-    FAIL_IF( (de_ctx = DetectEngineCtxInit()) == NULL);
+    FAIL_IF((de_ctx = DetectEngineCtxInit(&g_suricata)) == NULL);
 
     de_ctx->flags |= DE_QUIET;
     de_ctx->sig_list = SigInit(de_ctx,
@@ -1499,7 +1499,7 @@ static int DetectPcreParseTest24(void)
 {
     DetectEngineCtx *de_ctx = NULL;
 
-    FAIL_IF( (de_ctx = DetectEngineCtxInit()) == NULL);
+    FAIL_IF((de_ctx = DetectEngineCtxInit(&g_suricata)) == NULL);
 
     de_ctx->flags |= DE_QUIET;
     de_ctx->sig_list = SigInit(de_ctx,
@@ -1520,7 +1520,7 @@ static int DetectPcreParseTest25(void)
 {
     DetectEngineCtx *de_ctx = NULL;
 
-    FAIL_IF( (de_ctx = DetectEngineCtxInit()) == NULL);
+    FAIL_IF((de_ctx = DetectEngineCtxInit(&g_suricata)) == NULL);
 
     de_ctx->flags |= DE_QUIET;
     de_ctx->sig_list = SigInit(de_ctx,
@@ -1541,7 +1541,7 @@ static int DetectPcreParseTest26(void)
 {
     DetectEngineCtx *de_ctx = NULL;
 
-    FAIL_IF( (de_ctx = DetectEngineCtxInit()) == NULL);
+    FAIL_IF((de_ctx = DetectEngineCtxInit(&g_suricata)) == NULL);
 
     de_ctx->flags |= DE_QUIET;
     de_ctx->sig_list = SigInit(de_ctx,
@@ -1562,7 +1562,7 @@ static int DetectPcreParseTest27(void)
 {
     DetectEngineCtx *de_ctx = NULL;
 
-    FAIL_IF( (de_ctx = DetectEngineCtxInit()) == NULL);
+    FAIL_IF((de_ctx = DetectEngineCtxInit(&g_suricata)) == NULL);
 
     de_ctx->flags |= DE_QUIET;
     de_ctx->sig_list = SigInit(de_ctx, "alert tcp any any -> any 80 "
@@ -1582,7 +1582,7 @@ static int DetectPcreParseTest28(void)
 {
     DetectEngineCtx *de_ctx = NULL;
 
-    FAIL_IF( (de_ctx = DetectEngineCtxInit()) == NULL);
+    FAIL_IF((de_ctx = DetectEngineCtxInit(&g_suricata)) == NULL);
 
     de_ctx->flags |= DE_QUIET;
     de_ctx->sig_list = SigInit(de_ctx, "alert tcp any any -> any 80 "
@@ -1790,7 +1790,7 @@ static int DetectPcreTxBodyChunksTest02(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF(de_ctx == NULL);
 
     de_ctx->flags |= DE_QUIET;
@@ -1939,7 +1939,7 @@ static int DetectPcreTxBodyChunksTest03(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF(de_ctx == NULL);
 
     de_ctx->flags |= DE_QUIET;
@@ -2034,7 +2034,7 @@ static int DetectPcreParseHttpHost(void)
 {
     AppProto alproto = ALPROTO_UNKNOWN;
     int list = DETECT_SM_LIST_NOTSET;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
 
     FAIL_IF(de_ctx == NULL);
 
@@ -2067,7 +2067,7 @@ static int DetectPcreParseHttpHost(void)
  */
 static int DetectPcreParseCaptureTest(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF(de_ctx == NULL);
 
     Signature *s = DetectEngineAppendSig(de_ctx, "alert http any any -> any any "

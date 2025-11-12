@@ -596,7 +596,7 @@ FILE *SCRConfGenerateInvalidDummyReferenceConfigFD03(void)
  */
 static int SCRConfTest01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     int result = 0;
 
     if (de_ctx == NULL)
@@ -625,7 +625,7 @@ static int SCRConfTest01(void)
  */
 static int SCRConfTest02(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     int result = 0;
 
     if (de_ctx == NULL)
@@ -653,7 +653,7 @@ static int SCRConfTest02(void)
  */
 static int SCRConfTest03(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     int result = 0;
 
     if (de_ctx == NULL)
@@ -680,7 +680,7 @@ static int SCRConfTest03(void)
  */
 static int SCRConfTest04(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     int result = 1;
 
     if (de_ctx == NULL)
@@ -713,7 +713,7 @@ static int SCRConfTest04(void)
  */
 static int SCRConfTest05(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     int result = 1;
 
     if (de_ctx == NULL)
@@ -746,7 +746,7 @@ static int SCRConfTest05(void)
  */
 static int SCRConfTest06(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     int result = 1;
 
     if (de_ctx == NULL)

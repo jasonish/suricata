@@ -403,7 +403,7 @@ static int DetectUrilenInitTest(DetectEngineCtx **de_ctx, Signature **sig,
         goto end;
     }
 
-    *de_ctx = DetectEngineCtxInit();
+    *de_ctx = DetectEngineCtxInit(&g_suricata);
     if (*de_ctx == NULL) {
         goto end;
     }
@@ -482,7 +482,7 @@ static int DetectUrilenSigTest01(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 

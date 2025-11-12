@@ -482,7 +482,7 @@ static int DetectRpcTestSig01(void)
 
     p = UTHBuildPacket(buf, buflen, IPPROTO_UDP);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;

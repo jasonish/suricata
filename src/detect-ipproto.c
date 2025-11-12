@@ -1922,7 +1922,7 @@ static int DetectIPProtoTestSig2(void)
     FlowInitConfig(FLOW_QUIET);
     DecodeEthernet(&th_v, &dtv, p, raw_eth, sizeof(raw_eth));
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->mpm_matcher = mpm_default_matcher;
     de_ctx->flags |= DE_QUIET;
@@ -1974,7 +1974,7 @@ static int DetectIPProtoTestSig3(void)
     FlowInitConfig(FLOW_QUIET);
     DecodeEthernet(&th_v, &dtv, p, raw_eth, sizeof(raw_eth));
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF(de_ctx == NULL);
     de_ctx->mpm_matcher = mpm_default_matcher;
     de_ctx->flags |= DE_QUIET;

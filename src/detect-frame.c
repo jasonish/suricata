@@ -151,7 +151,7 @@ static int DetectFrameSetup(DetectEngineCtx *de_ctx, Signature *s, const char *s
 
 static int DetectFrameTestBadRules(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     const char *sigs[] = {

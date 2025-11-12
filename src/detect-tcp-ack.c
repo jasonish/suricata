@@ -200,7 +200,7 @@ static int DetectAckSigTest01(void)
     /* ICMP */
     Packet *p3 = UTHBuildPacket(NULL, 0, IPPROTO_ICMP);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 

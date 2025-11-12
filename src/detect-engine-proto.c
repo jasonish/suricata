@@ -151,7 +151,7 @@ static int DetectProtoInitTest(DetectEngineCtx **de_ctx, Signature **sig,
     }
 
     if (*de_ctx == NULL) {
-        *de_ctx = DetectEngineCtxInit();
+        *de_ctx = DetectEngineCtxInit(&g_suricata);
         if (*de_ctx == NULL) {
             goto end;
         }
@@ -349,7 +349,7 @@ static int DetectProtoTestSetup02(void)
 
 static int DetectProtoTestSig01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;

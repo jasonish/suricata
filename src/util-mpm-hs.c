@@ -2229,7 +2229,7 @@ static int SCHSTest29(void)
     memset(&th_v, 0, sizeof(th_v));
     p = UTHBuildPacket(buf, buflen, IPPROTO_TCP);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     if (de_ctx == NULL)
         goto end;
     de_ctx->mpm_matcher = MPM_HS;

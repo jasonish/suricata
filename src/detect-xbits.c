@@ -487,7 +487,7 @@ static void XBitsTestShutdown(void)
 static int XBitsTestParse01(void)
 {
     DetectEngineCtx *de_ctx = NULL;
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     DetectXbitsData *cd = NULL;
@@ -560,7 +560,7 @@ static int XBitsTestSig01(void)
 
     XBitsTestSetup();
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -591,7 +591,7 @@ static int XBitsTestSig02(void)
 {
     Signature *s = NULL;
     DetectEngineCtx *de_ctx = NULL;
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 

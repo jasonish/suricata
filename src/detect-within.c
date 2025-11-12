@@ -216,7 +216,7 @@ static int DetectWithinTestVarSetup(void)
         "http_client_body; "
         "sid:4; rev:1;)";
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
 
     Signature *s = DetectEngineAppendSig(de_ctx, sig);

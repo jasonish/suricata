@@ -272,7 +272,7 @@ static int SCRuleVarsPositiveTest03(void)
     SCConfInit();
     SCConfYamlLoadString(dummy_conf_string, strlen(dummy_conf_string));
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -296,7 +296,7 @@ static int SCRuleVarsNegativeTest04(void)
     SCConfCreateContextBackup();
     SCConfInit();
     SCConfYamlLoadString(dummy_conf_string, strlen(dummy_conf_string));
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -350,7 +350,7 @@ static int SCRuleVarsMTest01(void)
     SCConfInit();
     SCConfYamlLoadString(dummy_mt_conf_string, strlen(dummy_mt_conf_string));
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     snprintf(de_ctx->config_prefix, sizeof(de_ctx->config_prefix),

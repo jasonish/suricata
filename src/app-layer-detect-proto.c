@@ -3189,7 +3189,7 @@ static int AppLayerProtoDetectTest16(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(&g_suricata);
     if (de_ctx == NULL) {
         goto end;
     }
@@ -3277,7 +3277,7 @@ static int AppLayerProtoDetectTest17(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(&g_suricata);
     if (de_ctx == NULL) {
         goto end;
     }
@@ -3367,7 +3367,7 @@ static int AppLayerProtoDetectTest18(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(&g_suricata);
     if (de_ctx == NULL) {
         goto end;
     }
@@ -3453,7 +3453,7 @@ static int AppLayerProtoDetectTest19(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(&g_suricata);
     if (de_ctx == NULL) {
         goto end;
     }

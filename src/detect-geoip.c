@@ -450,7 +450,7 @@ static int GeoipParseTest(const char *rule, int ncountries, const char **countri
     Signature *s = NULL;
     DetectGeoipData *data = NULL;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF(de_ctx == NULL);
     de_ctx->flags |= DE_QUIET;
 

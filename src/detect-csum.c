@@ -805,24 +805,29 @@ static void DetectICMPV6CsumFree(DetectEngineCtx *de_ctx, void *ptr)
 #include "packet.h"
 
 #define mystr(s) #s
-#define TEST1(kwstr) {\
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();\
-    FAIL_IF_NULL(de_ctx);\
-    de_ctx->flags = DE_QUIET;\
-    \
-    Signature *s = DetectEngineAppendSig(de_ctx, "alert ip any any -> any any ("mystr(kwstr)"-csum:valid; sid:1;)");\
-    FAIL_IF_NULL(s);\
-    s = DetectEngineAppendSig(de_ctx, "alert ip any any -> any any ("mystr(kwstr)"-csum:invalid; sid:2;)");\
-    FAIL_IF_NULL(s);\
-    s = DetectEngineAppendSig(de_ctx, "alert ip any any -> any any ("mystr(kwstr)"-csum:vaLid; sid:3;)");\
-    FAIL_IF_NULL(s);\
-    s = DetectEngineAppendSig(de_ctx, "alert ip any any -> any any ("mystr(kwstr)"-csum:VALID; sid:4;)");\
-    FAIL_IF_NULL(s);\
-    s = DetectEngineAppendSig(de_ctx, "alert ip any any -> any any ("mystr(kwstr)"-csum:iNvaLid; sid:5;)");\
-    FAIL_IF_NULL(s);\
-    DetectEngineCtxFree(de_ctx);\
-}
-
+#define TEST1(kwstr)                                                                               \
+    {                                                                                              \
+        DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);                                \
+        FAIL_IF_NULL(de_ctx);                                                                      \
+        de_ctx->flags = DE_QUIET;                                                                  \
+                                                                                                   \
+        Signature *s = DetectEngineAppendSig(                                                      \
+                de_ctx, "alert ip any any -> any any (" mystr(kwstr) "-csum:valid; sid:1;)");      \
+        FAIL_IF_NULL(s);                                                                           \
+        s = DetectEngineAppendSig(                                                                 \
+                de_ctx, "alert ip any any -> any any (" mystr(kwstr) "-csum:invalid; sid:2;)");    \
+        FAIL_IF_NULL(s);                                                                           \
+        s = DetectEngineAppendSig(                                                                 \
+                de_ctx, "alert ip any any -> any any (" mystr(kwstr) "-csum:vaLid; sid:3;)");      \
+        FAIL_IF_NULL(s);                                                                           \
+        s = DetectEngineAppendSig(                                                                 \
+                de_ctx, "alert ip any any -> any any (" mystr(kwstr) "-csum:VALID; sid:4;)");      \
+        FAIL_IF_NULL(s);                                                                           \
+        s = DetectEngineAppendSig(                                                                 \
+                de_ctx, "alert ip any any -> any any (" mystr(kwstr) "-csum:iNvaLid; sid:5;)");    \
+        FAIL_IF_NULL(s);                                                                           \
+        DetectEngineCtxFree(de_ctx);                                                               \
+    }
 
 static int DetectCsumValidArgsTestParse01(void)
 {
@@ -839,7 +844,7 @@ static int DetectCsumValidArgsTestParse01(void)
 
 #define TEST2(kwstr)                                                                               \
     {                                                                                              \
-        DetectEngineCtx *de_ctx = DetectEngineCtxInit();                                           \
+        DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);                                \
         FAIL_IF_NULL(de_ctx);                                                                      \
         Signature *s = DetectEngineAppendSig(                                                      \
                 de_ctx, "alert ip any any -> any any (" mystr(kwstr) "-csum:xxxx; sid:1;)");       \
@@ -872,23 +877,26 @@ static int DetectCsumInvalidArgsTestParse02(void)
 }
 #undef TEST2
 
-#define TEST3(kwstr, kwtype) { \
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();\
-    FAIL_IF_NULL(de_ctx);\
-    Signature *s = DetectEngineAppendSig(de_ctx, "alert ip any any -> any any ("mystr(kwstr)"-csum:valid; sid:1;)");\
-    FAIL_IF_NULL(s);\
-    SigMatch *sm = DetectGetLastSMFromLists(s, (kwtype), -1);\
-    FAIL_IF_NULL(sm);\
-    FAIL_IF_NULL(sm->ctx);\
-    FAIL_IF_NOT(((DetectCsumData *)sm->ctx)->valid == 1);\
-    s = DetectEngineAppendSig(de_ctx, "alert ip any any -> any any ("mystr(kwstr)"-csum:INVALID; sid:2;)");\
-    FAIL_IF_NULL(s);\
-    sm = DetectGetLastSMFromLists(s, (kwtype), -1);\
-    FAIL_IF_NULL(sm);\
-    FAIL_IF_NULL(sm->ctx);\
-    FAIL_IF_NOT(((DetectCsumData *)sm->ctx)->valid == 0);\
-    DetectEngineCtxFree(de_ctx);\
-}
+#define TEST3(kwstr, kwtype)                                                                       \
+    {                                                                                              \
+        DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);                                \
+        FAIL_IF_NULL(de_ctx);                                                                      \
+        Signature *s = DetectEngineAppendSig(                                                      \
+                de_ctx, "alert ip any any -> any any (" mystr(kwstr) "-csum:valid; sid:1;)");      \
+        FAIL_IF_NULL(s);                                                                           \
+        SigMatch *sm = DetectGetLastSMFromLists(s, (kwtype), -1);                                  \
+        FAIL_IF_NULL(sm);                                                                          \
+        FAIL_IF_NULL(sm->ctx);                                                                     \
+        FAIL_IF_NOT(((DetectCsumData *)sm->ctx)->valid == 1);                                      \
+        s = DetectEngineAppendSig(                                                                 \
+                de_ctx, "alert ip any any -> any any (" mystr(kwstr) "-csum:INVALID; sid:2;)");    \
+        FAIL_IF_NULL(s);                                                                           \
+        sm = DetectGetLastSMFromLists(s, (kwtype), -1);                                            \
+        FAIL_IF_NULL(sm);                                                                          \
+        FAIL_IF_NULL(sm->ctx);                                                                     \
+        FAIL_IF_NOT(((DetectCsumData *)sm->ctx)->valid == 0);                                      \
+        DetectEngineCtxFree(de_ctx);                                                               \
+    }
 
 static int DetectCsumValidArgsTestParse03(void)
 {
@@ -940,7 +948,7 @@ static int DetectCsumICMPV6Test01(void)
     StreamTcpInitConfig(true);
     FlowInitConfig(FLOW_QUIET);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->mpm_matcher = mpm_default_matcher;
     de_ctx->flags |= DE_QUIET;

@@ -194,6 +194,8 @@ extern uint8_t g_recurlvl_mask;
 /* Flag to disable hashing (almost) globally. */
 extern bool g_disable_hashing;
 
+extern SCInstance g_suricata;
+
 void EngineStop(void);
 void EngineDone(void);
 

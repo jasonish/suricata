@@ -87,7 +87,7 @@ static int DetectPktDataSetup (DetectEngineCtx *de_ctx, Signature *s, const char
 /************************************Unittests*********************************/
 static int DetectPktDataTest02(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(&g_suricata);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
