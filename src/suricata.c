@@ -2488,8 +2488,9 @@ static void SetupDelayedDetect(SCInstance *suri)
 
 }
 
-static int LoadSignatures(DetectEngineCtx *de_ctx, SCInstance *suri)
+static int LoadSignatures(DetectEngineCtx *de_ctx)
 {
+    SCInstance *suri = de_ctx->suri;
     de_ctx->firewall_rule_file_exclusive = suri->firewall_rule_file;
 
     if (SigLoadSignatures(de_ctx, suri->sig_file, suri->sig_file_exclusive) < 0) {
@@ -2642,8 +2643,10 @@ void PostConfLoadedDetectSetup(SCInstance *suri)
             FatalError("initializing detection engine failed.");
         }
 
+        de_ctx->suri = suri;
+
         if (de_ctx->type == DETECT_ENGINE_TYPE_NORMAL) {
-            if (LoadSignatures(de_ctx, suri) != TM_ECODE_OK)
+            if (LoadSignatures(de_ctx) != TM_ECODE_OK)
                 exit(EXIT_FAILURE);
         }
 

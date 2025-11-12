@@ -33,6 +33,7 @@
 #include "detect-engine-register.h"
 #include "detect-engine-inspect-buffer.h"
 
+#include "suricata.h"
 #include "util-prefilter.h"
 #include "util-mpm.h"
 #include "util-spm.h"
@@ -930,6 +931,8 @@ typedef uint8_t (*SCDetectRateFilterFunc)(const Packet *p, uint32_t sid, uint32_
 
 /** \brief main detection engine ctx */
 typedef struct DetectEngineCtx_ {
+    SCInstance *suri;
+
     bool failure_fatal;
     uint8_t flags;       /**< only DE_QUIET */
     uint8_t mpm_matcher; /**< mpm matcher this ctx uses */
