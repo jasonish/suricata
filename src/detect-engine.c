@@ -3888,7 +3888,8 @@ bool DetectEngineMultiTenantEnabled(void)
  *  \retval 0 ok
  *  \retval -1 failed
  */
-static int DetectEngineMultiTenantLoadTenant(uint32_t tenant_id, const char *filename, int loader_id)
+static int DetectEngineMultiTenantLoadTenant(
+        const SCInstance *suri, uint32_t tenant_id, const char *filename, int loader_id)
 {
     DetectEngineCtx *de_ctx = NULL;
     char prefix[64];
@@ -3914,7 +3915,7 @@ static int DetectEngineMultiTenantLoadTenant(uint32_t tenant_id, const char *fil
         goto error;
     }
 
-    de_ctx = DetectEngineCtxInitWithPrefix(&g_suricata, prefix, tenant_id);
+    de_ctx = DetectEngineCtxInitWithPrefix(suri, prefix, tenant_id);
     if (de_ctx == NULL) {
         SCLogError("initializing detection engine "
                    "context failed.");
@@ -3974,7 +3975,8 @@ static int DetectEngineMultiTenantReloadTenant(uint32_t tenant_id, const char *f
         goto error;
     }
 
-    DetectEngineCtx *new_de_ctx = DetectEngineCtxInitWithPrefix(&g_suricata, prefix, tenant_id);
+    DetectEngineCtx *new_de_ctx =
+            DetectEngineCtxInitWithPrefix(old_de_ctx->suri, prefix, tenant_id);
     if (new_de_ctx == NULL) {
         SCLogError("initializing detection engine "
                    "context failed.");
@@ -4016,6 +4018,7 @@ typedef struct TenantLoaderCtx_ {
     uint32_t tenant_id;
     int reload_cnt; /**< used by reload */
     char *yaml;     /**< heap alloc'd copy of file path for the yaml */
+    const SCInstance *suri; /**< suricata instance */
 } TenantLoaderCtx;
 
 static void DetectLoaderFreeTenant(void *ctx)
@@ -4032,18 +4035,19 @@ static int DetectLoaderFuncLoadTenant(void *vctx, int loader_id)
     TenantLoaderCtx *ctx = (TenantLoaderCtx *)vctx;
 
     SCLogDebug("loader %d", loader_id);
-    if (DetectEngineMultiTenantLoadTenant(ctx->tenant_id, ctx->yaml, loader_id) != 0) {
+    if (DetectEngineMultiTenantLoadTenant(ctx->suri, ctx->tenant_id, ctx->yaml, loader_id) != 0) {
         return -1;
     }
     return 0;
 }
 
-static int DetectLoaderSetupLoadTenant(uint32_t tenant_id, const char *yaml)
+static int DetectLoaderSetupLoadTenant(const SCInstance *suri, uint32_t tenant_id, const char *yaml)
 {
     TenantLoaderCtx *t = SCCalloc(1, sizeof(*t));
     if (t == NULL)
         return -ENOMEM;
 
+    t->suri = suri;
     t->tenant_id = tenant_id;
     t->yaml = SCStrdup(yaml);
     if (t->yaml == NULL) {
@@ -4080,6 +4084,7 @@ static int DetectLoaderSetupReloadTenants(const int reload_cnt)
                 ret = -1;
                 goto error;
             }
+            t->suri = de_ctx->suri;
             t->tenant_id = de_ctx->tenant_id;
             t->reload_cnt = reload_cnt;
             int loader_id = de_ctx->loader_id;
@@ -4105,12 +4110,14 @@ static int DetectLoaderSetupReloadTenant(uint32_t tenant_id, const char *yaml, i
     if (old_de_ctx == NULL)
         return -ENOENT;
     int loader_id = old_de_ctx->loader_id;
+    const SCInstance *suri = old_de_ctx->suri;
     DetectEngineDeReference(&old_de_ctx);
 
     TenantLoaderCtx *t = SCCalloc(1, sizeof(*t));
     if (t == NULL)
         return -ENOMEM;
 
+    t->suri = suri;
     t->tenant_id = tenant_id;
     if (yaml != NULL) {
         t->yaml = SCStrdup(yaml);
@@ -4131,7 +4138,7 @@ static int DetectLoaderSetupReloadTenant(uint32_t tenant_id, const char *yaml, i
  */
 int DetectEngineLoadTenantBlocking(uint32_t tenant_id, const char *yaml)
 {
-    int r = DetectLoaderSetupLoadTenant(tenant_id, yaml);
+    int r = DetectLoaderSetupLoadTenant(&g_suricata, tenant_id, yaml);
     if (r < 0)
         return r;
 
@@ -4434,7 +4441,7 @@ int DetectEngineMultiTenantSetup(const bool unix_socket)
                     goto bad_tenant;
                 }
 
-                int r = DetectLoaderSetupLoadTenant(tenant_id, yaml_path);
+                int r = DetectLoaderSetupLoadTenant(&g_suricata, tenant_id, yaml_path);
                 if (r < 0) {
                     /* error logged already */
                     goto bad_tenant;
@@ -4926,9 +4933,14 @@ int DetectEngineMTApply(void)
     }
 
     DetectEngineCtx *stub_de_ctx = NULL;
+    const SCInstance *suri = NULL;
     DetectEngineCtx *list = master->list;
     for ( ; list != NULL; list = list->next) {
         SCLogDebug("list %p tenant %u", list, list->tenant_id);
+
+        /* Remember suri from first de_ctx we see */
+        if (suri == NULL && list->suri != NULL)
+            suri = list->suri;
 
         if (list->type == DETECT_ENGINE_TYPE_NORMAL ||
             list->type == DETECT_ENGINE_TYPE_MT_STUB ||
@@ -4939,7 +4951,10 @@ int DetectEngineMTApply(void)
         }
     }
     if (stub_de_ctx == NULL) {
-        stub_de_ctx = DetectEngineCtxInitStubForMT(&g_suricata);
+        /* Use suri from existing de_ctx if available, otherwise use global */
+        if (suri == NULL)
+            suri = &g_suricata;
+        stub_de_ctx = DetectEngineCtxInitStubForMT(suri);
         if (stub_de_ctx == NULL) {
             SCMutexUnlock(&master->lock);
             return -1;
