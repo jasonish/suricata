@@ -2484,7 +2484,6 @@ const char *DetectEngineMpmCachingGetPath(void)
 static DetectEngineCtx *DetectEngineCtxInitReal(
         const SCInstance *suri, enum DetectEngineType type, const char *prefix, uint32_t tenant_id)
 {
-    (void)suri; /* unused for now */
     DetectEngineCtx *de_ctx = SCCalloc(1, sizeof(DetectEngineCtx));
     if (unlikely(de_ctx == NULL))
         goto error;
@@ -2495,6 +2494,7 @@ static DetectEngineCtx *DetectEngineCtxInitReal(
     de_ctx->type = type;
     de_ctx->filemagic_thread_ctx_id = -1;
     de_ctx->tenant_id = tenant_id;
+    de_ctx->suri = suri;
 
     if (type == DETECT_ENGINE_TYPE_DD_STUB || type == DETECT_ENGINE_TYPE_MT_STUB) {
         de_ctx->version = DetectEngineGetVersion();

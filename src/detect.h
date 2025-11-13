@@ -60,6 +60,9 @@ struct SCSigOrderFunc_;
 /* Forward declarations for structures from Rust. */
 typedef struct SCDetectRequiresStatus SCDetectRequiresStatus;
 
+/* Forward declaration for SCInstance from suricata.h */
+typedef struct SCInstance_ SCInstance;
+
 // rule types documentation tag start: SignatureType
 enum SignatureType {
     SIG_TYPE_NOT_SET = 0,
@@ -937,6 +940,8 @@ typedef struct DetectEngineCtx_ {
     uint8_t spm_matcher; /**< spm matcher this ctx uses */
 
     uint32_t tenant_id;
+
+    const SCInstance *suri;
 
     Signature *sig_list;
     uint32_t sig_cnt;
