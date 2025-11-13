@@ -200,6 +200,8 @@ void EngineDone(void);
 
 #ifdef UNITTESTS
 int RunmodeIsUnittests(void);
+void SCSetUnitTestInstance(SCInstance *suri);
+SCInstance *SCGetUnitTestInstance(void);
 #else
 #define RunmodeIsUnittests() 0
 #endif

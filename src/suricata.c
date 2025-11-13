@@ -267,12 +267,26 @@ void EngineModeSetIDS(void)
 }
 
 #ifdef UNITTESTS
+static SCInstance *g_unittest_instance = NULL;
+#endif
+
+#ifdef UNITTESTS
 int RunmodeIsUnittests(void)
 {
     if (g_suricata.run_mode == RUNMODE_UNITTEST)
         return 1;
 
     return 0;
+}
+
+void SCSetUnitTestInstance(SCInstance *suri)
+{
+    g_unittest_instance = suri;
+}
+
+SCInstance *SCGetUnitTestInstance(void)
+{
+    return g_unittest_instance;
 }
 #endif
 
