@@ -183,7 +183,7 @@ static InspectionBuffer *GetData(DetectEngineThreadCtx *det_ctx,
  */
 static int DetectHttpRequestLineTest01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;

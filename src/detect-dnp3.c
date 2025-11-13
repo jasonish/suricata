@@ -392,7 +392,7 @@ void DetectDNP3Register(void)
 
 static int DetectDNP3FuncTest01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     Signature *s = DetectEngineAppendSig(de_ctx, "alert dnp3 any any -> any any "
@@ -413,7 +413,7 @@ static int DetectDNP3FuncTest01(void)
 
 static int DetectDNP3ObjSetupTest(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF(de_ctx == NULL);
 
     Signature *s = DetectEngineAppendSig(de_ctx, "alert dnp3 any any -> any any "

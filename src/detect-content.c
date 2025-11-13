@@ -821,7 +821,7 @@ static bool TestLastContent(const Signature *s, uint16_t o, uint16_t d)
 #define TEST_RUN(sig, o, d)                                                                        \
     {                                                                                              \
         SCLogDebug("TEST_RUN start: '%s'", (sig));                                                 \
-        DetectEngineCtx *de_ctx = DetectEngineCtxInit();                                           \
+        DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);                                       \
         FAIL_IF_NULL(de_ctx);                                                                      \
         de_ctx->flags |= DE_QUIET;                                                                 \
         char rule[2048];                                                                           \
@@ -1105,7 +1105,7 @@ static int DetectContentLongPatternMatchTest(uint8_t *raw_eth_pkt, uint16_t pkts
     FlowInitConfig(FLOW_QUIET);
     DecodeEthernet(&th_v, &dtv, p, raw_eth_pkt, pktsize);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1354,7 +1354,7 @@ static int DetectContentParseTest17(void)
     const char *sigstr = "alert tcp any any -> any any (msg:\"Dummy\"; "
         "content:\"one\"; content:\"two\"; within:2; sid:1;)";
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -1376,7 +1376,7 @@ end:
  */
 static int DetectContentParseTest18(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     Signature *s = SigAlloc();
@@ -1405,7 +1405,7 @@ static int DetectContentParseTest18(void)
 static int DetectContentParseTest19(void)
 {
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1483,7 +1483,7 @@ static int DetectContentParseTest20(void)
     DetectEngineCtx *de_ctx = NULL;
     int result = 1;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -1509,7 +1509,7 @@ static int DetectContentParseTest21(void)
     DetectEngineCtx *de_ctx = NULL;
     int result = 1;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -1535,7 +1535,7 @@ static int DetectContentParseTest22(void)
     DetectEngineCtx *de_ctx = NULL;
     int result = 1;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -1561,7 +1561,7 @@ static int DetectContentParseTest23(void)
     DetectEngineCtx *de_ctx = NULL;
     int result = 1;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -1589,7 +1589,7 @@ static int DetectContentParseTest24(void)
     Signature *s = NULL;
     int result = 1;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -1626,7 +1626,7 @@ static int DetectContentParseTest25(void)
     DetectEngineCtx *de_ctx = NULL;
     int result = 1;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -1652,7 +1652,7 @@ static int DetectContentParseTest26(void)
     DetectEngineCtx *de_ctx = NULL;
     int result = 1;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -1678,7 +1678,7 @@ static int DetectContentParseTest27(void)
     DetectEngineCtx *de_ctx = NULL;
     int result = 1;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -1704,7 +1704,7 @@ static int DetectContentParseTest28(void)
     DetectEngineCtx *de_ctx = NULL;
     int result = 1;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -1730,7 +1730,7 @@ static int DetectContentParseTest29(void)
     DetectEngineCtx *de_ctx = NULL;
     int result = 1;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -1756,7 +1756,7 @@ static int DetectContentParseTest30(void)
     DetectEngineCtx *de_ctx = NULL;
     int result = 1;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -1782,7 +1782,7 @@ static int DetectContentParseTest31(void)
     DetectEngineCtx *de_ctx = NULL;
     int result = 1;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -1808,7 +1808,7 @@ static int DetectContentParseTest32(void)
     DetectEngineCtx *de_ctx = NULL;
     int result = 1;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -1834,7 +1834,7 @@ static int DetectContentParseTest33(void)
     DetectEngineCtx *de_ctx = NULL;
     int result = 1;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -1860,7 +1860,7 @@ static int DetectContentParseTest34(void)
     DetectEngineCtx *de_ctx = NULL;
     int result = 1;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -1886,7 +1886,7 @@ static int DetectContentParseTest35(void)
     DetectEngineCtx *de_ctx = NULL;
     int result = 1;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -1914,7 +1914,7 @@ static int SigTestPositiveTestContent(const char *rule, uint8_t *buf)
     Packet *p = UTHBuildPacket(buf, buflen, IPPROTO_TCP);
     FAIL_IF_NULL(p);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -2077,7 +2077,7 @@ static int DetectContentParseTest45(void)
 {
     DetectEngineCtx *de_ctx = NULL;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
@@ -2102,7 +2102,7 @@ static int SigTestNegativeTestContent(const char *rule, uint8_t *buf)
 
     p = UTHBuildPacket(buf, buflen, IPPROTO_TCP);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -2681,7 +2681,7 @@ static int DetectLongContentTest3(void)
 static int DetectBadBinContent(void)
 {
     DetectEngineCtx *de_ctx = NULL;
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     FAIL_IF_NOT_NULL(DetectEngineAppendSig(

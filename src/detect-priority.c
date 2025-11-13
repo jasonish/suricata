@@ -108,7 +108,7 @@ static int DetectPrioritySetup (DetectEngineCtx *de_ctx, Signature *s, const cha
 
 static int DetectPriorityTest01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->sig_list = SigInit(de_ctx, "alert tcp any any -> any any "
@@ -123,7 +123,7 @@ static int DetectPriorityTest01(void)
 
 static int DetectPriorityTest02(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     Signature *sig = DetectEngineAppendSig(de_ctx, "alert tcp any any -> any any "

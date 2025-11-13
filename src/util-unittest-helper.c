@@ -588,7 +588,7 @@ int UTHGenericTest(Packet **pkt, int numpkts, const char *sigs[], uint32_t sids[
                    "signatures and packets is > 0");
         goto end;
     }
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL) {
         goto end;
     }
@@ -787,7 +787,7 @@ int UTHPacketMatchSigMpm(Packet *p, char *sig, uint16_t mpm_type)
         BUG_ON("unsupported MPM type");
     }
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL) {
         printf("de_ctx == NULL: ");
         goto end;
@@ -839,7 +839,7 @@ int UTHPacketMatchSig(Packet *p, const char *sig)
     memset(&dtv, 0, sizeof(DecodeThreadVars));
     memset(&th_v, 0, sizeof(th_v));
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL) {
         result=0;
         goto end;
@@ -912,7 +912,7 @@ uint32_t UTHBuildPacketOfFlows(uint32_t start, uint32_t end, uint8_t dir)
 /** \brief parser a sig and see if the expected result is correct */
 int UTHParseSignature(const char *str, bool expect)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 

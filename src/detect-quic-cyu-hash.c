@@ -213,7 +213,7 @@ static int DetectQuicCyuHashTest01(void)
     p->flowflags |= FLOW_PKT_TOSERVER;
     f.alproto = ALPROTO_QUIC;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->mpm_matcher = mpm_default_matcher;
     de_ctx->flags |= DE_QUIET;

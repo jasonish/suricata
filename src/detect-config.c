@@ -420,7 +420,7 @@ static void DetectConfigFree(DetectEngineCtx *de_ctx, void *ptr)
 #ifdef UNITTESTS
 static int DetectConfigTest01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF(de_ctx == NULL);
     de_ctx->flags |= DE_QUIET;
     Signature *s = DetectEngineAppendSig(de_ctx,

@@ -183,7 +183,7 @@ static InspectionBuffer *Ja4DetectGetHash(DetectEngineThreadCtx *det_ctx,
 #ifdef UNITTESTS
 static int DetectJa4TestParse01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
 
     // invalid tests
     Signature *s =

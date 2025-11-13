@@ -126,7 +126,7 @@ error:
 static int DetectMsgParseTest01(void)
 {
     const char *teststringparsed = "flow stateless to_server";
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     SCClassConfDeInitContext(de_ctx);
@@ -148,7 +148,7 @@ static int DetectMsgParseTest01(void)
 static int DetectMsgParseTest02(void)
 {
     const char *teststringparsed = "msg escape tests wxy'\"\\;:";
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     Signature *sig = DetectEngineAppendSig(de_ctx,
@@ -166,7 +166,7 @@ static int DetectMsgParseTest02(void)
 static int DetectMsgParseTest03(void)
 {
     const char *teststringparsed = "flow stateless to_server";
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     SCClassConfDeInitContext(de_ctx);

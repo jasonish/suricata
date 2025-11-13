@@ -440,7 +440,7 @@ static int DetectAppLayerProtocolTest03(void)
 {
     Signature *s = NULL;
     DetectAppLayerProtocolData *data = NULL;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -464,7 +464,7 @@ static int DetectAppLayerProtocolTest04(void)
 {
     Signature *s = NULL;
     DetectAppLayerProtocolData *data = NULL;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -490,7 +490,7 @@ static int DetectAppLayerProtocolTest05(void)
 {
     Signature *s = NULL;
     DetectAppLayerProtocolData *data = NULL;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -520,7 +520,7 @@ static int DetectAppLayerProtocolTest05(void)
 static int DetectAppLayerProtocolTest06(void)
 {
     Signature *s = NULL;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -534,7 +534,7 @@ static int DetectAppLayerProtocolTest06(void)
 static int DetectAppLayerProtocolTest07(void)
 {
     Signature *s = NULL;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -548,7 +548,7 @@ static int DetectAppLayerProtocolTest07(void)
 static int DetectAppLayerProtocolTest08(void)
 {
     Signature *s = NULL;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -562,7 +562,7 @@ static int DetectAppLayerProtocolTest08(void)
 static int DetectAppLayerProtocolTest09(void)
 {
     Signature *s = NULL;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -576,7 +576,7 @@ static int DetectAppLayerProtocolTest09(void)
 static int DetectAppLayerProtocolTest10(void)
 {
     Signature *s = NULL;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -611,7 +611,7 @@ static int DetectAppLayerProtocolTest13(void)
 {
     Signature *s = NULL;
     DetectAppLayerProtocolData *data = NULL;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -634,7 +634,7 @@ static int DetectAppLayerProtocolTest13(void)
 static int DetectAppLayerProtocolTest14(void)
 {
     DetectAppLayerProtocolData *data = NULL;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 

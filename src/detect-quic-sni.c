@@ -120,7 +120,7 @@ static int DetectQuicSniSetup(DetectEngineCtx *de_ctx, Signature *s, const char 
  */
 static int QuicSniTestParse01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     Signature *sig = DetectEngineAppendSig(
@@ -144,7 +144,7 @@ static int QuicSniTestParse01(void)
  */
 static int QuicSniTestParse03(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     Signature *sig =

@@ -78,7 +78,7 @@ error:
  */
 static int RevTestParse01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     Signature *s =
@@ -96,7 +96,7 @@ static int RevTestParse01(void)
  */
 static int RevTestParse02(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     FAIL_IF_NOT_NULL(
@@ -111,7 +111,7 @@ static int RevTestParse02(void)
  */
 static int RevTestParse03(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     FAIL_IF_NOT_NULL(DetectEngineAppendSig(
@@ -126,7 +126,7 @@ static int RevTestParse03(void)
  */
 static int RevTestParse04(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     FAIL_IF_NOT_NULL(DetectEngineAppendSig(

@@ -1071,7 +1071,7 @@ static int DetectBytetestTestParse20(void)
     Signature *s = NULL;
     DetectBytetestData *bd = NULL;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
@@ -1156,7 +1156,7 @@ static int DetectBytetestTestParse21(void)
     DetectEngineCtx *de_ctx = NULL;
     Signature *s = NULL;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
@@ -1242,7 +1242,7 @@ static int DetectBytetestTestParse22(void)
     Signature *s = NULL;
     DetectBytetestData *bd = NULL;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;

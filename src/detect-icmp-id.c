@@ -301,7 +301,7 @@ static int DetectIcmpIdMatchTest01 (void)
     p = UTHBuildPacket(NULL, 0, IPPROTO_ICMP);
     p->l4.vars.icmpv4.id = htons(21781);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL) {
         goto end;
     }
@@ -384,7 +384,7 @@ static int DetectIcmpIdMatchTest02 (void)
 
     DecodeICMPV4(&th_v, &dtv, p, raw_icmpv4, sizeof(raw_icmpv4));
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL) {
         goto end;
     }

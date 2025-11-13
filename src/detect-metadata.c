@@ -264,7 +264,7 @@ static int DetectMetadataSetup(DetectEngineCtx *de_ctx, Signature *s, const char
 static int DetectMetadataParseTest01(void)
 {
     DetectEngineUnsetParseMetadata();
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     Signature *sig = DetectEngineAppendSig(de_ctx,
@@ -280,7 +280,7 @@ static int DetectMetadataParseTest01(void)
 static int DetectMetadataParseTest02(void)
 {
     DetectEngineSetParseMetadata();
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     Signature *sig = DetectEngineAppendSig(de_ctx,
                                            "alert tcp any any -> any any "

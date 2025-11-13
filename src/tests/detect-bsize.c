@@ -98,7 +98,7 @@ static int DetectBsizeTest04(void)
 
 #define TEST_OK(rule)                                                                              \
     {                                                                                              \
-        DetectEngineCtx *de_ctx = DetectEngineCtxInit();                                           \
+        DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);                                       \
         FAIL_IF_NULL(de_ctx);                                                                      \
         SCLogNotice("rule: %s", rule);                                                             \
         Signature *s = DetectEngineAppendSig(de_ctx, (rule));                                      \
@@ -108,7 +108,7 @@ static int DetectBsizeTest04(void)
 
 #define TEST_FAIL(rule)                                                                            \
     {                                                                                              \
-        DetectEngineCtx *de_ctx = DetectEngineCtxInit();                                           \
+        DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);                                       \
         FAIL_IF_NULL(de_ctx);                                                                      \
         SCLogNotice("rule: %s", rule);                                                             \
         Signature *s = DetectEngineAppendSig(de_ctx, (rule));                                      \

@@ -249,7 +249,7 @@ int DetectReplaceLongPatternMatchTest(uint8_t *raw_eth_pkt, uint16_t pktsize,
     FlowInitConfig(FLOW_QUIET);
     DecodeEthernet(&th_v, &dtv, p, GET_PKT_DATA(p), pktsize);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL) {
         goto end;
     }
@@ -590,7 +590,7 @@ static int DetectReplaceParseTest01(void)
     int run_mode_backup = SCRunmodeGet();
     SCRunmodeSet(RUNMODE_NFQ);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
@@ -611,7 +611,7 @@ static int DetectReplaceParseTest02(void)
     int run_mode_backup = SCRunmodeGet();
     SCRunmodeSet(RUNMODE_NFQ);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
@@ -633,7 +633,7 @@ static int DetectReplaceParseTest03(void)
     int run_mode_backup = SCRunmodeGet();
     SCRunmodeSet(RUNMODE_NFQ);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
 
     FAIL_IF_NULL(de_ctx);
 
@@ -655,7 +655,7 @@ static int DetectReplaceParseTest04(void)
     int run_mode_backup = SCRunmodeGet();
     SCRunmodeSet(RUNMODE_NFQ);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
@@ -675,7 +675,7 @@ static int DetectReplaceParseTest05(void)
     int run_mode_backup = SCRunmodeGet();
     SCRunmodeSet(RUNMODE_NFQ);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
@@ -696,7 +696,7 @@ static int DetectReplaceParseTest06(void)
     int run_mode_backup = SCRunmodeGet();
     SCRunmodeSet(RUNMODE_NFQ);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
@@ -717,7 +717,7 @@ static int DetectReplaceParseTest07(void)
     int run_mode_backup = SCRunmodeGet();
     SCRunmodeSet(RUNMODE_NFQ);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;

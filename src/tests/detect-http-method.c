@@ -77,7 +77,7 @@ static int RunTest(struct TestSteps *steps, const char *sig, const char *yaml)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -381,7 +381,7 @@ static int DetectEngineHttpMethodTest17(void)
 /** \test Check a signature with content */
 static int DetectHttpMethodTest01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     Signature *s = DetectEngineAppendSig(de_ctx, "alert tcp any any -> any any "
@@ -396,7 +396,7 @@ static int DetectHttpMethodTest01(void)
 /** \test Check a signature without content (fail) */
 static int DetectHttpMethodTest02(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     Signature *s = DetectEngineAppendSig(de_ctx, "alert tcp any any -> any any "
@@ -410,7 +410,7 @@ static int DetectHttpMethodTest02(void)
 /** \test Check a signature with parameter (fail) */
 static int DetectHttpMethodTest03(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     Signature *s = DetectEngineAppendSig(de_ctx, "alert tcp any any -> any any "
@@ -425,7 +425,7 @@ static int DetectHttpMethodTest03(void)
 /** \test Check a signature with fast_pattern (should work) */
 static int DetectHttpMethodTest04(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     Signature *s = DetectEngineAppendSig(de_ctx, "alert tcp any any -> any any "
@@ -441,7 +441,7 @@ static int DetectHttpMethodTest04(void)
 /** \test Check a signature with rawbytes (fail) */
 static int DetectHttpMethodTest05(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     Signature *s = DetectEngineAppendSig(de_ctx, "alert tcp any any -> any any "
@@ -487,7 +487,7 @@ static int DetectHttpMethodSigTest01(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -561,7 +561,7 @@ static int DetectHttpMethodSigTest02(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -632,7 +632,7 @@ static int DetectHttpMethodSigTest03(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -698,7 +698,7 @@ static int DetectHttpMethodSigTest04(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -738,7 +738,7 @@ static int DetectHttpMethodSigTest04(void)
 
 static int DetectHttpMethodIsdataatParseTest(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 

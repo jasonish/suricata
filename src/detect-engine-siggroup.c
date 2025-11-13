@@ -687,7 +687,7 @@ static int SigGroupHeadTest02(void)
 {
     SigGroupHead *sh = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     Signature *s = DetectEngineAppendSig(de_ctx, "alert tcp any any -> any any "
@@ -747,7 +747,7 @@ static int SigGroupHeadTest03(void)
 {
     SigGroupHead *sh = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     Signature *s = DetectEngineAppendSig(de_ctx, "alert tcp any any -> any any "
@@ -814,7 +814,7 @@ static int SigGroupHeadTest04(void)
 {
     SigGroupHead *src_sh = NULL;
     SigGroupHead *dst_sh = NULL;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
 
     FAIL_IF_NULL(de_ctx);
 
@@ -884,7 +884,7 @@ static int SigGroupHeadTest04(void)
 static int SigGroupHeadTest05(void)
 {
     SigGroupHead *sh = NULL;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
 
     FAIL_IF_NULL(de_ctx);
 
@@ -946,7 +946,7 @@ static int SigGroupHeadTest05(void)
  */
 static int SigGroupHeadTest06(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     DetectEngineThreadCtx *det_ctx = NULL;
     ThreadVars th_v;
 

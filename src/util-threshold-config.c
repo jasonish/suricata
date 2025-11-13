@@ -1250,7 +1250,7 @@ static FILE *SCThresholdConfGenerateValidDummyFD11(void)
  */
 static int SCThresholdConfTest01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1283,7 +1283,7 @@ static int SCThresholdConfTest01(void)
  */
 static int SCThresholdConfTest02(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1316,7 +1316,7 @@ static int SCThresholdConfTest02(void)
  */
 static int SCThresholdConfTest03(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1349,7 +1349,7 @@ static int SCThresholdConfTest03(void)
  */
 static int SCThresholdConfTest04(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1378,7 +1378,7 @@ static int SCThresholdConfTest04(void)
  */
 static int SCThresholdConfTest05(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1434,7 +1434,7 @@ static int SCThresholdConfTest05(void)
  */
 static int SCThresholdConfTest06(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1467,7 +1467,7 @@ static int SCThresholdConfTest06(void)
  */
 static int SCThresholdConfTest07(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1501,7 +1501,7 @@ static int SCThresholdConfTest07(void)
  */
 static int SCThresholdConfTest08(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1544,7 +1544,7 @@ static int SCThresholdConfTest09(void)
 
     DetectEngineThreadCtx *det_ctx = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1634,7 +1634,7 @@ static int SCThresholdConfTest10(void)
     ThreadVars th_v;
     memset(&th_v, 0, sizeof(th_v));
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     DetectEngineThreadCtx *det_ctx = NULL;
@@ -1718,7 +1718,7 @@ static int SCThresholdConfTest11(void)
     ThreadVars th_v;
     memset(&th_v, 0, sizeof(th_v));
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     DetectEngineThreadCtx *det_ctx = NULL;
@@ -1824,7 +1824,7 @@ static int SCThresholdConfTest12(void)
     ThreadVars th_v;
     memset(&th_v, 0, sizeof(th_v));
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     DetectEngineThreadCtx *det_ctx = NULL;
@@ -1922,7 +1922,7 @@ static int SCThresholdConfTest12(void)
  */
 static int SCThresholdConfTest13(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1965,7 +1965,7 @@ static int SCThresholdConfTest14(void)
     FAIL_IF_NULL(p2);
 
     DetectEngineThreadCtx *det_ctx = NULL;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -2027,7 +2027,7 @@ static int SCThresholdConfTest15(void)
     memset(&th_v, 0, sizeof(th_v));
 
     DetectEngineThreadCtx *det_ctx = NULL;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -2076,7 +2076,7 @@ static int SCThresholdConfTest16(void)
     memset(&th_v, 0, sizeof(th_v));
 
     DetectEngineThreadCtx *det_ctx = NULL;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -2124,7 +2124,7 @@ static int SCThresholdConfTest17(void)
     memset(&th_v, 0, sizeof(th_v));
 
     DetectEngineThreadCtx *det_ctx = NULL;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -2183,7 +2183,7 @@ static FILE *SCThresholdConfGenerateInvalidDummyFD12(void)
 static int SCThresholdConfTest18(void)
 {
     ThresholdInit();
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -2235,7 +2235,7 @@ static FILE *SCThresholdConfGenerateInvalidDummyFD13(void)
 static int SCThresholdConfTest19(void)
 {
     ThresholdInit();
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     Signature *s = DetectEngineAppendSig(de_ctx,
@@ -2285,7 +2285,7 @@ static FILE *SCThresholdConfGenerateValidDummyFD20(void)
 static int SCThresholdConfTest20(void)
 {
     ThresholdInit();
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     Signature *s = DetectEngineAppendSig(de_ctx,
@@ -2331,7 +2331,7 @@ static int SCThresholdConfTest20(void)
 static int SCThresholdConfTest21(void)
 {
     ThresholdInit();
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     Signature *s = DetectEngineAppendSig(de_ctx,
@@ -2411,7 +2411,7 @@ static int SCThresholdConfTest22(void)
 
     DetectEngineThreadCtx *det_ctx = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -2544,7 +2544,7 @@ static int SCThresholdConfTest23(void)
 
     DetectEngineThreadCtx *det_ctx = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 

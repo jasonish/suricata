@@ -181,7 +181,7 @@ static bool PrefilterTcpSeqIsPrefilterable(const Signature *s)
 static int DetectSeqSigTest01(void)
 {
     int result = 0;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 

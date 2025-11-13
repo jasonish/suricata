@@ -125,7 +125,7 @@ static int DetectSameipSigTest01(void)
     /* Second packet does not have same IPs */
     Packet *p2 = UTHBuildPacketSrcDst(buf, buflen, IPPROTO_TCP, "1.2.3.4", "4.3.2.1");
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 

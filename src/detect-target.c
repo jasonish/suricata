@@ -149,7 +149,7 @@ static int DetectTargetSetup(DetectEngineCtx *de_ctx, Signature *s, const char *
 
 static int DetectTargetSignatureTest01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     Signature *sig = DetectEngineAppendSig(de_ctx, "alert ip any any -> any any (target: dest_ip; sid:1; rev:1;)");

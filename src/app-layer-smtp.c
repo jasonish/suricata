@@ -3570,7 +3570,7 @@ static int SMTPParserTest12(void)
     StreamTcpInitConfig(true);
     SMTPTestInitConfig();
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -3704,7 +3704,7 @@ static int SMTPParserTest13(void)
     StreamTcpInitConfig(true);
     SMTPTestInitConfig();
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 

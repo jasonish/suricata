@@ -29,7 +29,7 @@
 
 static int DetectHTTP2frameTypeParseTest01 (void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     Signature *sig = DetectEngineAppendSig(de_ctx,
@@ -54,7 +54,7 @@ void DetectHTTP2frameTypeRegisterTests(void)
 
 static int DetectHTTP2errorCodeParseTest01 (void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     Signature *sig = DetectEngineAppendSig(de_ctx,
@@ -76,7 +76,7 @@ void DetectHTTP2errorCodeRegisterTests(void)
 
 static int DetectHTTP2priorityParseTest01 (void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     Signature *sig = DetectEngineAppendSig(de_ctx,
@@ -98,7 +98,7 @@ void DetectHTTP2priorityRegisterTests(void)
 
 static int DetectHTTP2windowParseTest01 (void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     Signature *sig = DetectEngineAppendSig(de_ctx,
@@ -121,7 +121,7 @@ void DetectHTTP2windowRegisterTests(void)
 
 static int DetectHTTP2settingsParseTest01 (void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     Signature *sig = DetectEngineAppendSig(de_ctx,
@@ -144,7 +144,7 @@ void DetectHTTP2settingsRegisterTests(void)
 
 static int DetectHTTP2sizeUpdateParseTest01 (void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     Signature *sig = DetectEngineAppendSig(de_ctx,

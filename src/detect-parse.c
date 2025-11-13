@@ -3636,7 +3636,7 @@ static int SigParseTest01 (void)
     int result = 1;
     Signature *sig = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -3656,7 +3656,7 @@ static int SigParseTest02 (void)
     Signature *sig = NULL;
     DetectPort *port = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
 
     if (de_ctx == NULL)
         goto end;
@@ -3698,7 +3698,7 @@ static int SigParseTest03 (void)
     int result = 1;
     Signature *sig = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -3719,7 +3719,7 @@ static int SigParseTest04 (void)
     int result = 1;
     Signature *sig = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -3739,7 +3739,7 @@ static int SigParseTest05 (void)
     int result = 0;
     Signature *sig = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -3762,7 +3762,7 @@ static int SigParseTest06 (void)
     int result = 0;
     Signature *sig = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -3788,7 +3788,7 @@ static int SigParseTest07(void)
 {
     int result = 0;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -3810,7 +3810,7 @@ static int SigParseTest08(void)
 {
     int result = 0;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -3833,7 +3833,7 @@ static int SigParseTest09(void)
 {
     int result = 1;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -3884,7 +3884,7 @@ static int SigParseTest10(void)
 {
     int result = 1;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -3916,7 +3916,7 @@ static int SigParseTest11(void)
 {
     int result = 0;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -3950,7 +3950,7 @@ static int SigParseTest12(void)
 {
     int result = 0;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -3976,7 +3976,7 @@ static int SigParseTest13(void)
 {
     int result = 0;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -4013,7 +4013,7 @@ static int SigParseTest14(void)
 {
     int result = 0;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -4050,7 +4050,7 @@ static int SigParseTest15(void)
 {
     int result = 0;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -4087,7 +4087,7 @@ static int SigParseTest16(void)
 {
     int result = 0;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -4124,7 +4124,7 @@ static int SigParseTest17(void)
 {
     int result = 0;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -4159,7 +4159,7 @@ static int SigParseTest18 (void)
 {
     int result = 0;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -4178,7 +4178,7 @@ static int SigParseTest19 (void)
 {
     int result = 0;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -4197,7 +4197,7 @@ static int SigParseTest20 (void)
 {
     int result = 0;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -4216,7 +4216,7 @@ static int SigParseTest21 (void)
 {
     int result = 0;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -4235,7 +4235,7 @@ static int SigParseTest22 (void)
 {
     int result = 0;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -4254,7 +4254,7 @@ end:
  */
 static int SigParseTest23(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     Signature *s = NULL;
@@ -4272,7 +4272,7 @@ static int SigParseBidirecTest06 (void)
     int result = 1;
     Signature *sig = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -4292,7 +4292,7 @@ static int SigParseBidirecTest07 (void)
     int result = 1;
     Signature *sig = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -4312,7 +4312,7 @@ static int SigParseBidirecTest08 (void)
     int result = 1;
     Signature *sig = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -4332,7 +4332,7 @@ static int SigParseBidirecTest09 (void)
     int result = 1;
     Signature *sig = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -4352,7 +4352,7 @@ static int SigParseBidirecTest10 (void)
     int result = 1;
     Signature *sig = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -4372,7 +4372,7 @@ static int SigParseBidirecTest11 (void)
     int result = 1;
     Signature *sig = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -4392,7 +4392,7 @@ static int SigParseBidirecTest12 (void)
     int result = 1;
     Signature *sig = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -4412,7 +4412,7 @@ static int SigParseBidirecTest13 (void)
     int result = 1;
     Signature *sig = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -4431,7 +4431,7 @@ static int SigParseBidirecTest14 (void)
     int result = 1;
     Signature *sig = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -4452,7 +4452,7 @@ static int SigTestBidirec01 (void)
     Signature *sig = NULL;
     int result = 0;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -4484,7 +4484,7 @@ static int SigTestBidirec02 (void)
     Signature *sig = NULL;
     Signature *copy = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -4529,7 +4529,7 @@ static int SigTestBidirec03 (void)
     Signature *sig = NULL;
     Packet *p = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -4644,7 +4644,7 @@ static int SigTestBidirec04 (void)
     Signature *sig = NULL;
     Packet *p = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -4786,7 +4786,7 @@ end:
  */
 static int SigParseTestNegation01 (void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     Signature *s = DetectEngineAppendSig(de_ctx, "alert tcp !any any -> any any (sid:1;)");
@@ -4804,7 +4804,7 @@ static int SigParseTestNegation02 (void)
     DetectEngineCtx *de_ctx;
     Signature *s=NULL;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
     de_ctx->flags |= DE_QUIET;
@@ -4830,7 +4830,7 @@ static int SigParseTestNegation03 (void)
     DetectEngineCtx *de_ctx;
     Signature *s=NULL;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
     de_ctx->flags |= DE_QUIET;
@@ -4856,7 +4856,7 @@ static int SigParseTestNegation04 (void)
     DetectEngineCtx *de_ctx;
     Signature *s=NULL;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
     de_ctx->flags |= DE_QUIET;
@@ -4882,7 +4882,7 @@ static int SigParseTestNegation05 (void)
     DetectEngineCtx *de_ctx;
     Signature *s=NULL;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
     de_ctx->flags |= DE_QUIET;
@@ -4908,7 +4908,7 @@ static int SigParseTestNegation06 (void)
     DetectEngineCtx *de_ctx;
     Signature *s=NULL;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
     de_ctx->flags |= DE_QUIET;
@@ -4931,7 +4931,7 @@ end:
  */
 static int SigParseTestNegation07 (void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     Signature *s = DetectEngineAppendSig(
@@ -4950,7 +4950,7 @@ static int SigParseTestNegation08 (void)
     DetectEngineCtx *de_ctx;
     Signature *s=NULL;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
     de_ctx->flags |= DE_QUIET;
@@ -4976,7 +4976,7 @@ static int SigParseTestMpm01 (void)
     int result = 0;
     Signature *sig = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -5007,7 +5007,7 @@ static int SigParseTestMpm02 (void)
     int result = 0;
     Signature *sig = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
 
@@ -5039,7 +5039,7 @@ static int SigParseTestAppLayerTLS01(void)
     DetectEngineCtx *de_ctx;
     Signature *s=NULL;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
     de_ctx->flags |= DE_QUIET;
@@ -5074,7 +5074,7 @@ static int SigParseTestAppLayerTLS02(void)
     DetectEngineCtx *de_ctx;
     Signature *s=NULL;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
     de_ctx->flags |= DE_QUIET;
@@ -5108,7 +5108,7 @@ static int SigParseTestAppLayerTLS03(void)
     DetectEngineCtx *de_ctx;
     Signature *s=NULL;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
     de_ctx->flags |= DE_QUIET;
@@ -5128,7 +5128,7 @@ end:
 
 static int SigParseTestUnbalancedQuotes01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     Signature *s = DetectEngineAppendSig(de_ctx,
@@ -5142,7 +5142,7 @@ static int SigParseTestUnbalancedQuotes01(void)
 
 static int SigParseTestContentGtDsize01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     Signature *s =
@@ -5156,7 +5156,7 @@ static int SigParseTestContentGtDsize01(void)
 
 static int SigParseTestContentGtDsize02(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     Signature *s =
@@ -5180,7 +5180,7 @@ static int CountSigsWithSid(const DetectEngineCtx *de_ctx, const uint32_t sid)
 
 static int SigParseBidirWithSameSrcAndDest01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -5206,7 +5206,7 @@ static int SigParseBidirWithSameSrcAndDest01(void)
 
 static int SigParseBidirWithSameSrcAndDest02(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -5251,7 +5251,7 @@ static int SigParseBidirWithSameSrcAndDest02(void)
 
 static int SigParseTestActionReject(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     Signature *sig = DetectEngineAppendSig(
@@ -5269,7 +5269,7 @@ static int SigParseTestActionReject(void)
 
 static int SigParseTestActionDrop(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     Signature *sig = DetectEngineAppendSig(

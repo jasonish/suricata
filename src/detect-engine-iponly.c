@@ -1446,7 +1446,7 @@ void IPOnlyAddSignature(DetectEngineCtx *de_ctx, DetectEngineIPOnlyCtx *io_ctx,
 
 static int IPOnlyTestSig01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF(de_ctx == NULL);
     de_ctx->flags |= DE_QUIET;
 
@@ -1466,7 +1466,7 @@ static int IPOnlyTestSig01(void)
 
 static int IPOnlyTestSig02 (void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF(de_ctx == NULL);
     de_ctx->flags |= DE_QUIET;
 
@@ -1490,7 +1490,7 @@ static int IPOnlyTestSig03 (void)
     DetectEngineCtx *de_ctx;
     Signature *s=NULL;
 
-    de_ctx = DetectEngineCtxInit();
+    de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL)
         goto end;
     de_ctx->flags |= DE_QUIET;
@@ -2046,7 +2046,7 @@ static int IPOnlyTestSig12(void)
 
 static int IPOnlyTestSig13(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF(de_ctx == NULL);
     de_ctx->flags |= DE_QUIET;
 
@@ -2063,7 +2063,7 @@ static int IPOnlyTestSig13(void)
 
 static int IPOnlyTestSig14(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF(de_ctx == NULL);
     de_ctx->flags |= DE_QUIET;
 
@@ -2232,7 +2232,7 @@ static int IPOnlyTestSig18(void)
 /** \test build IP-only tree */
 static int IPOnlyTestBug5066v1(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF(de_ctx == NULL);
     de_ctx->flags |= DE_QUIET;
 

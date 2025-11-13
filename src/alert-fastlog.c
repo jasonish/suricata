@@ -283,7 +283,7 @@ static int AlertFastLogTest01(void)
     memset(&th_v, 0, sizeof(th_v));
     p = UTHBuildPacket(buf, buflen, IPPROTO_TCP);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF(de_ctx == NULL);
     de_ctx->flags |= DE_QUIET;
 
@@ -322,7 +322,7 @@ static int AlertFastLogTest02(void)
 
     p = UTHBuildPacket(buf, buflen, IPPROTO_TCP);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF(de_ctx == NULL);
     de_ctx->flags |= DE_QUIET;
 

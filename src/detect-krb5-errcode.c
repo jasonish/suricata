@@ -223,7 +223,7 @@ static int DetectKrb5ErrCodeParseTest01 (void)
 
 static int DetectKrb5ErrCodeSignatureTest01 (void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     Signature *sig = DetectEngineAppendSig(de_ctx, "alert krb5 any any -> any any (krb5_err_code:10; sid:1; rev:1;)");

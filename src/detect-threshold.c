@@ -577,7 +577,7 @@ static int DetectThresholdTestSig1(void)
 
     p = UTHBuildPacketReal((uint8_t *)"A", 1, IPPROTO_TCP, "1.1.1.1", "2.2.2.2", 1024, 80);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL) {
         goto end;
     }
@@ -678,7 +678,7 @@ static int DetectThresholdTestSig2(void)
 
     p = UTHBuildPacketReal((uint8_t *)"A", 1, IPPROTO_TCP, "1.1.1.1", "2.2.2.2", 1024, 80);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL) {
         goto end;
     }
@@ -749,7 +749,7 @@ static int DetectThresholdTestSig3(void)
     ThresholdInit();
     Packet *p = UTHBuildPacketReal((uint8_t *)"A", 1, IPPROTO_TCP, "1.1.1.1", "2.2.2.2", 1024, 80);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -813,7 +813,7 @@ static int DetectThresholdTestSig4(void)
 
     p = UTHBuildPacketReal((uint8_t *)"A", 1, IPPROTO_TCP, "1.1.1.1", "2.2.2.2", 1024, 80);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL) {
         goto end;
     }
@@ -886,7 +886,7 @@ static int DetectThresholdTestSig5(void)
     memset(&th_v, 0, sizeof(th_v));
     p = UTHBuildPacketReal((uint8_t *)"A", 1, IPPROTO_TCP, "1.1.1.1", "2.2.2.2", 1024, 80);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL) {
         goto end;
     }
@@ -967,7 +967,7 @@ static int DetectThresholdTestSig6Ticks(void)
     memset(&th_v, 0, sizeof(th_v));
     p = UTHBuildPacketReal((uint8_t *)"A", 1, IPPROTO_TCP, "1.1.1.1", "2.2.2.2", 1024, 80);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL) {
         goto end;
     }
@@ -1057,7 +1057,7 @@ static int DetectThresholdTestSig7(void)
 
     p = UTHBuildPacketReal((uint8_t *)"A", 1, IPPROTO_TCP, "1.1.1.1", "2.2.2.2", 1024, 80);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL) {
         goto end;
     }
@@ -1146,7 +1146,7 @@ static int DetectThresholdTestSig8(void)
 
     p = UTHBuildPacketReal((uint8_t *)"A", 1, IPPROTO_TCP, "1.1.1.1", "2.2.2.2", 1024, 80);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL) {
         goto end;
     }
@@ -1235,7 +1235,7 @@ static int DetectThresholdTestSig9(void)
 
     p = UTHBuildPacketReal((uint8_t *)"A", 1, IPPROTO_TCP, "1.1.1.1", "2.2.2.2", 1024, 80);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL) {
         goto end;
     }
@@ -1324,7 +1324,7 @@ static int DetectThresholdTestSig10(void)
 
     p = UTHBuildPacketReal((uint8_t *)"A", 1, IPPROTO_TCP, "1.1.1.1", "2.2.2.2", 1024, 80);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL) {
         goto end;
     }
@@ -1413,7 +1413,7 @@ static int DetectThresholdTestSig11(void)
 
     p = UTHBuildPacketReal((uint8_t *)"A", 1, IPPROTO_TCP, "1.1.1.1", "2.2.2.2", 1024, 80);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL) {
         goto end;
     }
@@ -1502,7 +1502,7 @@ static int DetectThresholdTestSig12(void)
 
     p = UTHBuildPacketReal((uint8_t *)"A", 1, IPPROTO_TCP, "1.1.1.1", "2.2.2.2", 1024, 80);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     if (de_ctx == NULL) {
         goto end;
     }
@@ -1596,7 +1596,7 @@ static int DetectThresholdTestSig13(void)
     p = UTHBuildPacketReal((uint8_t *)"A", 1, IPPROTO_TCP, "1.1.1.1", "2.2.2.2", 1024, 80);
     FAIL_IF_NULL(p);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
@@ -1670,7 +1670,7 @@ static int DetectThresholdTestSig14(void)
     FAIL_IF_NULL(p1);
     FAIL_IF_NULL(p2);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit();
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
