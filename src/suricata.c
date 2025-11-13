@@ -2495,7 +2495,7 @@ static void SetupDelayedDetect(SCInstance *suri)
 
 static int LoadSignatures(DetectEngineCtx *de_ctx)
 {
-    SCInstance *suri = de_ctx->suri;
+    const SCInstance *suri = de_ctx->suri;
     de_ctx->firewall_rule_file_exclusive = suri->firewall_rule_file;
 
     if (SigLoadSignatures(de_ctx, suri->sig_file, suri->sig_file_exclusive) < 0) {
