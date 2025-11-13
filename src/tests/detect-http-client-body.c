@@ -135,7 +135,7 @@ static int RunTest (struct TestSteps *steps, const char *sig, const char *yaml)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -830,7 +830,7 @@ libhtp:\n\
  */
 static int DetectHttpClientBodyTest01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -853,7 +853,7 @@ static int DetectHttpClientBodyTest01(void)
  */
 static int DetectHttpClientBodyTest02(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -871,7 +871,7 @@ static int DetectHttpClientBodyTest02(void)
  */
 static int DetectHttpClientBodyTest03(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -897,7 +897,7 @@ static int DetectHttpClientBodyTest03(void)
  */
 static int DetectHttpClientBodyTest05(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -958,7 +958,7 @@ static int DetectHttpClientBodyTest06(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1066,7 +1066,7 @@ static int DetectHttpClientBodyTest07(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1188,7 +1188,7 @@ static int DetectHttpClientBodyTest08(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1313,7 +1313,7 @@ static int DetectHttpClientBodyTest09(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1438,7 +1438,7 @@ static int DetectHttpClientBodyTest10(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1554,7 +1554,7 @@ static int DetectHttpClientBodyTest11(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1653,7 +1653,7 @@ static int DetectHttpClientBodyTest12(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1752,7 +1752,7 @@ static int DetectHttpClientBodyTest13(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1853,7 +1853,7 @@ static int DetectHttpClientBodyTest14(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -2051,7 +2051,7 @@ static int DetectHttpClientBodyTest15(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -2240,7 +2240,7 @@ end:
 
 static int DetectHttpClientBodyTest22(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     Signature *s = DetectEngineAppendSig(de_ctx,
@@ -2282,7 +2282,7 @@ static int DetectHttpClientBodyTest22(void)
 
 static int DetectHttpClientBodyTest23(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -2322,7 +2322,7 @@ static int DetectHttpClientBodyTest23(void)
 
 static int DetectHttpClientBodyTest24(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     Signature *s = DetectEngineAppendSig(de_ctx, "alert icmp any any -> any any "
@@ -2363,7 +2363,7 @@ static int DetectHttpClientBodyTest24(void)
 
 static int DetectHttpClientBodyTest25(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     Signature *s =
@@ -2407,7 +2407,7 @@ static int DetectHttpClientBodyTest26(void)
     DetectEngineCtx *de_ctx = NULL;
     int result = 0;
 
-    if ((de_ctx = DetectEngineCtxInit(NULL)) == NULL)
+    if ((de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance())) == NULL)
         goto end;
 
     de_ctx->flags |= DE_QUIET;
@@ -2471,7 +2471,7 @@ static int DetectHttpClientBodyTest27(void)
     DetectEngineCtx *de_ctx = NULL;
     int result = 0;
 
-    if ((de_ctx = DetectEngineCtxInit(NULL)) == NULL)
+    if ((de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance())) == NULL)
         goto end;
 
     de_ctx->flags |= DE_QUIET;
@@ -2494,7 +2494,7 @@ static int DetectHttpClientBodyTest28(void)
     DetectEngineCtx *de_ctx = NULL;
     int result = 0;
 
-    if ((de_ctx = DetectEngineCtxInit(NULL)) == NULL)
+    if ((de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance())) == NULL)
         goto end;
 
     de_ctx->flags |= DE_QUIET;
@@ -2554,7 +2554,7 @@ static int DetectHttpClientBodyTest29(void)
     DetectEngineCtx *de_ctx = NULL;
     int result = 0;
 
-    if ((de_ctx = DetectEngineCtxInit(NULL)) == NULL)
+    if ((de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance())) == NULL)
         goto end;
 
     de_ctx->flags |= DE_QUIET;
@@ -2599,7 +2599,7 @@ static int DetectHttpClientBodyTest30(void)
     DetectEngineCtx *de_ctx = NULL;
     int result = 0;
 
-    if ((de_ctx = DetectEngineCtxInit(NULL)) == NULL)
+    if ((de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance())) == NULL)
         goto end;
 
     de_ctx->flags |= DE_QUIET;
@@ -2644,7 +2644,7 @@ static int DetectHttpClientBodyTest31(void)
     DetectEngineCtx *de_ctx = NULL;
     int result = 0;
 
-    if ((de_ctx = DetectEngineCtxInit(NULL)) == NULL)
+    if ((de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance())) == NULL)
         goto end;
 
     de_ctx->flags |= DE_QUIET;
@@ -2665,7 +2665,7 @@ static int DetectHttpClientBodyTest32(void)
     DetectEngineCtx *de_ctx = NULL;
     int result = 0;
 
-    if ((de_ctx = DetectEngineCtxInit(NULL)) == NULL)
+    if ((de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance())) == NULL)
         goto end;
 
     de_ctx->flags |= DE_QUIET;
@@ -2686,7 +2686,7 @@ static int DetectHttpClientBodyTest33(void)
     DetectEngineCtx *de_ctx = NULL;
     int result = 0;
 
-    if ((de_ctx = DetectEngineCtxInit(NULL)) == NULL)
+    if ((de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance())) == NULL)
         goto end;
 
     de_ctx->flags |= DE_QUIET;
@@ -2706,7 +2706,7 @@ static int DetectHttpClientBodyTest34(void)
     DetectEngineCtx *de_ctx = NULL;
     int result = 0;
 
-    if ((de_ctx = DetectEngineCtxInit(NULL)) == NULL)
+    if ((de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance())) == NULL)
         goto end;
 
     de_ctx->flags |= DE_QUIET;
@@ -2759,7 +2759,7 @@ static int DetectHttpClientBodyTest35(void)
     DetectEngineCtx *de_ctx = NULL;
     int result = 0;
 
-    if ((de_ctx = DetectEngineCtxInit(NULL)) == NULL)
+    if ((de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance())) == NULL)
         goto end;
 
     de_ctx->flags |= DE_QUIET;
@@ -2811,7 +2811,7 @@ static int DetectHttpClientBodyTest36(void)
     DetectEngineCtx *de_ctx = NULL;
     int result = 0;
 
-    if ((de_ctx = DetectEngineCtxInit(NULL)) == NULL)
+    if ((de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance())) == NULL)
         goto end;
 
     de_ctx->flags |= DE_QUIET;
@@ -2861,7 +2861,7 @@ static int DetectHttpClientBodyTest36(void)
 
 static int DetectHttpClientBodyIsdataatParseTest(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 

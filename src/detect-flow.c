@@ -1008,7 +1008,7 @@ static int DetectFlowSigTest01(void)
     const char *sig1 = "alert tcp any any -> any any (msg:\"dummy\"; "
         "content:\"nova\"; flow:no_stream; sid:1;)";
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 

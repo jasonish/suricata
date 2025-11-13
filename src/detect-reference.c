@@ -254,7 +254,7 @@ static int DetectReferenceSetup(DetectEngineCtx *de_ctx, Signature *s,
  */
 static int DetectReferenceParseTest01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -284,7 +284,7 @@ static int DetectReferenceParseTest01(void)
  */
 static int DetectReferenceParseTest02(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -321,7 +321,7 @@ static int DetectReferenceParseTest02(void)
  */
 static int DetectReferenceParseTest03(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 

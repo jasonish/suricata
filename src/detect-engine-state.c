@@ -486,7 +486,7 @@ static int DeStateSigTest01(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -572,7 +572,7 @@ static int DeStateSigTest02(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
@@ -669,7 +669,7 @@ static int DeStateSigTest03(void)
     memset(&ssn, 0, sizeof(ssn));
 
     DetectEngineThreadCtx *det_ctx = NULL;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
@@ -753,7 +753,7 @@ static int DeStateSigTest04(void)
     memset(&ssn, 0, sizeof(ssn));
 
     DetectEngineThreadCtx *det_ctx = NULL;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -834,7 +834,7 @@ static int DeStateSigTest05(void)
     memset(&ssn, 0, sizeof(ssn));
 
     DetectEngineThreadCtx *det_ctx = NULL;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -918,7 +918,7 @@ static int DeStateSigTest06(void)
     memset(&ssn, 0, sizeof(ssn));
 
     DetectEngineThreadCtx *det_ctx = NULL;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1003,7 +1003,7 @@ static int DeStateSigTest07(void)
     memset(&ssn, 0, sizeof(ssn));
 
     DetectEngineThreadCtx *det_ctx = NULL;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1103,7 +1103,7 @@ static int DeStateSigTest08(void)
     memset(&ssn, 0, sizeof(ssn));
 
     DetectEngineThreadCtx *det_ctx = NULL;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1233,7 +1233,7 @@ static int DeStateSigTest09(void)
     memset(&ssn, 0, sizeof(ssn));
 
     DetectEngineThreadCtx *det_ctx = NULL;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1361,7 +1361,7 @@ static int DeStateSigTest10(void)
     memset(&ssn, 0, sizeof(ssn));
 
     DetectEngineThreadCtx *det_ctx = NULL;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 

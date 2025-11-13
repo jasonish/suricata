@@ -29,7 +29,7 @@
 #include "util-unittest-helper.h"
 
 #define TEST_INIT                                                                                  \
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);                                           \
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());                        \
     FAIL_IF(de_ctx == NULL);                                                                       \
                                                                                                    \
     Address a;                                                                                     \

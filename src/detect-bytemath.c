@@ -829,7 +829,7 @@ static int DetectByteMathPacket01(void)
     p->flowflags |= FLOW_PKT_TOSERVER;
     f.alproto = ALPROTO_DNS;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->mpm_matcher = mpm_default_matcher;
@@ -928,7 +928,7 @@ static int DetectByteMathPacket02(void)
     p->flowflags |= FLOW_PKT_TOSERVER;
     f.alproto = ALPROTO_DNS;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->mpm_matcher = mpm_default_matcher;
@@ -1010,7 +1010,7 @@ static int DetectByteMathContext01(void)
     DetectContentData *cd = NULL;
     DetectByteMathData *bmd = NULL;
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF(de_ctx == NULL);
 
     de_ctx->flags |= DE_QUIET;

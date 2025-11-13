@@ -129,7 +129,7 @@ static int DetectHttpHeaderTest06(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -237,7 +237,7 @@ static int DetectHttpHeaderTest07(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -333,7 +333,7 @@ static int DetectHttpHeaderTest08(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -457,7 +457,7 @@ static int DetectHttpHeaderTest09(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -582,7 +582,7 @@ static int DetectHttpHeaderTest10(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -698,7 +698,7 @@ static int DetectHttpHeaderTest11(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -797,7 +797,7 @@ static int DetectHttpHeaderTest12(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -897,7 +897,7 @@ static int DetectHttpHeaderTest13(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -990,7 +990,7 @@ static int DetectHttpHeaderTest28(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1075,7 +1075,7 @@ static int DetectHttpHeaderTest29(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1160,7 +1160,7 @@ static int DetectHttpHeaderTest30(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1210,7 +1210,7 @@ static int DetectHttpHeaderTest30(void)
 
 static int DetectHttpHeaderIsdataatParseTest(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1272,7 +1272,7 @@ static int DetectEngineHttpHeaderTest01(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1366,7 +1366,7 @@ static int DetectEngineHttpHeaderTest02(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1460,7 +1460,7 @@ static int DetectEngineHttpHeaderTest03(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1554,7 +1554,7 @@ static int DetectEngineHttpHeaderTest04(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1648,7 +1648,7 @@ static int DetectEngineHttpHeaderTest05(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1742,7 +1742,7 @@ static int DetectEngineHttpHeaderTest06(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1836,7 +1836,7 @@ static int DetectEngineHttpHeaderTest07(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1930,7 +1930,7 @@ static int DetectEngineHttpHeaderTest08(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -2024,7 +2024,7 @@ static int DetectEngineHttpHeaderTest09(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -2118,7 +2118,7 @@ static int DetectEngineHttpHeaderTest10(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -2212,7 +2212,7 @@ static int DetectEngineHttpHeaderTest11(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -2306,7 +2306,7 @@ static int DetectEngineHttpHeaderTest12(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -2400,7 +2400,7 @@ static int DetectEngineHttpHeaderTest13(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -2494,7 +2494,7 @@ static int DetectEngineHttpHeaderTest14(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -2588,7 +2588,7 @@ static int DetectEngineHttpHeaderTest15(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -2682,7 +2682,7 @@ static int DetectEngineHttpHeaderTest16(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -2776,7 +2776,7 @@ static int DetectEngineHttpHeaderTest17(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -2877,7 +2877,7 @@ static int DetectEngineHttpHeaderTest20(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -2997,7 +2997,7 @@ static int DetectEngineHttpHeaderTest21(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -3117,7 +3117,7 @@ static int DetectEngineHttpHeaderTest22(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -3237,7 +3237,7 @@ static int DetectEngineHttpHeaderTest23(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -3357,7 +3357,7 @@ static int DetectEngineHttpHeaderTest24(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -3477,7 +3477,7 @@ static int DetectEngineHttpHeaderTest25(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -3597,7 +3597,7 @@ static int DetectEngineHttpHeaderTest26(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -3717,7 +3717,7 @@ static int DetectEngineHttpHeaderTest27(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -3842,7 +3842,7 @@ static int DetectEngineHttpHeaderTest28(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -3963,7 +3963,7 @@ static int DetectEngineHttpHeaderTest29(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -4042,7 +4042,7 @@ end:
 static int DetectEngineHttpHeaderTest30(void)
 {
     int result = 0;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
 
     if (de_ctx == NULL) {
         goto end;
@@ -4118,7 +4118,7 @@ static int DetectEngineHttpHeaderTest30(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -4233,7 +4233,7 @@ static int DetectEngineHttpHeaderTest31(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -4337,7 +4337,7 @@ static int DetectEngineHttpHeaderTest32(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -4447,7 +4447,7 @@ static int DetectEngineHttpHeaderTest33(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF(de_ctx == NULL);
     de_ctx->flags |= DE_QUIET;
 
@@ -4555,7 +4555,7 @@ static int DetectEngineHttpHeaderTest34(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF(de_ctx == NULL);
     de_ctx->flags |= DE_QUIET;
 
@@ -4670,7 +4670,7 @@ static int DetectEngineHttpHeaderTest35(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF(de_ctx == NULL);
     de_ctx->flags |= DE_QUIET;
 

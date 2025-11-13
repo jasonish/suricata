@@ -208,7 +208,7 @@ static int DetectClasstypeSetup(DetectEngineCtx *de_ctx, Signature *s, const cha
  */
 static int DetectClasstypeTest01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     SCClassConfDeInitContext(de_ctx);
@@ -233,7 +233,7 @@ static int DetectClasstypeTest01(void)
  */
 static int DetectClasstypeTest02(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     SCClassConfDeInitContext(de_ctx);
@@ -279,7 +279,7 @@ static int DetectClasstypeTest02(void)
  */
 static int DetectClasstypeTest03(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     SCClassConfDeInitContext(de_ctx);

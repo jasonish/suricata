@@ -603,7 +603,7 @@ static int DetectDsizeIcmpv6Test01(void)
 
     DecodeIPV6(&tv, &dtv, p, raw_icmpv6, sizeof(raw_icmpv6));
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;

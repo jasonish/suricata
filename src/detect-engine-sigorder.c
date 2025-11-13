@@ -24,6 +24,7 @@
  */
 
 #include "suricata-common.h"
+#include "suricata.h"
 #include "detect.h"
 #include "detect-xbits.h"
 #include "detect-flowbits.h"
@@ -967,7 +968,7 @@ static int SCSigOrderingTest01(void)
     SCSigOrderFunc *temp = NULL;
     int i = 0;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     SCSigRegisterSignatureOrderingFunc(de_ctx, SCSigOrderByActionCompare);
@@ -999,7 +1000,7 @@ static int SCSigOrderingTest02(void)
 {
     Signature *sig = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF(de_ctx == NULL);
 
     sig = DetectEngineAppendSig(de_ctx,
@@ -1118,7 +1119,7 @@ static int SCSigOrderingTest03(void)
 {
     Signature *sig = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     sig = DetectEngineAppendSig(de_ctx,
@@ -1256,7 +1257,7 @@ static int SCSigOrderingTest04(void)
 
     Signature *sig = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF(de_ctx == NULL);
 
     sig = DetectEngineAppendSig(de_ctx,
@@ -1362,7 +1363,7 @@ static int SCSigOrderingTest05(void)
 {
     Signature *sig = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF(de_ctx == NULL);
 
     sig = DetectEngineAppendSig(de_ctx,
@@ -1457,7 +1458,7 @@ static int SCSigOrderingTest06(void)
 
     Signature *sig = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     sig = DetectEngineAppendSig(de_ctx,
@@ -1543,7 +1544,7 @@ static int SCSigOrderingTest07(void)
 
     Signature *sig = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF(de_ctx == NULL);
 
     sig = DetectEngineAppendSig(de_ctx,
@@ -1643,7 +1644,7 @@ static int SCSigOrderingTest08(void)
     action_order_sigs[2] = ACTION_ALERT;
     action_order_sigs[3] = ACTION_PASS;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF(de_ctx == NULL);
 
     sig = DetectEngineAppendSig(de_ctx,
@@ -1749,7 +1750,7 @@ static int SCSigOrderingTest09(void)
     action_order_sigs[2] = ACTION_ALERT;
     action_order_sigs[3] = ACTION_PASS;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF(de_ctx == NULL);
 
     sig = DetectEngineAppendSig(de_ctx,
@@ -1853,7 +1854,7 @@ static int SCSigOrderingTest10(void)
     action_order_sigs[2] = ACTION_DROP;
     action_order_sigs[3] = ACTION_REJECT;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF(de_ctx == NULL);
 
     sig = DetectEngineAppendSig(de_ctx,
@@ -1946,7 +1947,7 @@ static int SCSigOrderingTest11(void)
 
     Signature *sig = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF(de_ctx == NULL);
 
     sig = DetectEngineAppendSig(de_ctx,
@@ -2005,7 +2006,7 @@ static int SCSigOrderingTest12(void)
     f.alproto = ALPROTO_UNKNOWN;
     f.proto = IPPROTO_TCP;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF(de_ctx == NULL);
     de_ctx->flags |= DE_QUIET;
 
@@ -2049,7 +2050,7 @@ static int SCSigOrderingTest13(void)
 
     Signature *sig = NULL;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF(de_ctx == NULL);
 
     sig = DetectEngineAppendSig(de_ctx, "alert tcp any any -> any any (flowbits:isset,bit1; flowbits:set,bit2; flowbits:set,bit3; sid:6;)");

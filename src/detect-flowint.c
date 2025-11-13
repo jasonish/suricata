@@ -472,7 +472,7 @@ static int DetectFlowintTestParseVal01(void)
     int result = 0;
     DetectFlowintData *sfd = NULL;
     DetectEngineCtx *de_ctx;
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         return 0;
     de_ctx->flags |= DE_QUIET;
@@ -499,7 +499,7 @@ static int DetectFlowintTestParseVar01(void)
     int result = 0;
     DetectFlowintData *sfd = NULL;
     DetectEngineCtx *de_ctx;
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         return 0;
     de_ctx->flags |= DE_QUIET;
@@ -529,7 +529,7 @@ static int DetectFlowintTestParseVal02(void)
     int result = 0;
     DetectFlowintData *sfd = NULL;
     DetectEngineCtx *de_ctx;
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         return 0;
     de_ctx->flags |= DE_QUIET;
@@ -556,7 +556,7 @@ static int DetectFlowintTestParseVar02(void)
     int result = 0;
     DetectFlowintData *sfd = NULL;
     DetectEngineCtx *de_ctx;
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         return 0;
     de_ctx->flags |= DE_QUIET;
@@ -586,7 +586,7 @@ static int DetectFlowintTestParseVal03(void)
     int result = 0;
     DetectFlowintData *sfd = NULL;
     DetectEngineCtx *de_ctx;
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         return 0;
     de_ctx->flags |= DE_QUIET;
@@ -613,7 +613,7 @@ static int DetectFlowintTestParseVar03(void)
     int result = 0;
     DetectFlowintData *sfd = NULL;
     DetectEngineCtx *de_ctx;
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         return 0;
     de_ctx->flags |= DE_QUIET;
@@ -644,7 +644,7 @@ static int DetectFlowintTestParseVal04(void)
     int result = 0;
     DetectFlowintData *sfd = NULL;
     DetectEngineCtx *de_ctx;
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         return 0;
     de_ctx->flags |= DE_QUIET;
@@ -671,7 +671,7 @@ static int DetectFlowintTestParseVar04(void)
     int result = 0;
     DetectFlowintData *sfd = NULL;
     DetectEngineCtx *de_ctx;
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         return 0;
     de_ctx->flags |= DE_QUIET;
@@ -701,7 +701,7 @@ static int DetectFlowintTestParseVal05(void)
     int result = 0;
     DetectFlowintData *sfd = NULL;
     DetectEngineCtx *de_ctx;
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         return 0;
     de_ctx->flags |= DE_QUIET;
@@ -728,7 +728,7 @@ static int DetectFlowintTestParseVar05(void)
     int result = 0;
     DetectFlowintData *sfd = NULL;
     DetectEngineCtx *de_ctx;
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         return 0;
     de_ctx->flags |= DE_QUIET;
@@ -758,7 +758,7 @@ static int DetectFlowintTestParseVal06(void)
     int result = 0;
     DetectFlowintData *sfd = NULL;
     DetectEngineCtx *de_ctx;
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         return 0;
     de_ctx->flags |= DE_QUIET;
@@ -785,7 +785,7 @@ static int DetectFlowintTestParseVar06(void)
     int result = 0;
     DetectFlowintData *sfd = NULL;
     DetectEngineCtx *de_ctx;
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         return 0;
     de_ctx->flags |= DE_QUIET;
@@ -815,7 +815,7 @@ static int DetectFlowintTestParseVal07(void)
     int result = 0;
     DetectFlowintData *sfd = NULL;
     DetectEngineCtx *de_ctx;
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         return 0;
     de_ctx->flags |= DE_QUIET;
@@ -842,7 +842,7 @@ static int DetectFlowintTestParseVar07(void)
     int result = 0;
     DetectFlowintData *sfd = NULL;
     DetectEngineCtx *de_ctx;
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         return 0;
     de_ctx->flags |= DE_QUIET;
@@ -872,7 +872,7 @@ static int DetectFlowintTestParseVal08(void)
     int result = 0;
     DetectFlowintData *sfd = NULL;
     DetectEngineCtx *de_ctx;
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         return 0;
     de_ctx->flags |= DE_QUIET;
@@ -899,7 +899,7 @@ static int DetectFlowintTestParseVar08(void)
     int result = 0;
     DetectFlowintData *sfd = NULL;
     DetectEngineCtx *de_ctx;
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         return 0;
     de_ctx->flags |= DE_QUIET;
@@ -929,7 +929,7 @@ static int DetectFlowintTestParseVal09(void)
     int result = 0;
     DetectFlowintData *sfd = NULL;
     DetectEngineCtx *de_ctx;
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         return 0;
     de_ctx->flags |= DE_QUIET;
@@ -956,7 +956,7 @@ static int DetectFlowintTestParseVar09(void)
     int result = 0;
     DetectFlowintData *sfd = NULL;
     DetectEngineCtx *de_ctx;
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         return 0;
     de_ctx->flags |= DE_QUIET;
@@ -986,7 +986,7 @@ static int DetectFlowintTestParseIsset10(void)
     int result = 1;
     DetectFlowintData *sfd = NULL;
     DetectEngineCtx *de_ctx;
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         return 0;
     de_ctx->flags |= DE_QUIET;
@@ -1028,7 +1028,7 @@ static int DetectFlowintTestParseInvalidSyntaxis01(void)
     int result = 1;
     DetectFlowintData *sfd = NULL;
     DetectEngineCtx *de_ctx;
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto error;
     de_ctx->flags |= DE_QUIET;
@@ -1116,7 +1116,7 @@ static int DetectFlowintTestPacket01Real(void)
     DetectEngineThreadCtx *det_ctx = NULL;
     memset(&th_v, 0, sizeof(th_v));
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF(de_ctx == NULL);
 
     de_ctx->flags |= DE_QUIET;
@@ -1189,7 +1189,7 @@ static int DetectFlowintTestPacket02Real(void)
     DetectEngineThreadCtx *det_ctx = NULL;
     memset(&th_v, 0, sizeof(th_v));
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF(de_ctx == NULL);
 
     de_ctx->flags |= DE_QUIET;
@@ -1265,7 +1265,7 @@ static int DetectFlowintTestPacket03Real(void)
     DetectEngineThreadCtx *det_ctx = NULL;
     memset(&th_v, 0, sizeof(th_v));
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF(de_ctx == NULL);
 
     de_ctx->flags |= DE_QUIET;

@@ -96,7 +96,7 @@ static int DetectGidSetup (DetectEngineCtx *de_ctx, Signature *s, const char *ra
  */
 static int GidTestParse01 (void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     Signature *s =
@@ -114,7 +114,7 @@ static int GidTestParse01 (void)
  */
 static int GidTestParse02 (void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     FAIL_IF_NOT_NULL(
@@ -129,7 +129,7 @@ static int GidTestParse02 (void)
  */
 static int GidTestParse03 (void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     FAIL_IF_NOT_NULL(DetectEngineAppendSig(

@@ -131,7 +131,7 @@ static int DetectTtlParseTest07 (void)
 
 static int DetectTtlSetupTest01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -174,7 +174,7 @@ static int DetectTtlTestSig1(void)
     ip4h.ip_ttl = 15;
     UTHSetIPV4Hdr(p, &ip4h);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 

@@ -2142,7 +2142,7 @@ static int PortTestMatchDoubleNegation(void)
 // length < 16
 static int DetectPortParseDoTest(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     DetectPort *head = NULL;
     DetectPort *nhead = NULL;
@@ -2165,7 +2165,7 @@ static int DetectPortParseDoTest(void)
 
 static int DetectPortParseDoTest2(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     DetectPort *head = NULL;
     DetectPort *nhead = NULL;

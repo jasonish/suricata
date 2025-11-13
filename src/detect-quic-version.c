@@ -124,7 +124,7 @@ static int DetectQuicVersionSetup(DetectEngineCtx *de_ctx, Signature *s, const c
  */
 static int QuicVersionTestParse01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     Signature *sig = DetectEngineAppendSig(
@@ -148,7 +148,7 @@ static int QuicVersionTestParse01(void)
  */
 static int QuicVersionTestParse03(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     Signature *sig = DetectEngineAppendSig(

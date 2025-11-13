@@ -807,7 +807,7 @@ static void DetectICMPV6CsumFree(DetectEngineCtx *de_ctx, void *ptr)
 #define mystr(s) #s
 #define TEST1(kwstr)                                                                               \
     {                                                                                              \
-        DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);                                       \
+        DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());                    \
         FAIL_IF_NULL(de_ctx);                                                                      \
         de_ctx->flags = DE_QUIET;                                                                  \
                                                                                                    \
@@ -844,7 +844,7 @@ static int DetectCsumValidArgsTestParse01(void)
 
 #define TEST2(kwstr)                                                                               \
     {                                                                                              \
-        DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);                                       \
+        DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());                    \
         FAIL_IF_NULL(de_ctx);                                                                      \
         Signature *s = DetectEngineAppendSig(                                                      \
                 de_ctx, "alert ip any any -> any any (" mystr(kwstr) "-csum:xxxx; sid:1;)");       \
@@ -879,7 +879,7 @@ static int DetectCsumInvalidArgsTestParse02(void)
 
 #define TEST3(kwstr, kwtype)                                                                       \
     {                                                                                              \
-        DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);                                       \
+        DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());                    \
         FAIL_IF_NULL(de_ctx);                                                                      \
         Signature *s = DetectEngineAppendSig(                                                      \
                 de_ctx, "alert ip any any -> any any (" mystr(kwstr) "-csum:valid; sid:1;)");      \
@@ -948,7 +948,7 @@ static int DetectCsumICMPV6Test01(void)
     StreamTcpInitConfig(true);
     FlowInitConfig(FLOW_QUIET);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->mpm_matcher = mpm_default_matcher;
     de_ctx->flags |= DE_QUIET;

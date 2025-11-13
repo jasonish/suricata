@@ -649,7 +649,7 @@ FILE *SCClassConfGenerateInvalidDummyClassConfigFD03(void)
  */
 static int SCClassConfTest01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     int result = 0;
 
     if (de_ctx == NULL)
@@ -676,7 +676,7 @@ static int SCClassConfTest01(void)
  */
 static int SCClassConfTest02(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     int result = 0;
 
     if (de_ctx == NULL)
@@ -702,7 +702,7 @@ static int SCClassConfTest02(void)
  */
 static int SCClassConfTest03(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
 
     FAIL_IF_NULL(de_ctx);
 
@@ -721,7 +721,7 @@ static int SCClassConfTest03(void)
  */
 static int SCClassConfTest04(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     SCClassConfDeInitContext(de_ctx);
@@ -749,7 +749,7 @@ static int SCClassConfTest04(void)
  */
 static int SCClassConfTest05(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     SCClassConfDeInitContext(de_ctx);

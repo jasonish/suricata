@@ -67,7 +67,7 @@ static int g_file_data_buffer_id = 0;
 
 static int DetectBase64DataSetupTest01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
@@ -91,7 +91,7 @@ static int DetectBase64DataSetupTest01(void)
  */
 static int DetectBase64DataSetupTest04(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;

@@ -316,7 +316,7 @@ static int DetectDceOpnumTestParse10(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -611,7 +611,7 @@ static int DetectDceOpnumTestParse11(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -889,7 +889,7 @@ static int DetectDceOpnumTestParse12(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1176,7 +1176,7 @@ static int DetectDceOpnumTestParse13(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 

@@ -1065,7 +1065,7 @@ static int DetectByteExtractTest34(void)
     DetectContentData *cd = NULL;
     SCDetectByteExtractData *bed = NULL;
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1138,7 +1138,7 @@ static int DetectByteExtractTest35(void)
     DetectPcreData *pd = NULL;
     SCDetectByteExtractData *bed = NULL;
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1214,7 +1214,7 @@ static int DetectByteExtractTest35(void)
 
 static int DetectByteExtractTest36(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1267,7 +1267,7 @@ static int DetectByteExtractTest37(void)
     DetectContentData *ud = NULL;
     SCDetectByteExtractData *bed = NULL;
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1364,7 +1364,7 @@ static int DetectByteExtractTest38(void)
     DetectContentData *ud = NULL;
     SCDetectByteExtractData *bed = NULL;
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1460,7 +1460,7 @@ static int DetectByteExtractTest39(void)
     DetectContentData *ud = NULL;
     SCDetectByteExtractData *bed = NULL;
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1557,7 +1557,7 @@ static int DetectByteExtractTest40(void)
     DetectContentData *ud = NULL;
     SCDetectByteExtractData *bed = NULL;
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1652,7 +1652,7 @@ static int DetectByteExtractTest41(void)
     DetectContentData *cd = NULL;
     SCDetectByteExtractData *bed = NULL;
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1746,7 +1746,7 @@ static int DetectByteExtractTest42(void)
     DetectContentData *ud = NULL;
     SCDetectByteExtractData *bed = NULL;
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1884,7 +1884,7 @@ static int DetectByteExtractTest43(void)
     DetectContentData *cd = NULL;
     SCDetectByteExtractData *bed = NULL;
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1978,7 +1978,7 @@ static int DetectByteExtractTest44(void)
     SCDetectByteExtractData *bed1 = NULL;
     SCDetectByteExtractData *bed2 = NULL;
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -2095,7 +2095,7 @@ static int DetectByteExtractTest45(void)
     DetectContentData *cd = NULL;
     SCDetectByteExtractData *bed = NULL;
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -2189,7 +2189,7 @@ static int DetectByteExtractTest46(void)
     SCDetectByteExtractData *bed1 = NULL;
     SCDetectByteExtractData *bed2 = NULL;
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -2306,7 +2306,7 @@ static int DetectByteExtractTest47(void)
     DetectContentData *cd = NULL;
     SCDetectByteExtractData *bed = NULL;
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -2401,7 +2401,7 @@ static int DetectByteExtractTest48(void)
     SCDetectByteExtractData *bed1 = NULL;
     SCDetectByteExtractData *bed2 = NULL;
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -2521,7 +2521,7 @@ static int DetectByteExtractTest49(void)
     DetectContentData *cd = NULL;
     SCDetectByteExtractData *bed = NULL;
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -2615,7 +2615,7 @@ static int DetectByteExtractTest50(void)
     SCDetectByteExtractData *bed1 = NULL;
     SCDetectByteExtractData *bed2 = NULL;
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -2738,7 +2738,7 @@ static int DetectByteExtractTest51(void)
     SCDetectByteExtractData *bed = NULL;
     DetectBytetestData *btd = NULL;
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -2832,7 +2832,7 @@ static int DetectByteExtractTest52(void)
     SCDetectByteExtractData *bed1 = NULL;
     DetectBytetestData *btd = NULL;
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -2941,7 +2941,7 @@ static int DetectByteExtractTest52(void)
 
 static int DetectByteExtractTest53(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -2995,7 +2995,7 @@ static int DetectByteExtractTest54(void)
     SCDetectByteExtractData *bed1 = NULL;
     DetectBytejumpData *bjd = NULL;
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -3104,7 +3104,7 @@ static int DetectByteExtractTest55(void)
     SCDetectByteExtractData *bed1 = NULL;
     SCDetectByteExtractData *bed2 = NULL;
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -3212,7 +3212,7 @@ static int DetectByteExtractTest56(void)
     SCDetectByteExtractData *bed1 = NULL;
     SCDetectByteExtractData *bed2 = NULL;
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -3358,7 +3358,7 @@ static int DetectByteExtractTest57(void)
     SCDetectByteExtractData *bed3 = NULL;
     SCDetectByteExtractData *bed4 = NULL;
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -3518,7 +3518,7 @@ static int DetectByteExtractTest58(void)
     DetectBytejumpData *bjd = NULL;
     DetectIsdataatData *isdd = NULL;
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -3636,7 +3636,7 @@ static int DetectByteExtractTest58(void)
 
 static int DetectByteExtractTest59(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -3724,7 +3724,7 @@ static int DetectByteExtractTest60(void)
     SCDetectByteExtractData *bed1 = NULL;
     DetectIsdataatData *isdd = NULL;
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -3858,7 +3858,7 @@ static int DetectByteExtractTest61(void)
     SCDetectByteExtractData *bed1 = NULL;
     DetectIsdataatData *isdd = NULL;
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -3991,7 +3991,7 @@ static int DetectByteExtractTest62(void)
     SigMatch *sm = NULL;
     SCDetectByteExtractData *bed = NULL;
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 

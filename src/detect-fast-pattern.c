@@ -392,7 +392,7 @@ static SigMatch *GetMatches(Signature *s, const int list)
 
 static int DetectFastPatternStickySingle(const char *sticky, const int list)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     char string[1024];
     snprintf(string, sizeof(string),
@@ -413,7 +413,7 @@ static int DetectFastPatternStickySingle(const char *sticky, const int list)
 
 static int DetectFastPatternModifierSingle(const char *sticky, const int list)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     char string[1024];
     snprintf(string, sizeof(string),
@@ -434,7 +434,7 @@ static int DetectFastPatternModifierSingle(const char *sticky, const int list)
 
 static int DetectFastPatternStickySingleNoFP(const char *sticky, const int list)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     char string[1024];
     snprintf(string, sizeof(string),
@@ -455,7 +455,7 @@ static int DetectFastPatternStickySingleNoFP(const char *sticky, const int list)
 
 static int DetectFastPatternModifierSingleNoFP(const char *sticky, const int list)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     char string[1024];
     snprintf(string, sizeof(string),
@@ -476,7 +476,7 @@ static int DetectFastPatternModifierSingleNoFP(const char *sticky, const int lis
 
 static int DetectFastPatternStickySingleBadArg(const char *sticky)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     char string[1024];
     /* bogus argument to fast_pattern */
@@ -520,7 +520,7 @@ static int DetectFastPatternStickySingleBadArg(const char *sticky)
 
 static int DetectFastPatternModifierBadRules(const char *sticky)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     char string[1024];
     /* bogus argument to fast_pattern */
@@ -663,7 +663,7 @@ static int DetectFastPatternModifierBadRules(const char *sticky)
 
 static int DetectFastPatternStickySingleFPOnly(const char *sticky, const int list)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     char string[1024];
     snprintf(string, sizeof(string),
@@ -685,7 +685,7 @@ static int DetectFastPatternStickySingleFPOnly(const char *sticky, const int lis
 
 static int DetectFastPatternModifierFPOnly(const char *sticky, const int list)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     char string[1024];
     snprintf(string, sizeof(string),
@@ -876,7 +876,7 @@ static int DetectFastPatternModifierFPOnly(const char *sticky, const int list)
 
 static int DetectFastPatternStickyFPChop(const char *sticky, const int list)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     char string[1024];
     snprintf(string, sizeof(string),
@@ -919,7 +919,7 @@ static int DetectFastPatternStickyFPChop(const char *sticky, const int list)
 
 static int DetectFastPatternModifierFPChop(const char *sticky, const int list)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     char string[1024];
     snprintf(string, sizeof(string),
@@ -1043,7 +1043,7 @@ static int DetectFastPatternTest14(void)
     Packet *p = UTHBuildPacket(buf, buflen, IPPROTO_TCP);
     FAIL_IF_NULL(p);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1084,7 +1084,7 @@ static int DetectFastPatternTest14(void)
  */
 static int DetectFastPatternTest671(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -1141,7 +1141,7 @@ static int DetectFastPatternTest671(void)
 
 static int DetectFastPatternPrefilter(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     const char *string = "alert tcp any any -> any any "
                          "(content:\"one\"; prefilter; sid:1;)";

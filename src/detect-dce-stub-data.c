@@ -654,7 +654,7 @@ static int DetectDceStubDataTestParse02(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1203,7 +1203,7 @@ static int DetectDceStubDataTestParse03(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF(de_ctx == NULL);
 
     de_ctx->flags |= DE_QUIET;
@@ -1386,7 +1386,7 @@ static int DetectDceStubDataTestParse04(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1671,7 +1671,7 @@ static int DetectDceStubDataTestParse05(void)
 
     StreamTcpInitConfig(true);
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL)
         goto end;
 
@@ -1833,7 +1833,7 @@ static int DetectDceStubDataTestParse05(void)
 // invalid signature because of invalid protocol
 static int DetectDceStubDataTestParse06(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags = DE_QUIET;
     Signature *s = DetectEngineAppendSig(

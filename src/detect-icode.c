@@ -339,7 +339,7 @@ static int DetectICodeMatchTest01(void)
     FAIL_IF_NOT(PacketIsICMPv4(p));
     p->icmp_s.code = p->l4.hdrs.icmpv4h->code = 10;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;

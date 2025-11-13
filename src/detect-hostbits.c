@@ -582,7 +582,7 @@ static int HostBitsTestSig01(void)
 
     HostBitsTestSetup();
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
@@ -618,7 +618,7 @@ static int HostBitsTestSig02(void)
 
     memset(&th_v, 0, sizeof(th_v));
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
@@ -684,7 +684,7 @@ static int HostBitsTestSig03(void)
 
     HostBitsTestSetup();
 
-    de_ctx = DetectEngineCtxInit(NULL);
+    de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;

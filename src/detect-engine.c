@@ -4939,7 +4939,7 @@ int DetectEngineMTApply(void)
         }
     }
     if (stub_de_ctx == NULL) {
-        stub_de_ctx = DetectEngineCtxInitStubForMT(NULL);
+        stub_de_ctx = DetectEngineCtxInitStubForMT(SCGetUnitTestInstance());
         if (stub_de_ctx == NULL) {
             SCMutexUnlock(&master->lock);
             return -1;
@@ -5131,7 +5131,7 @@ static int DetectEngineTest01(void)
 
     FAIL_IF(DetectEngineInitYamlConf(conf) == -1);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     FAIL_IF_NOT(de_ctx->inspection_recursion_limit == -1);
@@ -5163,7 +5163,7 @@ static int DetectEngineTest02(void)
 
     FAIL_IF(DetectEngineInitYamlConf(conf) == -1);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     FAIL_IF_NOT(
@@ -5195,7 +5195,7 @@ static int DetectEngineTest03(void)
 
     FAIL_IF(DetectEngineInitYamlConf(conf) == -1);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     FAIL_IF_NOT(
@@ -5228,7 +5228,7 @@ static int DetectEngineTest04(void)
 
     FAIL_IF(DetectEngineInitYamlConf(conf) == -1);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     FAIL_IF_NOT(de_ctx->inspection_recursion_limit == 10);
@@ -5253,7 +5253,7 @@ static int DetectEngineTest08(void)
 
     FAIL_IF(DetectEngineInitYamlConf(conf) == -1);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     FAIL_IF_NOT(de_ctx->max_uniq_toclient_groups == 23);
@@ -5281,7 +5281,7 @@ static int DetectEngineTest09(void)
 
     FAIL_IF(DetectEngineInitYamlConf(conf) == -1);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     FAIL_IF_NOT(de_ctx->max_uniq_toclient_groups == 20);

@@ -510,7 +510,7 @@ static void DetectFilestoreFree(DetectEngineCtx *de_ctx, void *ptr)
  */
 static int DetectFilestoreTest01(void)
 {
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF(de_ctx == NULL);
 
     de_ctx->flags |= DE_QUIET;

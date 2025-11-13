@@ -39,7 +39,7 @@ extern thread_local uint32_t ut_inspection_recursion_counter;
 
 #define TEST_RUN(buf, buflen, sig, match, steps)                                                   \
     {                                                                                              \
-        DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);                                       \
+        DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());                    \
         FAIL_IF_NULL(de_ctx);                                                                      \
         DetectEngineThreadCtx *det_ctx = NULL;                                                     \
         char rule[2048];                                                                           \

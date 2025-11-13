@@ -354,7 +354,7 @@ static int DetectIPRepTest01(void)
     FILE *fd = NULL;
     int r = 0;
     Packet *p = UTHBuildPacket((uint8_t *)"lalala", 6, IPPROTO_TCP);
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
 
     HostInitConfig(HOST_QUIET);
     memset(&th_v, 0, sizeof(th_v));
@@ -405,7 +405,7 @@ static int DetectIPRepTest02(void)
     FILE *fd = NULL;
     int r = 0;
     Packet *p = UTHBuildPacket((uint8_t *)"lalala", 6, IPPROTO_TCP);
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
 
     HostInitConfig(HOST_QUIET);
     memset(&th_v, 0, sizeof(th_v));
@@ -456,7 +456,7 @@ static int DetectIPRepTest03(void)
     FILE *fd = NULL;
     int r = 0;
     Packet *p = UTHBuildPacket((uint8_t *)"lalala", 6, IPPROTO_TCP);
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
 
     HostInitConfig(HOST_QUIET);
     memset(&th_v, 0, sizeof(th_v));
@@ -507,7 +507,7 @@ static int DetectIPRepTest04(void)
     FILE *fd = NULL;
     int r = 0;
     Packet *p = UTHBuildPacket((uint8_t *)"lalala", 6, IPPROTO_TCP);
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
 
     HostInitConfig(HOST_QUIET);
     memset(&th_v, 0, sizeof(th_v));
@@ -559,7 +559,7 @@ static int DetectIPRepTest05(void)
     FILE *fd = NULL;
     int r = 0;
     Packet *p = UTHBuildPacket((uint8_t *)"lalala", 6, IPPROTO_TCP);
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
 
     HostInitConfig(HOST_QUIET);
     memset(&th_v, 0, sizeof(th_v));
@@ -610,7 +610,7 @@ static int DetectIPRepTest06(void)
     FILE *fd = NULL;
     int r = 0;
     Packet *p = UTHBuildPacket((uint8_t *)"lalala", 6, IPPROTO_TCP);
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
 
     HostInitConfig(HOST_QUIET);
     memset(&th_v, 0, sizeof(th_v));
@@ -661,7 +661,7 @@ static int DetectIPRepTest07(void)
     FILE *fd = NULL;
     int r = 0;
     Packet *p = UTHBuildPacket((uint8_t *)"lalala", 6, IPPROTO_TCP);
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
 
     HostInitConfig(HOST_QUIET);
     memset(&th_v, 0, sizeof(th_v));
@@ -712,7 +712,7 @@ static int DetectIPRepTest08(void)
     FILE *fd = NULL;
     int r = 0;
     Packet *p = UTHBuildPacket((uint8_t *)"lalala", 6, IPPROTO_TCP);
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
 
     HostInitConfig(HOST_QUIET);
     memset(&th_v, 0, sizeof(th_v));
@@ -764,7 +764,7 @@ static int DetectIPRepTest09(void)
     FILE *fd = NULL;
     int r = 0;
     Packet *p = UTHBuildPacket((uint8_t *)"lalala", 6, IPPROTO_TCP);
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
 
     HostInitConfig(HOST_QUIET);
     memset(&th_v, 0, sizeof(th_v));
@@ -828,7 +828,7 @@ static int DetectIPRepTest10(void)
     FILE *fd = NULL;
     int r = 0;
     Packet *p = UTHBuildPacket((uint8_t *)"lalala", 6, IPPROTO_TCP);
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
 
     HostInitConfig(HOST_QUIET);
     memset(&th_v, 0, sizeof(th_v));
@@ -877,7 +877,7 @@ static int DetectIPRepTest11(void)
     FILE *fd = NULL;
     int r = 0;
     Packet *p = UTHBuildPacket((uint8_t *)"lalala", 6, IPPROTO_TCP);
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
 
     HostInitConfig(HOST_QUIET);
     memset(&th_v, 0, sizeof(th_v));

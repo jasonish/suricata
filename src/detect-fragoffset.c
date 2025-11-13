@@ -278,7 +278,7 @@ static int DetectFragOffsetMatchTest01 (void)
     ip4h.ip_off = 0x2222;
     UTHSetIPV4Hdr(p, &ip4h);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;

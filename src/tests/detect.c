@@ -146,7 +146,7 @@ static int SigTest03 (void)
     memset(&th_v, 0, sizeof(th_v));
     Packet *p = UTHBuildPacket((uint8_t *)buf, buflen, IPPROTO_TCP);
     FAIL_IF_NULL(p);
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     Signature *s = DetectEngineAppendSig(de_ctx,
@@ -179,7 +179,7 @@ static int SigTest04 (void)
     memset(&th_v, 0, sizeof(th_v));
     Packet *p = UTHBuildPacket((uint8_t *)buf, buflen, IPPROTO_TCP);
     FAIL_IF_NULL(p);
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     Signature *s = DetectEngineAppendSig(de_ctx,
@@ -212,7 +212,7 @@ static int SigTest05 (void)
     memset(&th_v, 0, sizeof(th_v));
     Packet *p = UTHBuildPacket((uint8_t *)buf, buflen, IPPROTO_TCP);
     FAIL_IF_NULL(p);
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     Signature *s = DetectEngineAppendSig(de_ctx,
@@ -268,7 +268,7 @@ static int SigTest06 (void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -333,7 +333,7 @@ static int SigTest07 (void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -401,7 +401,7 @@ static int SigTest08 (void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -469,7 +469,7 @@ static int SigTest09 (void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -530,7 +530,7 @@ static int SigTest10 (void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -590,7 +590,7 @@ static int SigTest11 (void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -645,7 +645,7 @@ static int SigTest12 (void)
     p->flow = &f;
     p->flags |= PKT_HAS_FLOW|PKT_STREAM_EST;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -699,7 +699,7 @@ static int SigTest13 (void)
     p->flow = &f;
     p->flags |= PKT_HAS_FLOW|PKT_STREAM_EST;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -744,7 +744,7 @@ static int SigTest14 (void)
 
     p = UTHBuildPacket((uint8_t *)buf, buflen, IPPROTO_TCP);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -798,7 +798,7 @@ static int SigTest15 (void)
     SCConfInit();
     SCConfYamlLoadString(dummy_conf_string, strlen(dummy_conf_string));
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -849,7 +849,7 @@ static int SigTest16 (void)
     SCConfInit();
     SCConfYamlLoadString(dummy_conf_string, strlen(dummy_conf_string));
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -902,7 +902,7 @@ static int SigTest17 (void)
     SCConfInit();
     SCConfYamlLoadString(dummy_conf_string, strlen(dummy_conf_string));
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -950,7 +950,7 @@ static int SigTest18 (void)
     p->dp = 34260;
     p->sp = 21;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -1008,7 +1008,7 @@ static int SigTest19 (void)
     SCConfInit();
     SCConfYamlLoadString(dummy_conf_string, strlen(dummy_conf_string));
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -1068,7 +1068,7 @@ static int SigTest20 (void)
     SCConfInit();
     SCConfYamlLoadString(dummy_conf_string, strlen(dummy_conf_string));
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -1129,7 +1129,7 @@ static int SigTest21 (void)
     p2->flow = &f;
     p2->flags |= PKT_HAS_FLOW|PKT_STREAM_EST;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -1207,7 +1207,7 @@ static int SigTest22 (void)
     p2->flow = &f;
     p2->flags |= PKT_HAS_FLOW|PKT_STREAM_EST;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -1280,7 +1280,7 @@ static int SigTest23 (void)
     p2->flow = &f;
     p2->flags |= PKT_HAS_FLOW|PKT_STREAM_EST;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -1366,7 +1366,7 @@ static int SigTest24IPV4Keyword(void)
     p2->payload_len = buflen;
     p2->proto = IPPROTO_TCP;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -1463,7 +1463,7 @@ static int SigTest25NegativeIPV4Keyword(void)
     p2->payload_len = buflen;
     p2->proto = IPPROTO_TCP;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -1571,7 +1571,7 @@ static int SigTest26TCPV4Keyword(void)
     p2->payload_len = 20;
     p2->proto = IPPROTO_TCP;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
@@ -1666,7 +1666,7 @@ static int SigTest26TCPV4AndNegativeIPV4Keyword(void)
     p2->payload_len = 20;
     p2->proto = IPPROTO_TCP;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -1787,7 +1787,7 @@ static int SigTest26TCPV4AndIPV4Keyword(void)
     p2->payload_len = 0;
     p2->proto = IPPROTO_TCP;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -1895,7 +1895,7 @@ static int SigTest27NegativeTCPV4Keyword(void)
     p2->payload_len = 20;
     p2->proto = IPPROTO_TCP;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -2018,7 +2018,7 @@ static int SigTest28TCPV6Keyword(void)
         BUG_ON(1);
     }
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -2139,7 +2139,7 @@ static int SigTest29NegativeTCPV6Keyword(void)
 
     FAIL_IF(TCP_GET_RAW_HLEN(PacketGetTCP(p2)) != 20);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -2248,7 +2248,7 @@ static int SigTest30UDPV4Keyword(void)
     p2->payload_len = sizeof(invalid_raw_udp) - UDP_HEADER_LEN;
     p2->proto = IPPROTO_UDP;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
@@ -2351,7 +2351,7 @@ static int SigTest31NegativeUDPV4Keyword(void)
     p2->payload_len = sizeof(invalid_raw_udp) - UDP_HEADER_LEN;
     p2->proto = IPPROTO_UDP;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -2459,7 +2459,7 @@ static int SigTest32UDPV6Keyword(void)
     p2->payload_len = IPV6_GET_RAW_PLEN(PacketGetIPv6(p2)) - UDP_HEADER_LEN;
     p2->proto = IPPROTO_UDP;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
 
     de_ctx->flags |= DE_QUIET;
@@ -2555,7 +2555,7 @@ static int SigTest33NegativeUDPV6Keyword(void)
     p2->payload_len = IPV6_GET_RAW_PLEN(PacketGetIPv6(p2)) - UDP_HEADER_LEN;
     p2->proto = IPPROTO_UDP;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -2670,7 +2670,7 @@ static int SigTest34ICMPV4Keyword(void)
     p2->payload_len = buflen;
     p2->proto = IPPROTO_ICMP;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -2785,7 +2785,7 @@ static int SigTest35NegativeICMPV4Keyword(void)
     p2->payload_len = buflen;
     p2->proto = IPPROTO_ICMP;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -2909,7 +2909,7 @@ static int SigTest38(void)
     p1->payload_len = buflen;
     p1->proto = IPPROTO_TCP;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -3022,7 +3022,7 @@ static int SigTest39(void)
     p1->payload_len = buflen;
     p1->proto = IPPROTO_TCP;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -3109,7 +3109,7 @@ static int SigTest36ContentAndIsdataatKeywords01 (void)
     FlowInitConfig(FLOW_QUIET);
     DecodeEthernet(&th_v, &dtv, p, raw_eth, sizeof(raw_eth));
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -3189,7 +3189,7 @@ static int SigTest37ContentAndIsdataatKeywords02 (void)
     FlowInitConfig(FLOW_QUIET);
     DecodeEthernet(&th_v, &dtv, p, raw_eth, sizeof(raw_eth));
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -3287,7 +3287,7 @@ static int SigTest40NoPacketInspection01(void)
 
     FLOW_INITIALIZE(&f);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -3343,7 +3343,7 @@ static int SigTest40NoPayloadInspection02(void)
     p->flags |= PKT_NOPAYLOAD_INSPECTION;
 
     DetectEngineThreadCtx *det_ctx = NULL;
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -3389,7 +3389,7 @@ static int SigTestMemory01 (void)
     p->payload_len = buflen;
     p->proto = IPPROTO_TCP;
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -3422,7 +3422,7 @@ static int SigTestMemory02 (void)
 
     memset(&th_v, 0, sizeof(th_v));
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -3456,7 +3456,7 @@ static int SigTestMemory03 (void)
 
     memset(&th_v, 0, sizeof(th_v));
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -3501,7 +3501,7 @@ static int SigTestContent01 (void)
     Packet *p = NULL;
     p = UTHBuildPacket((uint8_t *)buf, buflen, IPPROTO_TCP);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -3542,7 +3542,7 @@ static int SigTestContent02 (void)
     Packet *p = NULL;
     p = UTHBuildPacket((uint8_t *)buf, buflen, IPPROTO_TCP);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -3593,7 +3593,7 @@ static int SigTestContent03 (void)
     Packet *p = NULL;
     p = UTHBuildPacket((uint8_t *)buf, buflen, IPPROTO_TCP);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -3636,7 +3636,7 @@ static int SigTestContent04 (void)
     Packet *p = NULL;
     p = UTHBuildPacket((uint8_t *)buf, buflen, IPPROTO_TCP);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -3679,7 +3679,7 @@ static int SigTestContent05 (void)
     Packet *p = NULL;
     p = UTHBuildPacket((uint8_t *)buf, buflen, IPPROTO_TCP);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         printf("de_ctx == NULL: ");
         goto end;
@@ -3738,7 +3738,7 @@ static int SigTestContent06 (void)
     Packet *p = NULL;
     p = UTHBuildPacket((uint8_t *)buf, buflen, IPPROTO_TCP);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -3881,7 +3881,7 @@ static int SigTestWithin01 (void)
 
     FlowInitConfig(FLOW_QUIET);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -3955,7 +3955,7 @@ static int SigTestDepthOffset01 (void)
 
     p = UTHBuildPacket(buf, buflen, IPPROTO_TCP);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -3990,7 +3990,7 @@ static int SigTestDetectAlertCounter(void)
     DetectEngineThreadCtx *det_ctx = NULL;
     memset(&tv, 0, sizeof(tv));
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -4064,7 +4064,7 @@ static int SigTestDropFlow01(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
 
@@ -4139,7 +4139,7 @@ static int SigTestDropFlow02(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -4256,7 +4256,7 @@ static int SigTestDropFlow03(void)
 
     StreamTcpInitConfig(true);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -4386,7 +4386,7 @@ static int SigTestPorts01(void)
 
     p1 = UTHBuildPacket(payload, sizeof(payload), IPPROTO_ICMP);
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -4431,7 +4431,7 @@ static int SigTestBug01(void)
 
     Packet *p1 = UTHBuildPacket(payload, sizeof(payload), IPPROTO_TCP);
     FAIL_IF_NULL(p1);
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     Signature *s = DetectEngineAppendSig(de_ctx, "alert tcp any any -> any any "
@@ -4476,7 +4476,7 @@ static int DetectAddressYamlParsing01 (void)
     SCConfInit();
     SCConfYamlLoadString(dummy_conf_string2, strlen(dummy_conf_string2));
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -4523,7 +4523,7 @@ static int DetectAddressYamlParsing02 (void)
     SCConfInit();
     SCConfYamlLoadString(dummy_conf_string3, strlen(dummy_conf_string3));
 
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     if (de_ctx == NULL) {
         goto end;
     }
@@ -4567,7 +4567,7 @@ static int DetectAddressYamlParsing03 (void)
     SCConfCreateContextBackup();
     SCConfInit();
     SCConfYamlLoadString(dummy_conf_string4, strlen(dummy_conf_string4));
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     FAIL_IF((DetectEngineAppendSig(de_ctx, "alert tcp $HOME_NET any -> any any (sid:1;)")) == NULL);
@@ -4602,7 +4602,7 @@ static int DetectAddressYamlParsing04 (void)
     SCConfCreateContextBackup();
     SCConfInit();
     SCConfYamlLoadString(dummy_conf_string5, strlen(dummy_conf_string5));
-    DetectEngineCtx *de_ctx = DetectEngineCtxInit(NULL);
+    DetectEngineCtx *de_ctx = DetectEngineCtxInit(SCGetUnitTestInstance());
     FAIL_IF_NULL(de_ctx);
     de_ctx->flags |= DE_QUIET;
     FAIL_IF((DetectEngineAppendSig(de_ctx, "alert tcp $HOME_NET any -> any any (sid:1;)")) == NULL);
