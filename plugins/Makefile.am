@@ -11,3 +11,7 @@ endif
 if BUILD_NDPI
 SUBDIRS += ndpi
 endif
+
+if BUILD_JA4T_STUB
+SUBDIRS += ja4t-stub
+endif
