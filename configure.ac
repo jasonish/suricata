@@ -2326,6 +2326,17 @@ fi
     fi
     AC_SUBST([ndpi_comment])
 
+# JA4T stub plugin (no library dependencies)
+    AC_ARG_ENABLE(ja4t-stub,
+           AS_HELP_STRING([--enable-ja4t-stub], [Enable JA4T stub plugin]),
+           [enable_ja4t_stub=$enableval],[enable_ja4t_stub=no])
+
+    if test "x$enable_ja4t_stub" = "xyes"; then
+        AM_CONDITIONAL([BUILD_JA4T_STUB], [true])
+    else
+        AM_CONDITIONAL([BUILD_JA4T_STUB], [false])
+    fi
+
     AC_ARG_ENABLE(warnings,
            AS_HELP_STRING([--enable-warnings], [Enable supported C compiler warnings]),[enable_warnings=$enableval],[enable_warnings=no])
     AS_IF([test "x$enable_warnings" = "xyes"], [
@@ -2577,6 +2588,7 @@ AC_CONFIG_FILES(plugins/Makefile)
 AC_CONFIG_FILES(plugins/pfring/Makefile)
 AC_CONFIG_FILES(plugins/napatech/Makefile)
 AC_CONFIG_FILES(plugins/ndpi/Makefile)
+AC_CONFIG_FILES(plugins/ja4t-stub/Makefile)
 
 AC_OUTPUT
 
@@ -2635,6 +2647,7 @@ SURICATA_BUILD_CONF="Suricata Configuration:
 
 Plugins:
   nDPI:                                    ${enable_ndpi}
+  JA4T stub:                               ${enable_ja4t_stub}
 
 Development settings:
   Coccinelle / spatch:                     ${enable_coccinelle}
