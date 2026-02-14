@@ -33,7 +33,7 @@ use suricata::applayer::{
     StreamSlice, Transaction, APP_LAYER_PARSER_EOF_TC, APP_LAYER_PARSER_EOF_TS,
     APP_LAYER_PARSER_OPT_ACCEPT_GAPS,
 };
-use suricata::conf::conf_get;
+use suricata_ffi::conf::conf_get;
 use suricata::core::{ALPROTO_UNKNOWN, IPPROTO_TCP};
 use suricata::{build_slice, cast_pointer, export_state_data_get, export_tx_data_get};
 use suricata_ffi::{SCLogError, SCLogNotice};
