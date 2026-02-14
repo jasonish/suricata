@@ -21,7 +21,7 @@ use super::{
     frames::{Frame, QuicTlsExtension, StreamTag},
     parser::{quic_pkt_num, QuicData, QuicHeader, QuicType},
 };
-use crate::conf::conf_get;
+use suricata_ffi::conf::conf_get;
 use crate::encryption::EncryptionHandling;
 use crate::{
     applayer::{self, *},

@@ -17,7 +17,7 @@
 
 use super::parser;
 use crate::applayer::{self, *};
-use crate::conf::conf_get;
+use suricata_ffi::conf::conf_get;
 use crate::core::{
     sc_app_layer_parser_trigger_raw_stream_inspection, ALPROTO_FAILED, ALPROTO_UNKNOWN, IPPROTO_TCP,
 };

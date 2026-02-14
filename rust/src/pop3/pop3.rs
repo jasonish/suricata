@@ -20,7 +20,8 @@
 //! POP3 parser
 
 use crate::applayer::*;
-use crate::conf::{conf_get, get_memval};
+use crate::conf::get_memval;
+use suricata_ffi::conf::conf_get;
 use crate::core::{
     sc_app_layer_parser_trigger_raw_stream_inspection, ALPROTO_FAILED, ALPROTO_UNKNOWN, IPPROTO_TCP,
 };

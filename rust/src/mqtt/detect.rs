@@ -36,7 +36,7 @@ use suricata_sys::sys::{
 };
 
 use super::mqtt::{MQTTState, MQTTTransaction, ALPROTO_MQTT};
-use crate::conf::conf_get;
+use suricata_ffi::conf::conf_get;
 use crate::mqtt::mqtt_message::{MQTTMessage, MQTTOperation, MQTTTypeCode};
 use std::ffi::CStr;
 use std::os::raw::{c_int, c_void};

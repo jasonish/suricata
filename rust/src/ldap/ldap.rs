@@ -19,7 +19,7 @@
 // Author: Pierre Chifflier <chifflier@wzdftpd.net>
 
 use crate::applayer::{self, *};
-use crate::conf::conf_get;
+use suricata_ffi::conf::conf_get;
 use crate::core::*;
 use crate::direction::Direction;
 use crate::flow::Flow;

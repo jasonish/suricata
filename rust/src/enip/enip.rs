@@ -18,7 +18,7 @@
 use super::constant::{EnipCommand, EnipStatus};
 use super::parser;
 use crate::applayer::{self, *};
-use crate::conf::conf_get;
+use suricata_ffi::conf::conf_get;
 use crate::core::*;
 use crate::detect::EnumString;
 use crate::direction::Direction;

@@ -32,7 +32,8 @@ use std;
 use std::cmp;
 use std::ffi::CString;
 use std::collections::VecDeque;
-use crate::conf::{conf_get, get_memval};
+use crate::conf::get_memval;
+use suricata_ffi::conf::conf_get;
 
 pub static mut DCERPC_MAX_STUB_SIZE: u32 = 1048576;
 

@@ -51,7 +51,7 @@ pub unsafe extern "C" fn SCAsn1DetectParse(input: *const c_char) -> *mut DetectA
             let mut data = data;
 
             // Get configuration value
-            if let Some(max_frames) = crate::conf::conf_get("asn1-max-frames") {
+            if let Some(max_frames) = suricata_ffi::conf::conf_get("asn1-max-frames") {
                 if let Ok(v) = max_frames.parse::<u16>() {
                     data.max_frames = v;
                 } else {

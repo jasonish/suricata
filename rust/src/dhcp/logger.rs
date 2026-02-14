@@ -19,7 +19,7 @@ use std;
 
 use suricata_sys::sys::SCConfNode;
 
-use crate::conf::ConfNode;
+use suricata_ffi::conf::ConfNode;
 use crate::dhcp::dhcp::*;
 use crate::dhcp::parser::{DHCPOptGeneric, DHCPOptionWrapper};
 use crate::dns::log::dns_print_addr;

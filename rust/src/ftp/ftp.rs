@@ -20,7 +20,8 @@ use std::ffi::{CStr, CString};
 use std::os::raw::{c_char, c_void};
 use std::ptr;
 
-use crate::conf::{conf_get, get_memval};
+use crate::conf::get_memval;
+use suricata_ffi::conf::conf_get;
 use crate::ftp::constant::*;
 use lazy_static::lazy_static;
 use suricata_sys::sys::{MpmCtx, SCMpmAddPatternCI};

@@ -17,7 +17,7 @@
 
 use super::template::{TemplateTransaction, ALPROTO_TEMPLATE};
 /* TEMPLATE_START_REMOVE */
-use crate::conf::conf_get_node;
+use suricata_ffi::conf::conf_get_node;
 /* TEMPLATE_END_REMOVE */
 use crate::core::{STREAM_TOCLIENT, STREAM_TOSERVER};
 use crate::detect::{helper_keyword_register_sticky_buffer, SigTableElmtStickyBuffer};

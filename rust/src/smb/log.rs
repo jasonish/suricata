@@ -19,7 +19,7 @@ use std::str;
 use std::string::String;
 use uuid;
 use suricata_sys::sys::SCConfNode;
-use crate::conf::ConfNode;
+use suricata_ffi::conf::ConfNode;
 use crate::jsonbuilder::{JsonBuilder, JsonError};
 use crate::smb::smb::*;
 use crate::smb::smb1::*;

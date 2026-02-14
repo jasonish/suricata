@@ -31,7 +31,7 @@ use suricata_sys::sys::{
 
 use crate::applayer;
 use crate::applayer::*;
-use crate::conf::*;
+use suricata_ffi::conf::{conf_get, conf_get_bool};
 use crate::core::*;
 use crate::direction::Direction;
 use crate::direction::DIR_BOTH;

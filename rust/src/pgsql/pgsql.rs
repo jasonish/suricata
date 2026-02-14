@@ -22,7 +22,8 @@
 use super::parser::PgsqlParseError;
 use super::parser::{self, ConsolidatedDataRowPacket, PgsqlBEMessage, PgsqlFEMessage};
 use crate::applayer::*;
-use crate::conf::*;
+use crate::conf::get_memval;
+use suricata_ffi::conf::conf_get;
 use crate::core::{ALPROTO_FAILED, ALPROTO_UNKNOWN, IPPROTO_TCP, *};
 use crate::direction::Direction;
 use crate::flow::Flow;

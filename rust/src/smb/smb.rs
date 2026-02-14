@@ -48,7 +48,8 @@ use crate::applayer::*;
 use crate::direction::Direction;
 use crate::flow::{Flow, FLOW_DIR_REVERSED, flow_get_flags, flow_get_last_time, flow_get_ports};
 use crate::frames::*;
-use crate::conf::*;
+use crate::conf::get_memval;
+use suricata_ffi::conf::conf_get;
 use crate::applayer::{AppLayerResult, AppLayerTxData, AppLayerEvent};
 use crate::filecontainer::FileContainerWrapper;
 

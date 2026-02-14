@@ -24,8 +24,6 @@ use nom8::{
     sequence::preceded,
     IResult, Parser,
 };
-pub use suricata_ffi::conf::{conf_get, conf_get_bool, conf_get_node, ConfNode};
-
 const BYTE: u64 = 1;
 const KILOBYTE: u64 = 1024;
 const MEGABYTE: u64 = 1_048_576;

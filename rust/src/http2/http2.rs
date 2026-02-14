@@ -22,7 +22,7 @@ use super::range;
 
 use super::range::{SCHTPFileCloseHandleRange, SCHttpRangeFreeBlock};
 use crate::applayer::{self, *};
-use crate::conf::conf_get;
+use suricata_ffi::conf::conf_get;
 use crate::core::*;
 use crate::direction::Direction;
 use crate::dns::dns::DnsVariant;

@@ -17,7 +17,7 @@
 
 use super::parser;
 use crate::applayer::*;
-use crate::conf::conf_get;
+use suricata_ffi::conf::conf_get;
 use crate::core::{ALPROTO_UNKNOWN, IPPROTO_TCP};
 use crate::flow::Flow;
 use nom8 as nom;
@@ -365,7 +365,7 @@ const PARSER_NAME: &[u8] = b"template\0";
 #[no_mangle]
 pub unsafe extern "C" fn SCRegisterTemplateParser() {
     /* TEMPLATE_START_REMOVE */
-    if crate::conf::conf_get_node("app-layer.protocols.template").is_none() {
+    if suricata_ffi::conf::conf_get_node("app-layer.protocols.template").is_none() {
         return;
     }
     /* TEMPLATE_END_REMOVE */
