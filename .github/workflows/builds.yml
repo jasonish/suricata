@@ -755,7 +755,7 @@ jobs:
       - name: Check if the nDPI plugin was installed
         run: test -e /usr/local/lib/suricata/ndpi.so
       - run: tar xf prep/suricata-verify.tar.gz
-      # - run: python3 ./suricata-verify/run.py -q --debug-failed
+      - run: python3 ./suricata-verify/run.py -q --debug-failed || true
       - run: suricata-update -V
       - run: suricatasc -h
       # Test build after clean.
@@ -847,8 +847,8 @@ jobs:
       - name: Extracting suricata-verify
         run: tar xf prep/suricata-verify.tar.gz
       - run: rm -r prep
-      # - name: Running suricata-verify
-      #   run: python3 ./suricata-verify/run.py -q --debug-failed --aggressive-cleanup
+      - name: Running suricata-verify
+        run: python3 ./suricata-verify/run.py -q --debug-failed --aggressive-cleanup || true
       - run: llvm-profdata merge -o default.profdata $(find suricata-verify/tests/ -name '*.profraw')
       - run: llvm-cov show ./src/suricata -instr-profile=default.profdata --show-instantiations --ignore-filename-regex="^/root/.*" > coverage.txt
       - name: Upload coverage to Codecov
@@ -938,8 +938,8 @@ jobs:
       - run: ./src/suricata -u -l .
       - name: Extracting suricata-verify
         run: tar xf prep/suricata-verify.tar.gz
-      # - name: Running suricata-verify
-      #   run: python3 ./suricata-verify/run.py -q --debug-failed
+      - name: Running suricata-verify
+        run: python3 ./suricata-verify/run.py -q --debug-failed || true
       # Now install and make sure headers and libraries aren't
       # installed until requested.
       - run: make install
@@ -1033,8 +1033,8 @@ jobs:
       - run: ./src/suricata -u -l .
       - name: Extracting suricata-verify
         run: tar xf prep/suricata-verify.tar.gz
-      # - name: Running suricata-verify
-      #   run: python3 ./suricata-verify/run.py -q --debug-failed
+      - name: Running suricata-verify
+        run: python3 ./suricata-verify/run.py -q --debug-failed || true
       # Now install and make sure headers and libraries aren't
       # installed until requested.
       - run: make install
@@ -1144,8 +1144,8 @@ jobs:
       - run: src/suricata --build-info | grep -E "JA4 support:\s+no" &> /dev/null
         working-directory: /home/suricata/suricata
 
-      # - run: sudo -u suricata -s python3 ./suricata-verify/run.py -q --debug-failed
-      #   working-directory: /home/suricata/suricata
+      - run: sudo -u suricata -s python3 ./suricata-verify/run.py -q --debug-failed || true
+        working-directory: /home/suricata/suricata
 
       - run: src/suricata -h | grep '\-\-list\-app\-layer\-hooks' &> /dev/null
         working-directory: /home/suricata/suricata
@@ -1338,7 +1338,7 @@ jobs:
       - run: ./configure --enable-unittests --enable-coccinelle
       - run: make -j ${{ env.CPUS }}
       - run: CONCURRENCY_LEVEL=${{ env.CPUS }} make check
-      # - run: python3 ./suricata-verify/run.py -q --debug-failed
+      - run: python3 ./suricata-verify/run.py -q --debug-failed || true
       - run: make install
       - run: make install-headers
       - run: make install-library
@@ -1412,9 +1412,9 @@ jobs:
       - run: CARGO=cargo-1.82 RUSTC=rustc-1.82 RUSTDOC=rustdoc-1.82 ./configure --enable-unittests
       - run: make -j ${{ env.CPUS }}
       - run: make check
-      # - run: python3 ./suricata-verify/run.py -q --debug-failed
-      #   env:
-      #     CARGO: cargo-1.82
+      - run: python3 ./suricata-verify/run.py -q --debug-failed || true
+        env:
+          CARGO: cargo-1.82
       - run: make install
       - run: make install-headers
       - run: make install-library
@@ -1655,10 +1655,10 @@ jobs:
           CC: "clang-15"
           CXX: "clang++-15"
           RUSTFLAGS: "-C instrument-coverage"
-      # - run: |
-      #     ./qa/unix.sh "suricata-verify/"
-      #   env:
-      #     LLVM_PROFILE_FILE: "/tmp/unix.profraw"
+      - run: |
+          ./qa/unix.sh "suricata-verify/"
+        env:
+          LLVM_PROFILE_FILE: "/tmp/unix.profraw"
       - run: llvm-profdata-15 merge -o default.profdata $(find /tmp/ -name '*.profraw')
       - run: llvm-cov-15 show ./src/suricata -instr-profile=default.profdata --show-instantiations --ignore-filename-regex="^/root/.*" > coverage.txt
       - name: Upload coverage to Codecov
@@ -1894,8 +1894,8 @@ jobs:
       - run: make -j ${{ env.CPUS }}
         env:
           CC: "clang-18"
-      # - run: |
-      #     ./qa/unix.sh "suricata-verify/"
+      - run: |
+          ./qa/unix.sh "suricata-verify/"
 
   ubuntu-latest-namespace-ips:
     name: Ubuntu 24.04 (afpacket IPS tests in namespaces)
@@ -2316,8 +2316,8 @@ jobs:
       - run: make dist
       - name: Extracting suricata-verify
         run: tar xf prep/suricata-verify.tar.gz
-      # - name: Running suricata-verify
-      #   run: python3 ./suricata-verify/run.py -q --debug-failed
+      - name: Running suricata-verify
+        run: python3 ./suricata-verify/run.py -q --debug-failed || true
       # Now install and make sure headers and libraries aren't install
       # until requested.
       - run: make install
@@ -2477,8 +2477,8 @@ jobs:
       - run: make check
       - name: Extracting suricata-verify
         run: tar xf prep/suricata-verify.tar.gz
-      # - name: Running suricata-verify
-      #   run: python3 ./suricata-verify/run.py -q --debug-failed
+      - name: Running suricata-verify
+        run: python3 ./suricata-verify/run.py -q --debug-failed || true
 
   # test build with afl and fuzztargets
   ubuntu-22-04-fuzz:
@@ -2871,8 +2871,8 @@ jobs:
       - name: Building Rust documentation
         run: make doc
         working-directory: rust
-      # - name: Running suricata-verify
-      #   run: python3 ./suricata-verify/run.py -q --debug-failed
+      - name: Running suricata-verify
+        run: python3 ./suricata-verify/run.py -q --debug-failed || true
       - run: make install
       - run: suricata-update -V
       - run: suricatasc -h
@@ -2960,8 +2960,8 @@ jobs:
       - name: Building Rust documentation
         run: make doc
         working-directory: rust
-      # - name: Running suricata-verify
-      #   run: python3 ./suricata-verify/run.py -q --debug-failed
+      - name: Running suricata-verify
+        run: python3 ./suricata-verify/run.py -q --debug-failed || true
       - run: make install
       - run: suricata-update -V
       - run: suricatasc -h
@@ -3127,8 +3127,8 @@ jobs:
       - name: Building Rust documentation
         run: make doc
         working-directory: rust
-      # - name: Running suricata-verify
-      #   run: python3 ./suricata-verify/run.py -q --debug-failed
+      - name: Running suricata-verify
+        run: python3 ./suricata-verify/run.py -q --debug-failed || true
       - run: make install
       - run: suricata-update -V
       - run: suricatasc -h
@@ -3200,8 +3200,8 @@ jobs:
       - run: make -j ${{ env.CPUS }}
       - run: make check
       - run: tar xf prep/suricata-verify.tar.gz
-      # - name: Running suricata-verify
-      #   run: python3 ./suricata-verify/run.py -q --debug-failed
+      - name: Running suricata-verify
+        run: python3 ./suricata-verify/run.py -q --debug-failed || true
       - run: make install
       - run: suricata-update -V
       - run: suricatasc -h
@@ -3256,10 +3256,10 @@ jobs:
       - run: CPATH="$HOMEBREW_PREFIX/include:$CPATH" LIBRARY_PATH="$HOMEBREW_PREFIX/lib:$LIBRARY_PATH" PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH" make -j2
       - run: CPATH="$HOMEBREW_PREFIX/include:$CPATH" LIBRARY_PATH="$HOMEBREW_PREFIX/lib:$LIBRARY_PATH" PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH" make check
       - run: tar xf prep/suricata-verify.tar.gz
-      # - name: Running suricata-verify
-      #   run: |
-      #     . ./testenv/bin/activate
-      #     python3 ./suricata-verify/run.py -q --debug-failed
+      - name: Running suricata-verify
+        run: |
+          . ./testenv/bin/activate
+          python3 ./suricata-verify/run.py -q --debug-failed || true
       - run: CPATH="$HOMEBREW_PREFIX/include:$CPATH" LIBRARY_PATH="$HOMEBREW_PREFIX/lib:$LIBRARY_PATH" PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH" CFLAGS="${DEFAULT_CFLAGS}" make install
       - name: Check Suricata-Update
         run: |
@@ -3326,7 +3326,7 @@ jobs:
           ./src/suricata --build-info
           ./src/suricata -u -l .
           # need cwd in path due to npcap dlls (see above)
-          # PATH="$PATH:$(pwd)" python3 ./suricata-verify/run.py -q --debug-failed
+          PATH="$PATH:$(pwd)" python3 ./suricata-verify/run.py -q --debug-failed || true
       - run: make install
       - run: suricata-update -V
 
@@ -3373,7 +3373,7 @@ jobs:
         run: |
           ./src/suricata --build-info
           ./src/suricata -u -l .
-          # python3 ./suricata-verify/run.py -q --debug-failed
+          python3 ./suricata-verify/run.py -q --debug-failed || true
       - run: make install
       - run: suricata-update -V
 
@@ -3431,7 +3431,7 @@ jobs:
         run: |
           ./src/suricata --build-info
           ./src/suricata -u -l .
-          # python3 ./suricata-verify/run.py -q --debug-failed
+          python3 ./suricata-verify/run.py -q --debug-failed || true
       - run: make install
       - run: suricata-update -V
 
