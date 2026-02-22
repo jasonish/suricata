@@ -19,7 +19,7 @@
 
 use std::{ffi::CString, path::Path};
 
-use suricata_sys::sys::{SCFatalErrorOnInitStatic, SCLogLevel};
+use suricata_sys::sys::SCLogLevel;
 #[cfg(not(test))]
 use suricata_sys::sys::{SCError, SCLogMessage};
 
@@ -44,11 +44,11 @@ fn basename(filename: &str) -> &str {
     return filename;
 }
 
-pub fn fatalerror(message: &str) {
-    unsafe {
-        SCFatalErrorOnInitStatic(to_safe_cstring(message).as_ptr());
-    }
-}
+//pub fn fatalerror(message: &str) {
+//    unsafe {
+//        SCFatalErrorOnInitStatic(to_safe_cstring(message).as_ptr());
+//    }
+//}
 
 pub fn sclog(level: SCLogLevel, file: &str, line: u32, function: &str, message: &str) {
     let filename = basename(file);
@@ -199,7 +199,7 @@ macro_rules! SCLogDebug {
 #[macro_export]
 macro_rules!SCFatalErrorOnInit {
     ($($arg:tt)*) => {
-        $crate::debug::fatalerror(&format!($($arg)*));
+        suricata_ffi::debug::fatalerror(&format!($($arg)*));
     }
 }
 
