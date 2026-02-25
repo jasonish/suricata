@@ -1,0 +1,8 @@
+%YAML 1.1
+---
+threading:
+  cpu-affinity:
+    management-cpu-set: # New format
+      cpu: [ 0 ]
+    - worker-cpu-set: # Deprecated format
+        cpu: [ 1, 2 ]

@@ -1646,6 +1646,7 @@ dependencies = [
  "num-traits 0.2.19",
  "psl",
  "regex",
+ "saphyr",
  "sawp",
  "sawp-modbus",
  "sawp-pop3",
@@ -1672,6 +1673,7 @@ version = "9.0.0-dev"
 dependencies = [
  "clap",
  "saphyr",
+ "saphyr-parser",
  "thiserror 2.0.16",
 ]
 

@@ -17,6 +17,8 @@
 
 //! Module for retrieving configuration details.
 
+pub mod loader;
+
 use nom8::{
     character::complete::{multispace0, not_line_ending},
     combinator::verify,

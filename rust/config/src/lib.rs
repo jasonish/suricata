@@ -5,11 +5,17 @@ mod loader;
 
 pub use loader::{load_config, LoadError};
 
-use saphyr::LoadableYamlNode;
+use std::borrow::Cow;
+
 use saphyr::MappingOwned;
+use saphyr::ScalarOwned;
+use saphyr::ScalarStyle;
 use saphyr::Yaml;
 use saphyr::YamlEmitter;
+use saphyr::YamlLoader;
 use saphyr::YamlOwned;
+use saphyr_parser::BufferedInput;
+use saphyr_parser::Parser;
 use thiserror::Error;
 
 /// Parsed Suricata configuration document.
@@ -29,7 +35,15 @@ pub enum ParseError {
 /// Empty input (or an empty/null document) is treated as an empty
 /// configuration mapping.
 pub fn parse_config(input: &str) -> Result<Config, ParseError> {
-    let mut docs = YamlOwned::load_from_str(input)?;
+    let mut parser = Parser::new(BufferedInput::new(input.chars()));
+    let mut loader = YamlLoader::default();
+    loader.early_parse(false);
+    parser.load(&mut loader, true)?;
+
+    let mut docs = loader.into_documents();
+    for doc in &mut docs {
+        normalize_scalar_representations(doc, false);
+    }
 
     match docs.len() {
         0 => Ok(YamlOwned::Mapping(MappingOwned::new())),
@@ -46,6 +60,76 @@ pub fn parse_config(input: &str) -> Result<Config, ParseError> {
         }
         count => Err(ParseError::MultipleDocuments(count)),
     }
+}
+
+// Normalize parser representations into scalar values while preserving non-core tags.
+//
+// We use the parser in `early_parse(false)` mode so we can inspect scalar style.
+// This allows Suricata's legacy YAML-1.1 null handling for plain `Null`.
+fn normalize_scalar_representations(node: &mut YamlOwned, in_key: bool) {
+    match node {
+        YamlOwned::Mapping(mapping) => {
+            let entries = std::mem::take(mapping).into_iter().collect::<Vec<_>>();
+            for (mut key, mut value) in entries {
+                normalize_scalar_representations(&mut key, true);
+                normalize_scalar_representations(&mut value, false);
+                mapping.insert(key, value);
+            }
+        }
+        YamlOwned::Sequence(sequence) => {
+            for value in sequence {
+                normalize_scalar_representations(value, false);
+            }
+        }
+        YamlOwned::Tagged(_, inner) => {
+            normalize_scalar_representations(inner, in_key);
+        }
+        YamlOwned::Representation(_, _, _) => {
+            let representation = std::mem::replace(node, YamlOwned::BadValue);
+            *node = convert_representation_scalar(representation, in_key);
+        }
+        _ => {}
+    }
+}
+
+// Convert one representation node into a scalar value.
+fn convert_representation_scalar(node: YamlOwned, in_key: bool) -> YamlOwned {
+    let YamlOwned::Representation(value, style, tag) = node else {
+        return node;
+    };
+
+    if let Some(tag) = tag {
+        if !tag.is_yaml_core_schema() {
+            let inner = convert_representation_scalar(
+                YamlOwned::Representation(value, style, None),
+                in_key,
+            );
+            return YamlOwned::Tagged(tag, Box::new(inner));
+        }
+
+        let tag_cow = Cow::Owned(tag);
+        if let Some(scalar) =
+            ScalarOwned::parse_from_cow_and_metadata(Cow::Owned(value), style, Some(&tag_cow))
+        {
+            return YamlOwned::Value(scalar);
+        }
+        return YamlOwned::BadValue;
+    }
+
+    if !in_key && is_yaml11_plain_null(style, &value) {
+        return YamlOwned::Value(ScalarOwned::Null);
+    }
+
+    if let Some(scalar) = ScalarOwned::parse_from_cow_and_metadata(Cow::Owned(value), style, None) {
+        YamlOwned::Value(scalar)
+    } else {
+        YamlOwned::BadValue
+    }
+}
+
+// Suricata legacy null handling from the old C yaml loader.
+fn is_yaml11_plain_null(style: ScalarStyle, value: &str) -> bool {
+    style == ScalarStyle::Plain && matches!(value, "" | "~" | "null" | "Null" | "NULL")
 }
 
 /// Print a parsed configuration document as YAML.
@@ -203,6 +287,39 @@ mod tests {
     }
 
     #[test]
+    // Verify legacy null handling for unquoted YAML-1.1 forms.
+    fn test_parse_config_legacy_null_variants() {
+        let config = parse_config(
+            "quoted-tilde: \"~\"\n\
+             unquoted-tilde: ~\n\
+             quoted-null: \"null\"\n\
+             unquoted-null: null\n\
+             quoted-Null: \"Null\"\n\
+             unquoted-Null: Null\n\
+             quoted-NULL: \"NULL\"\n\
+             unquoted-NULL: NULL\n\
+             empty-quoted: \"\"\n\
+             empty-unquoted: \n",
+        )
+        .expect("config should parse");
+
+        assert_eq!(config["quoted-tilde"].as_str(), Some("~"));
+        assert!(config["unquoted-tilde"].is_null());
+
+        assert_eq!(config["quoted-null"].as_str(), Some("null"));
+        assert!(config["unquoted-null"].is_null());
+
+        assert_eq!(config["quoted-Null"].as_str(), Some("Null"));
+        assert!(config["unquoted-Null"].is_null());
+
+        assert_eq!(config["quoted-NULL"].as_str(), Some("NULL"));
+        assert!(config["unquoted-NULL"].is_null());
+
+        assert_eq!(config["empty-quoted"].as_str(), Some(""));
+        assert!(config["empty-unquoted"].is_null());
+    }
+
+    #[test]
     // Verify empty input parses as an empty mapping config.
     fn test_parse_config_empty_input() {
         let config = parse_config("").expect("empty input should parse");
@@ -223,6 +340,17 @@ mod tests {
             .expect_err("multiple documents should return an error");
 
         assert!(matches!(error, ParseError::MultipleDocuments(2)));
+    }
+
+    #[test]
+    // Verify legacy threading YAML with mixed formats is rejected by the loader.
+    fn test_load_config_legacy_threading_rejected() {
+        let path =
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/legacy-threading.yaml");
+
+        let error = load_config(&path).expect_err("legacy threading config should fail to load");
+
+        assert!(matches!(error, LoadError::Parse(ParseError::Parse(_))));
     }
 
     #[test]

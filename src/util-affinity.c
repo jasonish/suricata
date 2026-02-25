@@ -1988,6 +1988,8 @@ static int ThreadingAffinityTest27(void)
     SCConfInit();
     ResetAffinityForTest();
 
+    /* Pre 9.0 this would parse up to the invalid YAML. For 9.0 this
+     * fails to parse as the document needs to be fully valid. */
     const char *config = "%YAML 1.1\n"
                          "---\n"
                          "threading:\n"
@@ -1997,15 +1999,11 @@ static int ThreadingAffinityTest27(void)
                          "    - worker-cpu-set:\n" // Deprecated format
                          "        cpu: [ 1, 2 ]\n";
 
-    SCConfYamlLoadString(config, strlen(config));
-    AffinitySetupLoadFromConfig();
+    FAIL_IF(SCConfYamlLoadString(config, strlen(config)) != -1);
 
-    ThreadsAffinityType *mgmt_taf = &thread_affinity[MANAGEMENT_CPU_SET];
-    ThreadsAffinityType *worker_taf = &thread_affinity[WORKER_CPU_SET];
-    // The first format should be picked-up and the other should be ignored
-    // For ignored formats, CPU_SET is initliazed as all cores
-    FAIL_IF(CPU_COUNT(&mgmt_taf->cpu_set) != 1 ||
-            CPU_COUNT(&worker_taf->cpu_set) != UtilCpuGetNumProcessorsOnline());
+    /* Just make sure we didn't partially parse the config, which we
+     * did pre 9.0. */
+    FAIL_IF_NOT_NULL(SCConfGetNode("threading"));
 
     SCConfDeInit();
     SCConfRestoreContextBackup();
