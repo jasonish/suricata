@@ -11,6 +11,8 @@ name = "suricata-config"
 
 [dependencies]
 clap = { version = "4.5.39", default-features = false, features = ["std", "derive", "help", "usage"] }
+jsonschema = { version = "0.14.0", default-features = false, features = ["draft202012"] }
 saphyr = { version = "0.0.6" }
 saphyr-parser = { version = "0.0.6" }
+serde_json = { version = "1.0.143", features = ["preserve_order"] }
 thiserror = "2.0.12"

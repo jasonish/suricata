@@ -3,8 +3,10 @@
 
 pub mod ffi;
 pub mod loader;
+pub mod validate;
 
 pub use loader::{load_file, load_string, LoadError};
+pub use validate::{config_to_json, validate_json_schema, ValidationError};
 
 use saphyr::MappingOwned;
 use saphyr::Yaml;
@@ -22,6 +24,14 @@ pub type Config = YamlOwned;
 
 /// Limit for nesting depth. Fuzzing can easily reach this.
 const MAX_YAML_NESTING_DEPTH: usize = 255;
+
+/// Embedded default JSON Schema for Suricata YAML configuration.
+pub const SURICATA_YAML_SCHEMA: &str = include_str!("../suricata-yaml.schema.json");
+
+/// Parse and return the embedded default JSON Schema.
+pub fn embedded_schema() -> Result<serde_json::Value, serde_json::Error> {
+    serde_json::from_str(SURICATA_YAML_SCHEMA)
+}
 
 /// Errors returned while parsing a configuration document.
 #[derive(Debug, Error)]
