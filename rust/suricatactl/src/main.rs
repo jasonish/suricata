@@ -8,6 +8,8 @@
 
 use clap::Parser;
 use clap::Subcommand;
+use std::ffi::OsStr;
+use std::ffi::OsString;
 use tracing::Level;
 
 mod filestore;
@@ -33,6 +35,9 @@ struct Cli {
 enum Commands {
     /// Filestore management commands
     Filestore(FilestoreCommand),
+
+    /// Suricata configuration commands
+    Config,
 }
 
 #[derive(Parser, Debug)]
@@ -58,6 +63,10 @@ struct FilestorePruneArgs {
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    if dispatch_config_command_from_argv()? {
+        return Ok(());
+    }
+
     let cli = Cli::parse();
 
     let log_level = if cli.quiet {
@@ -73,5 +82,42 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Commands::Filestore(filestore) => match filestore.command {
             FilestoreCommands::Prune(args) => crate::filestore::prune::prune(args),
         },
+        Commands::Config => unreachable!("config dispatch is handled before clap parsing"),
     }
+}
+
+fn dispatch_config_command_from_argv() -> Result<bool, Box<dyn std::error::Error>> {
+    let args: Vec<OsString> = std::env::args_os().collect();
+    if args.len() < 2 {
+        return Ok(false);
+    }
+
+    let mut index = 1;
+    while index < args.len() && is_global_passthrough_flag(args[index].as_os_str()) {
+        index += 1;
+    }
+
+    let Some(command) = args.get(index) else {
+        return Ok(false);
+    };
+    if command != OsStr::new("config") {
+        return Ok(false);
+    }
+
+    let mut command_name = args[0].clone();
+    command_name.push(" config");
+    let forwarded = std::iter::once(command_name)
+        .chain(args.into_iter().skip(index + 1))
+        .collect::<Vec<_>>();
+    suricata_config::cli::run_from_iter(forwarded)?;
+    Ok(true)
+}
+
+fn is_global_passthrough_flag(arg: &OsStr) -> bool {
+    if arg == OsStr::new("--verbose") || arg == OsStr::new("-q") || arg == OsStr::new("--quiet") {
+        return true;
+    }
+
+    let value = arg.to_string_lossy();
+    value.starts_with('-') && value.chars().skip(1).all(|ch| ch == 'v')
 }
