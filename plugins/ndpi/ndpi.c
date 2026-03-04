@@ -33,7 +33,7 @@
 
 #include "ndpi_api.h"
 
-static ThreadStorageId thread_storage_id = { .id = -1 };
+static SCThreadStorageId thread_storage_id = { .id = -1 };
 static FlowStorageId flow_storage_id = { .id = -1 };
 static int ndpi_protocol_keyword_id = -1;
 static int ndpi_risk_keyword_id = -1;
@@ -100,7 +100,7 @@ static void OnFlowUpdate(ThreadVars *tv, Flow *f, Packet *p, void *_data)
 
     uint16_t ip_len = 0;
     void *ip_ptr = NULL;
-    struct NdpiThreadContext *threadctx = ThreadGetStorageById(tv, thread_storage_id);
+    struct NdpiThreadContext *threadctx = SCThreadGetStorageById(tv, thread_storage_id);
     struct NdpiFlowContext *flowctx = FlowGetStorageById(f, flow_storage_id);
 
     if (!threadctx->ndpi || !flowctx->ndpi_flow) {
@@ -175,7 +175,7 @@ static void OnThreadInit(ThreadVars *tv, void *_data)
     NDPI_BITMASK_SET_ALL(protos);
     ndpi_set_protocol_detection_bitmask2(context->ndpi, &protos);
     ndpi_finalize_initialization(context->ndpi);
-    ThreadSetStorageById(tv, thread_storage_id, context);
+    SCThreadSetStorageById(tv, thread_storage_id, context);
 }
 
 static int DetectnDPIProtocolPacketMatch(
@@ -454,7 +454,7 @@ static void EveCallback(ThreadVars *tv, const Packet *p, Flow *f, SCJsonBuilder 
         return;
     }
 
-    struct NdpiThreadContext *threadctx = ThreadGetStorageById(tv, thread_storage_id);
+    struct NdpiThreadContext *threadctx = SCThreadGetStorageById(tv, thread_storage_id);
     struct NdpiFlowContext *flowctx = FlowGetStorageById(f, flow_storage_id);
     ndpi_serializer serializer;
     char *buffer;
@@ -512,7 +512,7 @@ static void NdpiInit(void)
     SCLogDebug("Initializing nDPI plugin");
 
     /* Register thread storage. */
-    thread_storage_id = ThreadStorageRegister("ndpi", sizeof(void *), NULL, ThreadStorageFree);
+    thread_storage_id = SCThreadStorageRegister("ndpi", sizeof(void *), NULL, ThreadStorageFree);
     if (thread_storage_id.id < 0) {
         FatalError("Failed to register nDPI thread storage");
     }

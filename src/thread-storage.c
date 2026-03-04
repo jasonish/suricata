@@ -22,42 +22,42 @@
 
 const StorageEnum storage_type = STORAGE_THREAD;
 
-unsigned int ThreadStorageSize(void)
+unsigned int SCThreadStorageSize(void)
 {
     return StorageGetSize(storage_type);
 }
 
-void *ThreadGetStorageById(const ThreadVars *tv, ThreadStorageId id)
+void *SCThreadGetStorageById(const ThreadVars *tv, SCThreadStorageId id)
 {
     return StorageGetById(tv->storage, storage_type, id.id);
 }
 
-int ThreadSetStorageById(ThreadVars *tv, ThreadStorageId id, void *ptr)
+int SCThreadSetStorageById(ThreadVars *tv, SCThreadStorageId id, void *ptr)
 {
     return StorageSetById(tv->storage, storage_type, id.id, ptr);
 }
 
-void *ThreadAllocStorageById(ThreadVars *tv, ThreadStorageId id)
+void *SCThreadAllocStorageById(ThreadVars *tv, SCThreadStorageId id)
 {
     return StorageAllocByIdPrealloc(tv->storage, storage_type, id.id);
 }
 
-void ThreadFreeStorageById(ThreadVars *tv, ThreadStorageId id)
+void SCThreadFreeStorageById(ThreadVars *tv, SCThreadStorageId id)
 {
     StorageFreeById(tv->storage, storage_type, id.id);
 }
 
-void ThreadFreeStorage(ThreadVars *tv)
+void SCThreadFreeStorage(ThreadVars *tv)
 {
-    if (ThreadStorageSize() > 0)
+    if (SCThreadStorageSize() > 0)
         StorageFreeAll(tv->storage, storage_type);
 }
 
-ThreadStorageId ThreadStorageRegister(const char *name, const unsigned int size,
+SCThreadStorageId SCThreadStorageRegister(const char *name, const unsigned int size,
         void *(*Alloc)(unsigned int), void (*Free)(void *))
 {
     int id = StorageRegister(storage_type, name, size, Alloc, Free);
-    ThreadStorageId tsi = { .id = id };
+    SCThreadStorageId tsi = { .id = id };
     return tsi;
 }
 
@@ -78,49 +78,50 @@ static int ThreadStorageTest01(void)
     StorageCleanup();
     StorageInit();
 
-    ThreadStorageId id1 = ThreadStorageRegister("test", 8, StorageTestAlloc, StorageTestFree);
+    SCThreadStorageId id1 = SCThreadStorageRegister("test", 8, StorageTestAlloc, StorageTestFree);
     FAIL_IF(id1.id < 0);
 
-    ThreadStorageId id2 = ThreadStorageRegister("variable", 24, StorageTestAlloc, StorageTestFree);
+    SCThreadStorageId id2 =
+            SCThreadStorageRegister("variable", 24, StorageTestAlloc, StorageTestFree);
     FAIL_IF(id2.id < 0);
 
-    ThreadStorageId id3 =
-            ThreadStorageRegister("store", sizeof(void *), StorageTestAlloc, StorageTestFree);
+    SCThreadStorageId id3 =
+            SCThreadStorageRegister("store", sizeof(void *), StorageTestAlloc, StorageTestFree);
     FAIL_IF(id3.id < 0);
 
     FAIL_IF(StorageFinalize() < 0);
 
-    ThreadVars *tv = SCCalloc(1, sizeof(ThreadVars) + ThreadStorageSize());
+    ThreadVars *tv = SCCalloc(1, sizeof(ThreadVars) + SCThreadStorageSize());
     FAIL_IF_NULL(tv);
 
-    void *ptr = ThreadGetStorageById(tv, id1);
+    void *ptr = SCThreadGetStorageById(tv, id1);
     FAIL_IF_NOT_NULL(ptr);
 
-    ptr = ThreadGetStorageById(tv, id2);
+    ptr = SCThreadGetStorageById(tv, id2);
     FAIL_IF_NOT_NULL(ptr);
 
-    ptr = ThreadGetStorageById(tv, id3);
+    ptr = SCThreadGetStorageById(tv, id3);
     FAIL_IF_NOT_NULL(ptr);
 
-    void *ptr1a = ThreadAllocStorageById(tv, id1);
+    void *ptr1a = SCThreadAllocStorageById(tv, id1);
     FAIL_IF_NULL(ptr1a);
 
-    void *ptr2a = ThreadAllocStorageById(tv, id2);
+    void *ptr2a = SCThreadAllocStorageById(tv, id2);
     FAIL_IF_NULL(ptr2a);
 
-    void *ptr3a = ThreadAllocStorageById(tv, id3);
+    void *ptr3a = SCThreadAllocStorageById(tv, id3);
     FAIL_IF_NULL(ptr3a);
 
-    void *ptr1b = ThreadGetStorageById(tv, id1);
+    void *ptr1b = SCThreadGetStorageById(tv, id1);
     FAIL_IF(ptr1a != ptr1b);
 
-    void *ptr2b = ThreadGetStorageById(tv, id2);
+    void *ptr2b = SCThreadGetStorageById(tv, id2);
     FAIL_IF(ptr2a != ptr2b);
 
-    void *ptr3b = ThreadGetStorageById(tv, id3);
+    void *ptr3b = SCThreadGetStorageById(tv, id3);
     FAIL_IF(ptr3a != ptr3b);
 
-    ThreadFreeStorage(tv);
+    SCThreadFreeStorage(tv);
     StorageCleanup();
     SCFree(tv);
     PASS;
@@ -131,26 +132,26 @@ static int ThreadStorageTest02(void)
     StorageCleanup();
     StorageInit();
 
-    ThreadStorageId id1 = ThreadStorageRegister("test", sizeof(void *), NULL, StorageTestFree);
+    SCThreadStorageId id1 = SCThreadStorageRegister("test", sizeof(void *), NULL, StorageTestFree);
     FAIL_IF(id1.id < 0);
 
     FAIL_IF(StorageFinalize() < 0);
 
-    ThreadVars *tv = SCCalloc(1, sizeof(ThreadVars) + ThreadStorageSize());
+    ThreadVars *tv = SCCalloc(1, sizeof(ThreadVars) + SCThreadStorageSize());
     FAIL_IF_NULL(tv);
 
-    void *ptr = ThreadGetStorageById(tv, id1);
+    void *ptr = SCThreadGetStorageById(tv, id1);
     FAIL_IF_NOT_NULL(ptr);
 
     void *ptr1a = SCMalloc(128);
     FAIL_IF_NULL(ptr1a);
 
-    ThreadSetStorageById(tv, id1, ptr1a);
+    SCThreadSetStorageById(tv, id1, ptr1a);
 
-    void *ptr1b = ThreadGetStorageById(tv, id1);
+    void *ptr1b = SCThreadGetStorageById(tv, id1);
     FAIL_IF(ptr1a != ptr1b);
 
-    ThreadFreeStorage(tv);
+    SCThreadFreeStorage(tv);
     StorageCleanup();
     SCFree(tv);
     PASS;
@@ -161,46 +162,46 @@ static int ThreadStorageTest03(void)
     StorageCleanup();
     StorageInit();
 
-    ThreadStorageId id1 = ThreadStorageRegister("test1", sizeof(void *), NULL, StorageTestFree);
+    SCThreadStorageId id1 = SCThreadStorageRegister("test1", sizeof(void *), NULL, StorageTestFree);
     FAIL_IF(id1.id < 0);
 
-    ThreadStorageId id2 = ThreadStorageRegister("test2", sizeof(void *), NULL, StorageTestFree);
+    SCThreadStorageId id2 = SCThreadStorageRegister("test2", sizeof(void *), NULL, StorageTestFree);
     FAIL_IF(id2.id < 0);
 
-    ThreadStorageId id3 = ThreadStorageRegister("test3", 32, StorageTestAlloc, StorageTestFree);
+    SCThreadStorageId id3 = SCThreadStorageRegister("test3", 32, StorageTestAlloc, StorageTestFree);
     FAIL_IF(id3.id < 0);
 
     FAIL_IF(StorageFinalize() < 0);
 
-    ThreadVars *tv = SCCalloc(1, sizeof(ThreadVars) + ThreadStorageSize());
+    ThreadVars *tv = SCCalloc(1, sizeof(ThreadVars) + SCThreadStorageSize());
     FAIL_IF_NULL(tv);
 
-    void *ptr = ThreadGetStorageById(tv, id1);
+    void *ptr = SCThreadGetStorageById(tv, id1);
     FAIL_IF_NOT_NULL(ptr);
 
     void *ptr1a = SCMalloc(128);
     FAIL_IF_NULL(ptr1a);
 
-    ThreadSetStorageById(tv, id1, ptr1a);
+    SCThreadSetStorageById(tv, id1, ptr1a);
 
     void *ptr2a = SCMalloc(256);
     FAIL_IF_NULL(ptr2a);
 
-    ThreadSetStorageById(tv, id2, ptr2a);
+    SCThreadSetStorageById(tv, id2, ptr2a);
 
-    void *ptr3a = ThreadAllocStorageById(tv, id3);
+    void *ptr3a = SCThreadAllocStorageById(tv, id3);
     FAIL_IF_NULL(ptr3a);
 
-    void *ptr1b = ThreadGetStorageById(tv, id1);
+    void *ptr1b = SCThreadGetStorageById(tv, id1);
     FAIL_IF(ptr1a != ptr1b);
 
-    void *ptr2b = ThreadGetStorageById(tv, id2);
+    void *ptr2b = SCThreadGetStorageById(tv, id2);
     FAIL_IF(ptr2a != ptr2b);
 
-    void *ptr3b = ThreadGetStorageById(tv, id3);
+    void *ptr3b = SCThreadGetStorageById(tv, id3);
     FAIL_IF(ptr3a != ptr3b);
 
-    ThreadFreeStorage(tv);
+    SCThreadFreeStorage(tv);
     StorageCleanup();
     SCFree(tv);
     PASS;
