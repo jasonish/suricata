@@ -1754,6 +1754,44 @@ extern "C" {
         set: *mut Dataset, data: *const u8, data_len: u32, rep: *const DataRepType,
     ) -> ::std::os::raw::c_int;
 }
+#[repr(C)]
+#[derive(Debug, Default, Copy, Clone, PartialEq, Eq)]
+pub struct SCThreadStorageId {
+    pub id: ::std::os::raw::c_int,
+}
+extern "C" {
+    pub fn SCThreadStorageSize() -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn SCThreadGetStorageById(
+        tv: *const ThreadVars, id: SCThreadStorageId,
+    ) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn SCThreadSetStorageById(
+        tv: *mut ThreadVars, id: SCThreadStorageId, ptr: *mut ::std::os::raw::c_void,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn SCThreadAllocStorageById(
+        tv: *mut ThreadVars, id: SCThreadStorageId,
+    ) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn SCThreadFreeStorageById(tv: *mut ThreadVars, id: SCThreadStorageId);
+}
+extern "C" {
+    pub fn SCThreadFreeStorage(tv: *mut ThreadVars);
+}
+extern "C" {
+    pub fn SCThreadStorageRegister(
+        name: *const ::std::os::raw::c_char, size: ::std::os::raw::c_uint,
+        Alloc: ::std::option::Option<
+            unsafe extern "C" fn(arg1: ::std::os::raw::c_uint) -> *mut ::std::os::raw::c_void,
+        >,
+        Free: ::std::option::Option<unsafe extern "C" fn(arg1: *mut ::std::os::raw::c_void)>,
+    ) -> SCThreadStorageId;
+}
 #[doc = " A \"mark\" or saved state for a JsonBuilder object.\n\n The name is full, and the types are u64 as this object is used\n directly in C as well."]
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, PartialEq, Eq)]

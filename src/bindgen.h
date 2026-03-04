@@ -66,6 +66,7 @@
 #include "reputation.h"
 #include "feature.h"
 #include "datasets.h"
+#include "thread-storage.h"
 
 #include "jsonbuilder.h"
 
