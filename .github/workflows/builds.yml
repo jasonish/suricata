@@ -3195,6 +3195,9 @@ jobs:
       - run: CFLAGS="${DEFAULT_CFLAGS}" ./configure
       - run: make dist
       - run: test -e doc/userguide/suricata.1
+      - run: test -e doc/userguide/suricatactl.1
+      - run: test -e doc/userguide/suricatactl-filestore.1
+      - run: test -e doc/userguide/suricatasc.1
       - run: test -e doc/userguide/userguide.pdf
       - name: Preparing distribution
         run: |
