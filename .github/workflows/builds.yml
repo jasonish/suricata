@@ -3490,6 +3490,7 @@ jobs:
             git
             make
             mingw-w64-ucrt-x86_64-cbindgen
+            mingw-w64-ucrt-x86_64-file
             mingw-w64-ucrt-x86_64-jansson
             mingw-w64-ucrt-x86_64-jq
             mingw-w64-ucrt-x86_64-libpcap
