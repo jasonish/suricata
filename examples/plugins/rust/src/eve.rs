@@ -25,7 +25,10 @@ unsafe extern "C" fn log_eve_raw(
 }
 
 fn log_eve_wrapped(
-    _tv: *mut ThreadVars, _p: *const Packet, f: *mut Flow, jb: &mut JsonBuilder,
+    _tv: *mut ThreadVars,
+    _p: *const Packet,
+    f: *mut Flow,
+    jb: &mut JsonBuilder,
 ) -> Result<(), suricata_ffi::jsonbuilder::Error> {
     jb.open_object("rust_wrapped")?;
     jb.set_string("example", "eve-callback")?;
