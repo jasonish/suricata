@@ -40,6 +40,7 @@
 #include "conf.h"
 
 #include "output-eve.h"
+#include "thread-callbacks.h"
 #include "detect-engine-register.h"
 #include "detect-engine-buffer.h"
 #include "detect-engine-helper.h"
