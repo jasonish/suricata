@@ -18,4 +18,5 @@ Most code copied from rust/src/applayertemplate
 ## rust
 
 A pure Rust plugin example intended to grow into an omnibus plugin example.
-Currently demonstrates plugin initialization and EVE callback registration.
+Currently demonstrates plugin initialization, EVE callback registration,
+and thread init callback registration.

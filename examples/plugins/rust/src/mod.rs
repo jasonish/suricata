@@ -1,4 +1,5 @@
 mod eve;
+mod thread;
 
 use suricata_ffi::{SCLogError, SCLogNotice};
 use suricata_sys::sys::SCPlugin;
@@ -9,6 +10,12 @@ unsafe extern "C" fn init() {
 
     if let Err(err) = eve::register() {
         SCLogError!("Failed to register rust example EVE callback: {}", err);
+    }
+    if let Err(err) = thread::register() {
+        SCLogError!(
+            "Failed to register rust example thread init callback: {}",
+            err
+        );
     }
 }
 
