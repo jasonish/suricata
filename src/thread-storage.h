@@ -22,7 +22,7 @@
 #ifndef SURICATA_THREAD_STORAGE_H
 #define SURICATA_THREAD_STORAGE_H
 
-#include "threadvars.h"
+typedef struct ThreadVars_ ThreadVars;
 
 typedef struct ThreadStorageId {
     int id;

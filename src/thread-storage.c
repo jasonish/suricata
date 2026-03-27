@@ -17,6 +17,7 @@
 
 #include "suricata-common.h"
 #include "thread-storage.h"
+#include "threadvars.h"
 #include "util-storage.h"
 #include "util-unittest.h"
 
