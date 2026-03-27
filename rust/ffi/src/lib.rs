@@ -19,6 +19,7 @@ pub mod debug;
 pub mod eve;
 pub mod jsonbuilder;
 pub mod plugin;
+pub mod thread;
 
 pub const IPPROTO_TCP: u8 = 6;
 pub const IPPROTO_UDP: u8 = 17;
