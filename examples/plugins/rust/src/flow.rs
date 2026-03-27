@@ -3,6 +3,8 @@ use suricata_ffi::{
     SCLogNotice,
 };
 
+use crate::thread::{ExampleThreadStorage, THREAD_STORAGE_ID};
+
 pub(crate) fn register() -> Result<(), &'static str> {
     flow::register_init_callback(|tv: *mut ThreadVars, f: *mut Flow, p: *const Packet| {
         SCLogNotice!(
@@ -18,8 +20,12 @@ pub(crate) fn register() -> Result<(), &'static str> {
             "Flow update callback (tv={:p}, flow={:p}, packet={:p})",
             tv,
             f,
-            p
+            p,
         );
+
+        if let Some(storage) = get_thread_storage(tv) {
+            storage.count += 1;
+        }
     })?;
 
     flow::register_finish_callback(|tv: *mut ThreadVars, f: *mut Flow| {
@@ -27,4 +33,9 @@ pub(crate) fn register() -> Result<(), &'static str> {
     })?;
 
     Ok(())
+}
+
+fn get_thread_storage(tv: *mut ThreadVars) -> Option<&'static mut ExampleThreadStorage> {
+    let id = THREAD_STORAGE_ID.get().copied()?;
+    unsafe { suricata_ffi::thread::storage::get_by_id(tv, id) }
 }
