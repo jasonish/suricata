@@ -614,6 +614,39 @@ extern "C" {
     #[doc = " \\internal\n\n Run all registered flow init callbacks."]
     pub fn SCThreadRunInitCallbacks(tv: *mut ThreadVars);
 }
+#[repr(C)]
+#[derive(Debug, Default, Copy, Clone, PartialEq, Eq)]
+pub struct ThreadStorageId {
+    pub id: ::std::os::raw::c_int,
+}
+extern "C" {
+    pub fn SCThreadStorageSize() -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn SCThreadGetStorageById(
+        tv: *const ThreadVars, id: ThreadStorageId,
+    ) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn SCThreadSetStorageById(
+        tv: *mut ThreadVars, id: ThreadStorageId, ptr: *mut ::std::os::raw::c_void,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn SCThreadFreeStorageById(tv: *mut ThreadVars, id: ThreadStorageId);
+}
+extern "C" {
+    pub fn SCThreadFreeStorage(tv: *mut ThreadVars);
+}
+extern "C" {
+    pub fn SCRegisterThreadStorageTests();
+}
+extern "C" {
+    pub fn SCThreadStorageRegister(
+        name: *const ::std::os::raw::c_char,
+        Free: ::std::option::Option<unsafe extern "C" fn(arg1: *mut ::std::os::raw::c_void)>,
+    ) -> ThreadStorageId;
+}
 extern "C" {
     pub fn SCSigTablePreRegister(
         KeywordsRegister: ::std::option::Option<unsafe extern "C" fn()>,

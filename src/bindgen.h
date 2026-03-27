@@ -41,6 +41,7 @@
 
 #include "output-eve.h"
 #include "thread-callbacks.h"
+#include "thread-storage.h"
 #include "detect-engine-register.h"
 #include "detect-engine-buffer.h"
 #include "detect-engine-helper.h"
