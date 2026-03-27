@@ -18,8 +18,11 @@
 #ifndef SURICATA_THREAD_CALLBACKS_H
 #define SURICATA_THREAD_CALLBACKS_H
 
+#ifndef SURICATA_BINDGEN_H
 #include "suricata-common.h"
-#include "threadvars.h"
+#endif
+
+typedef struct ThreadVars_ ThreadVars;
 
 /** \brief Function type for thread intialization callbacks.
  *
