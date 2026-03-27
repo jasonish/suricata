@@ -17,6 +17,7 @@
 
 pub mod debug;
 pub mod eve;
+pub mod flow;
 pub mod jsonbuilder;
 pub mod plugin;
 pub mod thread;
