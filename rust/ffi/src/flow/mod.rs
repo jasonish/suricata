@@ -16,5 +16,6 @@
  */
 
 mod flow;
+pub mod storage;
 
 pub use self::flow::*;
