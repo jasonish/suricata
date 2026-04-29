@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Suricata Flow City</title>
+<style>
+  :root { color-scheme: dark; }
+  html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #030712; color: #e5f6ff; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  canvas { width: 100vw; height: 100vh; display: block; }
+  #hud { position: fixed; left: 18px; top: 14px; padding: 14px 16px; min-width: 360px; border: 1px solid rgba(103,232,249,.35); border-radius: 18px; background: linear-gradient(135deg, rgba(8,13,30,.86), rgba(14,24,50,.62)); box-shadow: 0 0 35px rgba(34,211,238,.18), inset 0 0 28px rgba(59,130,246,.07); backdrop-filter: blur(12px); }
+  #title { display: flex; gap: 10px; align-items: baseline; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #67e8f9; text-shadow: 0 0 16px rgba(103,232,249,.65); }
+  #title small { color: #94a3b8; font-weight: 600; letter-spacing: .02em; text-transform: none; }
+  #stats { margin-top: 10px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .stat { padding: 8px 10px; border-radius: 12px; background: rgba(15,23,42,.76); border: 1px solid rgba(148,163,184,.14); }
+  .stat label { display: block; color: #94a3b8; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
+  .stat span { display: block; margin-top: 2px; color: #fff; font-size: 18px; font-weight: 800; }
+  #status { margin-top: 10px; color: #a7f3d0; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #legend { position: fixed; right: 18px; bottom: 16px; padding: 12px 14px; border-radius: 16px; border: 1px solid rgba(148,163,184,.22); background: rgba(2,6,23,.68); color: #cbd5e1; backdrop-filter: blur(10px); font-size: 13px; }
+  .swatch { display: inline-block; width: 28px; height: 4px; margin-right: 8px; vertical-align: middle; border-radius: 99px; background: linear-gradient(90deg,#22c55e,#eab308,#ef4444,#f0abfc); box-shadow: 0 0 12px rgba(34,211,238,.65); }
+</style>
+</head>
+<body>
+<canvas id="city"></canvas>
+<div id="hud">
+  <div id="title">Flow City <small>Suricata live traffic skyline</small></div>
+  <div id="stats">
+    <div class="stat"><label>Active</label><span id="active">0</span></div>
+    <div class="stat"><label>IPs</label><span id="ips">0</span></div>
+    <div class="stat"><label>Rate</label><span id="rate">0 bps</span></div>
+    <div class="stat"><label>Bytes</label><span id="bytes">0 B</span></div>
+  </div>
+  <div id="status">connecting to event stream…</div>
+</div>
+<div id="legend"><span class="swatch"></span>beam thickness/color follows flow bandwidth; buildings rise for new IPs</div>
+<script>
+const canvas = document.getElementById('city');
+const ctx = canvas.getContext('2d');
+const hud = {
+  active: document.getElementById('active'),
+  ips: document.getElementById('ips'),
+  rate: document.getElementById('rate'),
+  bytes: document.getElementById('bytes'),
+  status: document.getElementById('status'),
+};
+
+let dpr = 1;
+let W = 0;
+let H = 0;
+let snapshot = { flows: [], active_flows: 0, total_bps: 0, total_bytes: 0 };
+const buildings = new Map();
+const beams = new Map();
+const sparks = [];
+let lastTs = performance.now();
+
+function resize() {
+  dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+  W = Math.floor(innerWidth * dpr);
+  H = Math.floor(innerHeight * dpr);
+  canvas.width = W;
+  canvas.height = H;
+  layoutBuildings();
+}
+window.addEventListener('resize', resize);
+resize();
+
+function hashString(s) {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+function randFrom(seed) {
+  seed |= 0;
+  seed = (seed + 0x6D2B79F5) | 0;
+  let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+  t ^= t + Math.imul(t ^ t >>> 7, 61 | t);
+  return ((t ^ t >>> 14) >>> 0) / 4294967296;
+}
+
+function ensureBuilding(ip) {
+  if (!ip) ip = 'unknown';
+  let b = buildings.get(ip);
+  if (b) {
+    b.lastSeen = performance.now();
+    return b;
+  }
+  const seed = hashString(ip);
+  b = {
+    ip, seed,
+    x: 0, y: 0, w: 18 + randFrom(seed + 1) * 34, h: 70 + randFrom(seed + 2) * 180,
+    rise: 0, glow: 1, traffic: 0, lastSeen: performance.now(),
+    hue: 175 + randFrom(seed + 3) * 115,
+  };
+  buildings.set(ip, b);
+  layoutBuildings();
+  burst(b, 18, '#67e8f9');
+  return b;
+}
+
+function layoutBuildings() {
+  const arr = [...buildings.values()].sort((a, b) => a.seed - b.seed);
+  const margin = 80 * dpr;
+  const ground = H - 96 * dpr;
+  const usable = Math.max(1, W - margin * 2);
+  arr.forEach((b, i) => {
+    const t = arr.length <= 1 ? .5 : i / (arr.length - 1);
+    const lane = (i % 5) / 4;
+    b.x = margin + t * usable + (randFrom(b.seed + 9) - .5) * 38 * dpr;
+    b.y = ground - lane * 95 * dpr;
+  });
+}
+
+function flowKey(f) {
+  return `${f.src_ip}:${f.src_port}-${f.dest_ip}:${f.dest_port}-${f.proto}`;
+}
+
+function ingest(data) {
+  snapshot = data;
+  hud.active.textContent = data.active_flows ?? data.flows?.length ?? 0;
+  hud.rate.textContent = humanBits(data.total_bps || 0) + '/s';
+  hud.bytes.textContent = humanBytes(data.total_bytes || 0);
+
+  const live = new Set();
+  let totalTraffic = 0;
+  for (const f of data.flows || []) {
+    const a = ensureBuilding(f.src_ip);
+    const b = ensureBuilding(f.dest_ip);
+    a.traffic += (f.bps || 0) * 0.000003;
+    b.traffic += (f.bps || 0) * 0.000003;
+    totalTraffic += f.bps || 0;
+
+    const key = flowKey(f);
+    live.add(key);
+    let beam = beams.get(key);
+    if (!beam) {
+      beam = { key, src: a.ip, dst: b.ip, bps: 0, pulse: 1, born: performance.now(), app: f.app_proto || '-', proto: f.proto || '' };
+      beams.set(key, beam);
+      burst(a, 10, '#22d3ee');
+      burst(b, 10, '#f0abfc');
+    }
+    beam.bps = f.bps || 0;
+    beam.app = f.app_proto || '-';
+    beam.proto = f.proto || '';
+    beam.lastSeen = performance.now();
+  }
+  for (const [key, beam] of beams) {
+    if (!live.has(key)) beam.fading = true;
+  }
+  hud.ips.textContent = buildings.size;
+}
+
+function burst(b, count, color) {
+  for (let i = 0; i < count; i++) {
+    sparks.push({
+      x: b.x, y: b.y - b.h * Math.max(.15, b.rise),
+      vx: (Math.random() - .5) * 160 * dpr,
+      vy: (-Math.random() * 180 - 40) * dpr,
+      life: .8 + Math.random() * .7,
+      color,
+    });
+  }
+}
+
+const es = new EventSource('/events');
+es.onopen = () => hud.status.textContent = 'connected: streaming flow snapshots';
+es.onerror = () => hud.status.textContent = 'event stream disconnected; browser will retry';
+es.addEventListener('status', ev => {
+  try { hud.status.textContent = JSON.parse(ev.data).status; } catch { hud.status.textContent = ev.data; }
+});
+es.onmessage = ev => {
+  try { ingest(JSON.parse(ev.data)); hud.status.textContent = 'live: ' + new Date().toLocaleTimeString(); }
+  catch (e) { hud.status.textContent = 'bad snapshot: ' + e; }
+};
+
+function draw(now) {
+  const dt = Math.min(.05, (now - lastTs) / 1000);
+  lastTs = now;
+  update(dt);
+  render(now / 1000);
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+
+function update(dt) {
+  for (const b of buildings.values()) {
+    b.rise += (1 - b.rise) * Math.min(1, dt * 2.4);
+    b.glow *= Math.pow(.06, dt);
+    b.traffic *= Math.pow(.15, dt);
+  }
+  for (const [key, beam] of beams) {
+    beam.pulse *= Math.pow(.04, dt);
+    if (beam.fading) {
+      beam.fade = (beam.fade ?? 1) - dt * .8;
+      if (beam.fade <= 0) beams.delete(key);
+    }
+  }
+  for (let i = sparks.length - 1; i >= 0; i--) {
+    const s = sparks[i];
+    s.life -= dt;
+    s.x += s.vx * dt;
+    s.y += s.vy * dt;
+    s.vy += 260 * dpr * dt;
+    if (s.life <= 0) sparks.splice(i, 1);
+  }
+}
+
+function render(t) {
+  ctx.clearRect(0, 0, W, H);
+  const bg = ctx.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, '#030712');
+  bg.addColorStop(.55, '#081228');
+  bg.addColorStop(1, '#020617');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+  drawStars(t);
+  drawGrid(t);
+  for (const beam of beams.values()) drawBeam(beam, t);
+  for (const b of [...buildings.values()].sort((a, b) => a.y - b.y)) drawBuilding(b, t);
+  drawSparks();
+  drawVignette();
+}
+
+function drawStars(t) {
+  ctx.save();
+  for (let i = 0; i < 110; i++) {
+    const x = randFrom(i * 17) * W;
+    const y = randFrom(i * 31) * H * .58;
+    const a = .15 + .45 * Math.abs(Math.sin(t * .7 + i));
+    ctx.fillStyle = `rgba(186,230,253,${a})`;
+    ctx.fillRect(x, y, dpr, dpr);
+  }
+  ctx.restore();
+}
+
+function drawGrid(t) {
+  const ground = H - 72 * dpr;
+  ctx.save();
+  ctx.strokeStyle = 'rgba(34,211,238,.16)';
+  ctx.lineWidth = 1 * dpr;
+  for (let x = -W; x < W * 2; x += 56 * dpr) {
+    ctx.beginPath(); ctx.moveTo(x + (t * 28 * dpr) % (56 * dpr), ground); ctx.lineTo(W / 2, H * .54); ctx.stroke();
+  }
+  for (let y = ground; y > H * .54; y -= 34 * dpr) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawBuilding(b, t) {
+  const h = b.h * b.rise * dpr;
+  const w = b.w * dpr;
+  const x = b.x;
+  const y = b.y;
+  const top = y - h;
+  const trafficGlow = Math.min(1, b.traffic);
+  ctx.save();
+  ctx.shadowBlur = (18 + 38 * b.glow + 28 * trafficGlow) * dpr;
+  ctx.shadowColor = `hsla(${b.hue}, 95%, 65%, .8)`;
+  const grad = ctx.createLinearGradient(0, top, 0, y);
+  grad.addColorStop(0, `hsla(${b.hue}, 75%, 38%, .95)`);
+  grad.addColorStop(1, 'rgba(15,23,42,.96)');
+  ctx.fillStyle = grad;
+  roundRect(x - w / 2, top, w, h, 6 * dpr);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.strokeStyle = `hsla(${b.hue}, 95%, 70%, .55)`;
+  ctx.lineWidth = 1.2 * dpr;
+  ctx.stroke();
+
+  ctx.fillStyle = `hsla(${b.hue}, 95%, 72%, .82)`;
+  const rows = Math.max(2, Math.floor(h / (16 * dpr)));
+  for (let r = 1; r < rows; r++) {
+    for (let c = -1; c <= 1; c++) {
+      if (randFrom(b.seed + r * 13 + c * 7) > .42) {
+        ctx.globalAlpha = .25 + .65 * Math.abs(Math.sin(t * 2 + r + c));
+        ctx.fillRect(x + c * w * .22 - 2 * dpr, top + r * h / rows, 4 * dpr, 2 * dpr);
+      }
+    }
+  }
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = 'rgba(226,232,240,.88)';
+  ctx.font = `${11 * dpr}px ui-sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.fillText(shortIp(b.ip), x, y + 18 * dpr);
+  ctx.restore();
+}
+
+function drawBeam(beam, t) {
+  const a = buildings.get(beam.src);
+  const b = buildings.get(beam.dst);
+  if (!a || !b) return;
+  const alpha = beam.fade ?? 1;
+  const ax = a.x, ay = a.y - a.h * a.rise * dpr - 8 * dpr;
+  const bx = b.x, by = b.y - b.h * b.rise * dpr - 8 * dpr;
+  const mx = (ax + bx) / 2;
+  const my = Math.min(ay, by) - (60 + Math.min(220, distance(ax, ay, bx, by) * .18)) * dpr;
+  const intensity = Math.min(1, Math.log10((beam.bps || 1) + 10) / 9);
+  const hue = 145 - 145 * intensity;
+  const width = (1.2 + intensity * 8 + beam.pulse * 7) * dpr;
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.lineCap = 'round';
+  ctx.shadowBlur = (12 + intensity * 30) * dpr;
+  ctx.shadowColor = `hsla(${hue}, 95%, 62%, .9)`;
+  ctx.strokeStyle = `hsla(${hue}, 95%, 62%, ${.42 + intensity * .48})`;
+  ctx.lineWidth = width;
+  ctx.beginPath(); ctx.moveTo(ax, ay); ctx.quadraticCurveTo(mx, my, bx, by); ctx.stroke();
+  const p = (t * (0.18 + intensity * .7) + (beam.born || 0) * .001) % 1;
+  const dot = quadPoint(ax, ay, mx, my, bx, by, p);
+  ctx.fillStyle = '#e0f2fe';
+  ctx.shadowBlur = 24 * dpr;
+  ctx.shadowColor = '#67e8f9';
+  ctx.beginPath(); ctx.arc(dot.x, dot.y, (3 + intensity * 6) * dpr, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
+
+function drawSparks() {
+  ctx.save();
+  for (const s of sparks) {
+    ctx.globalAlpha = Math.max(0, s.life);
+    ctx.fillStyle = s.color;
+    ctx.shadowBlur = 12 * dpr;
+    ctx.shadowColor = s.color;
+    ctx.beginPath(); ctx.arc(s.x, s.y, 2.2 * dpr, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawVignette() {
+  const g = ctx.createRadialGradient(W / 2, H / 2, H * .1, W / 2, H / 2, H * .78);
+  g.addColorStop(0, 'rgba(0,0,0,0)');
+  g.addColorStop(1, 'rgba(0,0,0,.62)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+}
+
+function roundRect(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h); ctx.lineTo(x, y + h); ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y);
+}
+
+function quadPoint(ax, ay, cx, cy, bx, by, t) {
+  const u = 1 - t;
+  return { x: u*u*ax + 2*u*t*cx + t*t*bx, y: u*u*ay + 2*u*t*cy + t*t*by };
+}
+function distance(ax, ay, bx, by) { return Math.hypot(ax - bx, ay - by); }
+function shortIp(ip) { return ip.length > 18 ? ip.slice(0, 16) + '…' : ip; }
+function humanBytes(v) { return human(v, ['B','KiB','MiB','GiB','TiB']); }
+function humanBits(v) { return human(v, ['bps','Kbps','Mbps','Gbps','Tbps']); }
+function human(v, units) {
+  let n = Number(v) || 0, i = 0;
+  while (n >= 1024 && i < units.length - 1) { n /= 1024; i++; }
+  return `${n >= 100 ? n.toFixed(0) : n >= 10 ? n.toFixed(1) : n.toFixed(2)} ${units[i]}`;
+}
+</script>
+</body>
+</html>

@@ -15,6 +15,12 @@ for testing capture plugin loading and registration in CI.
 An app-layer template plugin with logging and detection.
 Most code copied from rust/src/applayertemplate
 
+## flowtop
+
+A flow lifecycle plugin example that tracks active flows and publishes live
+flow counters/rates over a Unix stream socket. Includes Rust terminal and web
+visualizers.
+
 ## rust
 
 A pure Rust plugin example intended to grow into an omnibus plugin example.
