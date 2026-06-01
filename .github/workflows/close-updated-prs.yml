@@ -40,7 +40,7 @@ jobs:
           changes.
 
           If you wish to create an in progress pull request that you can push to,
-          please draft a draft pull request.
+          please create a draft pull request.
 
           Please see [GitHub Pull Request Workflow](https://docs.suricata.io/en/latest/devguide/contributing/github-pr-workflow.html).
 
