@@ -97,3 +97,4 @@ OISF does not participate in bug bounty programs, or offer any other rewards
 for reporting issues.
 
 Foo
+Bar
