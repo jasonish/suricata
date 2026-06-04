@@ -89,7 +89,7 @@ suricata-derive = { path = "./derive", version = "@PACKAGE_VERSION@" }
 suricata-sys = { path = "./sys", version = "@PACKAGE_VERSION@" }
 suricata-ffi = { path = "./ffi", version = "@PACKAGE_VERSION@" }
 
-suricata-lua-sys = { version = "5.4.8002" }
+suricata-lua-sys = { version = "5.4.8003-alpha.1" }
 
 htp = { package = "suricata-htp", path = "./htp", version = "@PACKAGE_VERSION@" }
 
