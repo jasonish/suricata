@@ -65,3 +65,6 @@ doc/userguide/*.1
 
 # Don't ignore *.rules in rules/
 !/rules/*.rules
+
+# An artifact from a logging unit test.
+/boo.txt
