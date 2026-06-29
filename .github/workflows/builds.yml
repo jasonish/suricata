@@ -3400,6 +3400,7 @@ jobs:
           copyback: false
           envs: "DEFAULT_CFLAGS"
           prepare: |
+            pkg update
             pkg install -y \
               autoconf \
               automake \
