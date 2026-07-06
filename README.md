@@ -142,3 +142,4 @@ A: Yes, we do this to keep the ownership of Suricata in one hand: the
 Open Information Security Foundation. See
 http://suricata.io/about/open-source/ and
 http://suricata.io/about/contribution-agreement/
+
