@@ -1120,6 +1120,106 @@ jobs:
       - run: suricata-update -V
       - run: suricatasc -h
 
+  # Build both C and Rust with AddressSanitizer, then run Suricata-Verify.
+  fedora-44-rust-nightly-asan:
+    name: Fedora 44 (Rust nightly ASAN, Suricata-Verify)
+    runs-on: ubuntu-latest
+    container: fedora:44
+    needs: [prepare-deps, prepare-cbindgen]
+    steps:
+      - name: Cache cargo registry
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: ~/.cargo/registry
+          key: ${{ github.job }}-cargo-registry
+
+      - name: Determine number of CPUs
+        run: echo CPUS=$(nproc --all) >> $GITHUB_ENV
+
+      - name: Install system packages
+        run: |
+          dnf -y install \
+                autoconf \
+                automake \
+                awk \
+                curl \
+                diffutils \
+                file-devel \
+                gcc \
+                gcc-c++ \
+                git \
+                jq \
+                jansson-devel \
+                libasan \
+                libtool \
+                libyaml-devel \
+                libnfnetlink-devel \
+                libnetfilter_queue-devel \
+                libnet-devel \
+                libcap-ng-devel \
+                libpcap-devel \
+                make \
+                pcre2-devel \
+                pkgconfig \
+                python3-yaml \
+                which \
+                xz-devel \
+                zlib-devel
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - run: git config --global --add safe.directory /__w/suricata/suricata
+      - uses: ./.github/actions/install-cbindgen
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: prep
+          path: prep
+      - run: tar xf prep/suricata-update.tar.gz
+      - run: tar xf prep/suricata-verify.tar.gz
+
+      - name: Install nightly Rust
+        run: |
+          curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly --profile minimal -y
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - run: rustc --version
+      - run: ./autogen.sh
+      - name: Configure
+        env:
+          # An explicit target prevents sanitizer flags from being applied to
+          # host proc macros.
+          CARGO_BUILD_TARGET: x86_64-unknown-linux-gnu
+          RUSTFLAGS: "-Zsanitizer=address -Cforce-frame-pointers=yes"
+        run: >-
+          CFLAGS="${DEFAULT_CFLAGS} -g -fno-omit-frame-pointer -fsanitize=address"
+          LDFLAGS="-fsanitize=address"
+          ac_cv_func_realloc_0_nonnull=yes
+          ac_cv_func_malloc_0_nonnull=yes
+          ./configure --enable-warnings --enable-debug --enable-unittests --disable-shared
+      - name: Build
+        env:
+          CARGO_BUILD_TARGET: x86_64-unknown-linux-gnu
+          RUSTFLAGS: "-Zsanitizer=address -Cforce-frame-pointers=yes"
+        run: make -j ${{ env.CPUS }}
+      - name: Verify Rust ASAN instrumentation
+        run: |
+          nm -C rust/target/x86_64-unknown-linux-gnu/debug/libsuricata_rust.a > rust-asan-symbols.txt
+          grep -q __asan_report_load1 rust-asan-symbols.txt
+      - run: ./src/suricata --build-info
+      - run: ./src/suricata -u -l .
+      - name: Running suricata-verify
+        env:
+          SURICATASC: ./rust/target/x86_64-unknown-linux-gnu/debug/suricatasc
+        run: python3 ./suricata-verify/run.py -q --debug-failed
+      - name: Upload failure logs
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: rust-asan-logs
+          if-no-files-found: ignore
+          path: |
+            *.log
+            suricata-verify/tests/**/output/
+
   # This job builds and tests Suricata as a non-root user as some
   # issues only show up when not running as root, and by default all
   # jobs in GitHub actions are run as root inside the container.
