@@ -63,6 +63,7 @@
 #include "flow-bindgen.h"
 #include "flow-callbacks.h"
 #include "flow-storage.h"
+#include "packet-bindgen.h"
 
 #include "thread-callbacks.h"
 #include "thread-storage.h"

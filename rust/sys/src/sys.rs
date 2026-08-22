@@ -1951,6 +1951,12 @@ extern "C" {
         Free: ::std::option::Option<unsafe extern "C" fn(arg1: *mut ::std::os::raw::c_void)>,
     ) -> SCFlowStorageId;
 }
+extern "C" {
+    pub fn SCPacketGetFlow(p: *const Packet) -> *mut Flow;
+}
+extern "C" {
+    pub fn SCPacketGetTCPHeader(p: *const Packet, len: *mut u16) -> *const u8;
+}
 #[doc = " \\brief Function type for thread intialization callbacks.\n\n Once registered by SCThreadRegisterInitCallback, this function will\n be called for every thread being initialized during Suricata\n startup.\n\n \\param tv The ThreadVars struct that has just been initialized.\n \\param user The user data provided when registering the callback."]
 pub type SCThreadInitCallbackFn = ::std::option::Option<
     unsafe extern "C" fn(tv: *mut ThreadVars, user: *mut ::std::os::raw::c_void),

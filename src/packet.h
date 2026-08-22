@@ -19,6 +19,7 @@
 #define SURICATA_PACKET_H
 
 #include "decode.h"
+#include "packet-bindgen.h"
 #include "util-device.h"
 
 void PacketDrop(Packet *p, const uint8_t action, enum PacketDropReason r);

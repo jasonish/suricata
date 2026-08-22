@@ -68,6 +68,64 @@ uint8_t PacketGetAction(const Packet *p)
 }
 
 /**
+ * \brief Return the flow associated with a packet.
+ *
+ * The returned pointer is borrowed and is only valid while the packet and its
+ * flow remain valid.
+ */
+Flow *SCPacketGetFlow(const Packet *p)
+{
+    return p == NULL ? NULL : p->flow;
+}
+
+/**
+ * \brief Return the complete decoded TCP header associated with a packet.
+ *
+ * The returned pointer is borrowed and is only valid while the packet remains
+ * valid. The length includes TCP options. Invalid, non-TCP, and truncated
+ * headers return NULL and set the output length to zero.
+ */
+const uint8_t *SCPacketGetTCPHeader(const Packet *p, uint16_t *len)
+{
+    if (len == NULL) {
+        return NULL;
+    }
+    *len = 0;
+
+    if (p == NULL || !PacketIsTCP(p)) {
+        return NULL;
+    }
+
+    const TCPHdr *tcph = PacketGetTCP(p);
+    if (tcph == NULL) {
+        return NULL;
+    }
+
+    const uint8_t hlen = TCP_GET_RAW_HLEN(tcph);
+    if (hlen < TCP_HEADER_LEN) {
+        return NULL;
+    }
+
+    const uint8_t *pkt = GET_PKT_DATA(p);
+    if (pkt == NULL) {
+        return NULL;
+    }
+    const uintptr_t pkt_start = (uintptr_t)pkt;
+    const uintptr_t tcp_start = (uintptr_t)tcph;
+    if (tcp_start < pkt_start) {
+        return NULL;
+    }
+    const uintptr_t tcp_offset = tcp_start - pkt_start;
+    const uint32_t pkt_len = GET_PKT_LEN(p);
+    if (tcp_offset > pkt_len || hlen > pkt_len - tcp_offset) {
+        return NULL;
+    }
+
+    *len = hlen;
+    return (const uint8_t *)tcph;
+}
+
+/**
  *  \brief Initialize a packet structure for use.
  */
 bool PacketInit(Packet *p)
