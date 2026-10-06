@@ -1675,6 +1675,7 @@ dependencies = [
  "encoding_rs",
  "ordered-float",
  "saphyr",
+ "saphyr-parser",
  "thiserror 2.0.18",
 ]
 

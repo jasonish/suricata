@@ -6,15 +6,25 @@ pub mod loader;
 
 pub use loader::{load_file, load_file_with_include_dir, load_string, LoadError};
 
-use saphyr::LoadableYamlNode;
+use std::collections::HashMap;
+
 use saphyr::MappingOwned;
 use saphyr::Yaml;
 use saphyr::YamlEmitter;
+use saphyr::YamlLoader;
 use saphyr::YamlOwned;
+use saphyr_parser::Event;
+use saphyr_parser::Parser;
+use saphyr_parser::Span;
+use saphyr_parser::SpannedEventReceiver;
 use thiserror::Error;
 
 /// Parsed Suricata configuration document.
 pub type Config = YamlOwned;
+
+/// Maximum nesting depth of a configuration, counting the root mapping
+/// or sequence. This is the same limit as the C loader had.
+pub const MAX_NESTING_DEPTH: usize = 128;
 
 /// Errors returned while parsing a configuration document.
 #[derive(Debug, Error)]
@@ -23,14 +33,19 @@ pub enum ParseError {
     Parse(#[from] saphyr::ScanError),
     #[error("expected one yaml document, got {0}")]
     MultipleDocuments(usize),
+    #[error("maximum nesting depth exceeded ({limit}) at line {line}")]
+    NestingLimit { limit: usize, line: usize },
 }
 
 /// Parse a Suricata YAML configuration document.
 ///
 /// Empty input (or an empty/null document) is treated as an empty
 /// configuration mapping.
+///
+/// Parsing is not recursive, and a document nested deeper than
+/// [`MAX_NESTING_DEPTH`] fails to parse.
 pub fn parse_yaml(input: &str) -> Result<Config, ParseError> {
-    let mut docs = YamlOwned::load_from_str(input)?;
+    let mut docs = load_documents(input)?;
 
     match docs.len() {
         0 => Ok(YamlOwned::Mapping(MappingOwned::new())),
@@ -46,6 +61,96 @@ pub fn parse_yaml(input: &str) -> Result<Config, ParseError> {
             }
         }
         count => Err(ParseError::MultipleDocuments(count)),
+    }
+}
+
+// Parse all YAML documents in the input.
+//
+// The parser's own load() recurses for each level of nesting, so the
+// events are passed to the loader here instead, checking the nesting
+// depth on the way.
+fn load_documents(input: &str) -> Result<Vec<Config>, ParseError> {
+    let mut loader = YamlLoader::<YamlOwned>::default();
+    let mut nesting = NestingCheck::default();
+
+    for event in Parser::new_from_str(input) {
+        let (event, span) = event?;
+        nesting.check(&event, span)?;
+        loader.on_event(event, span);
+    }
+
+    Ok(loader.into_documents())
+}
+
+// Tracks the nesting depth while parsing.
+//
+// An alias copies its anchored node, so the height of each anchored node
+// is recorded, and an alias nests as deep as its anchored node.
+#[derive(Default)]
+struct NestingCheck {
+    // The open mappings and sequences.
+    open: Vec<OpenNode>,
+    // The height of each anchored node by anchor ID.
+    anchors: HashMap<usize, usize>,
+}
+
+struct OpenNode {
+    anchor: usize,
+    // The height of the highest child seen so far.
+    height: usize,
+}
+
+impl NestingCheck {
+    fn check(&mut self, event: &Event, span: Span) -> Result<(), ParseError> {
+        match event {
+            Event::MappingStart(anchor, _) | Event::SequenceStart(anchor, _) => {
+                self.open.push(OpenNode {
+                    anchor: *anchor,
+                    height: 0,
+                });
+                self.check_depth(0, span)
+            }
+            Event::MappingEnd | Event::SequenceEnd => {
+                if let Some(node) = self.open.pop() {
+                    self.add_node(node.anchor, node.height + 1);
+                }
+                Ok(())
+            }
+            Event::Scalar(_, _, anchor, _) => {
+                self.add_node(*anchor, 0);
+                Ok(())
+            }
+            Event::Alias(anchor) => {
+                let height = self.anchors.get(anchor).copied().unwrap_or(0);
+                self.check_depth(height, span)?;
+                self.add_node(0, height);
+                Ok(())
+            }
+            _ => Ok(()),
+        }
+    }
+
+    // Check the depth of a node with the given height below the open
+    // nodes.
+    fn check_depth(&self, height: usize, span: Span) -> Result<(), ParseError> {
+        if self.open.len() + height > MAX_NESTING_DEPTH {
+            return Err(ParseError::NestingLimit {
+                limit: MAX_NESTING_DEPTH,
+                line: span.start.line(),
+            });
+        }
+        Ok(())
+    }
+
+    // Record a complete node of the given height in its parent, and its
+    // anchor if it has one.
+    fn add_node(&mut self, anchor: usize, height: usize) {
+        if anchor > 0 {
+            self.anchors.insert(anchor, height);
+        }
+        if let Some(parent) = self.open.last_mut() {
+            parent.height = parent.height.max(height);
+        }
     }
 }
 
