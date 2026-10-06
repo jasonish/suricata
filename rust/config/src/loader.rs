@@ -31,8 +31,20 @@ pub enum LoadError {
 }
 
 /// Parse a configuration file and apply transformations (includes, etc).
+///
+/// Relative include paths, including those in included files, are
+/// resolved from the directory of this file.
 pub fn load_file(path: &Path) -> Result<Config, LoadError> {
     let include_dir = path.parent().unwrap_or_else(|| Path::new("."));
+    load_file_with_include_dir(path, include_dir)
+}
+
+/// Parse a configuration file and apply transformations (includes, etc).
+///
+/// Relative include paths, including those in included files, are
+/// resolved from `include_dir`. This matches the C loader, which resolves
+/// all includes from the directory of the top-level configuration file.
+pub fn load_file_with_include_dir(path: &Path, include_dir: &Path) -> Result<Config, LoadError> {
     let config = load_yaml_file(path)?;
 
     finalize_config(config, include_dir)
@@ -99,8 +111,8 @@ fn apply_entry(
 
     match include_path_from_tag(&value)? {
         Some(include_name) => {
-            let (included, included_dir) = load_include(include_dir, include_name, depth + 1)?;
-            set_entry(target, key, included, &included_dir, depth + 1)
+            let included = load_include(include_dir, include_name, depth + 1)?;
+            set_entry(target, key, included, include_dir, depth + 1)
         }
         None => set_entry(target, key, value, include_dir, depth),
     }
@@ -211,7 +223,7 @@ fn inline_include_value(
 fn inline_include_file(
     mapping: &mut MappingOwned, include_name: &str, include_dir: &Path, depth: usize,
 ) -> Result<(), LoadError> {
-    let (included, included_dir) = load_include(include_dir, include_name, depth)?;
+    let included = load_include(include_dir, include_name, depth)?;
 
     let YamlOwned::Mapping(included_mapping) = strip_tags(included) else {
         return Err(LoadError::InvalidInclude(format!(
@@ -220,7 +232,7 @@ fn inline_include_file(
     };
 
     for (key, value) in included_mapping {
-        apply_entry(mapping, key, value, &included_dir, depth)?;
+        apply_entry(mapping, key, value, include_dir, depth)?;
     }
 
     Ok(())
@@ -343,10 +355,9 @@ fn dotted_segment_key(segment: &str) -> YamlOwned {
     YamlOwned::Value(ScalarOwned::String(segment.into()))
 }
 
-// Resolve and load one include file and return it with its base directory.
-fn load_include(
-    include_dir: &Path, include_name: &str, depth: usize,
-) -> Result<(Config, PathBuf), LoadError> {
+// Resolve and load one include file. Relative paths are resolved from
+// the top-level include directory, also for includes in included files.
+fn load_include(include_dir: &Path, include_name: &str, depth: usize) -> Result<Config, LoadError> {
     if depth > INCLUDE_RECURSION_LIMIT {
         return Err(LoadError::IncludeRecursionLimit(INCLUDE_RECURSION_LIMIT));
     }
@@ -357,13 +368,7 @@ fn load_include(
         include_dir.join(include_name)
     };
 
-    let included_dir = include_path
-        .parent()
-        .unwrap_or_else(|| Path::new("."))
-        .to_path_buf();
-    let included = load_yaml_file(&include_path)?;
-
-    Ok((included, included_dir))
+    load_yaml_file(&include_path)
 }
 
 // Check whether a YAML tag corresponds to !include.

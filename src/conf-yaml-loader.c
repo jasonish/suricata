@@ -353,10 +353,13 @@ static int ConfYamlMergeRustConfig(SCConfNode *parent, const SCConfig *config)
 
 /**
  * \brief Load one file through Rust and merge it into parent.
+ *
+ * Relative includes, also those in included files, are resolved from
+ * conf_dirname, the directory of the top-level configuration file.
  */
 static int ConfYamlLoadRustFileIntoParent(SCConfNode *parent, const char *filename)
 {
-    SCConfig *config = SCConfigLoadFile(filename);
+    SCConfig *config = SCConfigLoadFile(filename, conf_dirname);
     if (config == NULL) {
         ConfYamlLogRustError("Failed to load configuration file", filename);
         return -1;

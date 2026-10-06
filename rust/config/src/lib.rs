@@ -4,7 +4,7 @@
 pub mod ffi;
 pub mod loader;
 
-pub use loader::{load_file, load_string, LoadError};
+pub use loader::{load_file, load_file_with_include_dir, load_string, LoadError};
 
 use saphyr::LoadableYamlNode;
 use saphyr::MappingOwned;
@@ -316,6 +316,23 @@ mod tests {
 
         assert!(config.as_mapping_get("include").is_none());
         assert_eq!(config["base"].as_str(), Some("root"));
+        assert_eq!(config["from-one"].as_str(), Some("one"));
+        assert_eq!(config["from-two"].as_str(), Some("two"));
+        assert_eq!(config["from-tag"]["source"].as_str(), Some("nested-tag"));
+    }
+
+    // Includes in a file loaded with an explicit include directory, like
+    // an additional config file (--include), are resolved from that
+    // directory, not from the directory of the file.
+    #[test]
+    fn test_load_config_with_include_dir() {
+        let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("tests");
+        let path = dir.join("nested/one.yaml");
+
+        let config = load_file_with_include_dir(&path, &dir)
+            .expect("includes should resolve relative to the include directory");
+
+        assert!(config.as_mapping_get("include").is_none());
         assert_eq!(config["from-one"].as_str(), Some("one"));
         assert_eq!(config["from-two"].as_str(), Some("two"));
         assert_eq!(config["from-tag"]["source"].as_str(), Some("nested-tag"));

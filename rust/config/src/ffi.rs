@@ -217,8 +217,13 @@ fn build_config_tree(config: Config) -> Result<SCConfig, String> {
     Ok(SCConfig { root })
 }
 
-fn load_file_as_tree(path: &str) -> Result<SCConfig, String> {
-    let config = crate::load_file(Path::new(path)).map_err(|err| err.to_string())?;
+fn load_file_as_tree(path: &str, include_dir: Option<&str>) -> Result<SCConfig, String> {
+    let path = Path::new(path);
+    let config = match include_dir {
+        Some(include_dir) => crate::load_file_with_include_dir(path, Path::new(include_dir)),
+        None => crate::load_file(path),
+    }
+    .map_err(|err| err.to_string())?;
     build_config_tree(config)
 }
 
@@ -231,12 +236,19 @@ fn load_string_as_tree(input: &[u8]) -> Result<SCConfig, String> {
 
 /// Load a YAML file into an FFI-safe config tree.
 ///
+/// Relative include paths, including those in included files, are
+/// resolved from `include_dir`. If `include_dir` is NULL, they are
+/// resolved from the directory of `path`.
+///
 /// # Safety
 /// - `path` must point to a valid, NUL-terminated C string.
-/// - `path` must remain valid for the duration of this call.
-/// - The bytes referenced by `path` must be valid UTF-8.
+/// - `include_dir` must be NULL or point to a valid, NUL-terminated C string.
+/// - `path` and `include_dir` must remain valid for the duration of this call.
+/// - The bytes referenced by `path` and `include_dir` must be valid UTF-8.
 #[no_mangle]
-pub unsafe extern "C" fn SCConfigLoadFile(path: *const c_char) -> *mut SCConfig {
+pub unsafe extern "C" fn SCConfigLoadFile(
+    path: *const c_char, include_dir: *const c_char,
+) -> *mut SCConfig {
     if path.is_null() {
         set_last_error("config path must not be NULL".into());
         return ptr::null_mut();
@@ -250,7 +262,19 @@ pub unsafe extern "C" fn SCConfigLoadFile(path: *const c_char) -> *mut SCConfig 
         }
     };
 
-    match load_file_as_tree(path) {
+    let include_dir = if include_dir.is_null() {
+        None
+    } else {
+        match CStr::from_ptr(include_dir).to_str() {
+            Ok(include_dir) => Some(include_dir),
+            Err(err) => {
+                set_last_error(format!("include directory is not valid utf-8: {err}"));
+                return ptr::null_mut();
+            }
+        }
+    };
+
+    match load_file_as_tree(path, include_dir) {
         Ok(config) => {
             clear_last_error();
             Box::into_raw(Box::new(config))
