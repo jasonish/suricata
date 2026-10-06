@@ -303,13 +303,16 @@ mod tests {
         assert!(config.as_mapping_get("vars").is_none());
     }
 
+    // Like the C loader, includes in an included file are resolved
+    // relative to the top-level config directory, not to the directory
+    // of the including file.
     #[test]
     fn test_load_config_nested_includes() {
         let path =
             std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/include-nested.yaml");
 
         let config = load_file(&path)
-            .expect("nested includes should resolve relative to the including file directory");
+            .expect("nested includes should resolve relative to the top-level config directory");
 
         assert!(config.as_mapping_get("include").is_none());
         assert_eq!(config["base"].as_str(), Some("root"));
