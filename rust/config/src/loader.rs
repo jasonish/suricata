@@ -26,6 +26,8 @@ pub enum LoadError {
     InvalidInclude(String),
     #[error("maximum include recursion level reached ({0})")]
     IncludeRecursionLimit(usize),
+    #[error("invalid dotted key {key:?}: {reason}")]
+    InvalidDottedKey { key: String, reason: String },
 }
 
 /// Parse a configuration file and apply transformations (includes, etc).
@@ -43,12 +45,8 @@ pub fn load_string(input: &str) -> Result<Config, LoadError> {
 }
 
 // Apply all post-parse loader transformations to a parsed config tree.
-fn finalize_config(mut config: Config, include_dir: &Path) -> Result<Config, LoadError> {
-    resolve_includes(&mut config, include_dir, 0)?;
-    config = unwrap_tagged_values(config);
-    apply_dotted_overrides(&mut config);
-
-    Ok(config)
+fn finalize_config(config: Config, include_dir: &Path) -> Result<Config, LoadError> {
+    resolve_value(config, include_dir, 0)
 }
 
 // Read and parse one YAML file without applying loader transformations.
@@ -57,56 +55,104 @@ fn load_yaml_file(path: &Path) -> Result<Config, LoadError> {
     crate::parse_yaml(&input).map_err(LoadError::from)
 }
 
-// Recursively resolve include directives and !include tags in a YAML node.
-fn resolve_includes(node: &mut Config, include_dir: &Path, depth: usize) -> Result<(), LoadError> {
-    if depth > INCLUDE_RECURSION_LIMIT {
-        return Err(LoadError::IncludeRecursionLimit(INCLUDE_RECURSION_LIMIT));
-    }
-
+// Resolve includes and dotted keys in a parsed node, and remove YAML tags.
+fn resolve_value(
+    node: YamlOwned, include_dir: &Path, depth: usize,
+) -> Result<YamlOwned, LoadError> {
     match node {
-        YamlOwned::Mapping(mapping) => resolve_mapping_includes(mapping, include_dir, depth),
-        YamlOwned::Sequence(sequence) => {
-            for value in sequence {
-                resolve_includes(value, include_dir, depth)?;
+        YamlOwned::Mapping(mapping) => {
+            let mut resolved = MappingOwned::new();
+            for (key, value) in mapping {
+                apply_entry(&mut resolved, key, value, include_dir, depth)?;
             }
-            Ok(())
+            Ok(YamlOwned::Mapping(resolved))
         }
-        YamlOwned::Tagged(_, value) => resolve_includes(value, include_dir, depth),
-        _ => Ok(()),
+        YamlOwned::Sequence(sequence) => sequence
+            .into_iter()
+            .map(|value| resolve_value(value, include_dir, depth))
+            .collect::<Result<Vec<_>, _>>()
+            .map(YamlOwned::Sequence),
+        YamlOwned::Tagged(_, value) => resolve_value(*value, include_dir, depth),
+        other => Ok(other),
     }
 }
 
-/// Resolve includes within a mapping.
+/// Apply one mapping entry to the target mapping.
 ///
-/// Entries are processed in document order with last-writer-wins
-/// semantics. When an `include:` key is encountered, the included
-/// file(s) are inlined into the mapping. Keys that appear later in
-/// the parent file, or in later entries of an include sequence,
-/// override earlier ones.
-fn resolve_mapping_includes(
-    mapping: &mut MappingOwned, include_dir: &Path, depth: usize,
+/// Entries are applied in document order with last-writer-wins
+/// semantics, matching the C loader:
+///
+/// - An `include:` key inlines the entries of the included file(s) at
+///   this point, so later entries override them.
+/// - A dotted key walks the path below the target, creating mappings as
+///   needed, and merges the value into the node found there. Numeric
+///   path segments index into sequences.
+/// - Any other key replaces an existing value.
+fn apply_entry(
+    target: &mut MappingOwned, key: YamlOwned, value: YamlOwned, include_dir: &Path, depth: usize,
 ) -> Result<(), LoadError> {
-    let entries = std::mem::take(mapping).into_iter().collect::<Vec<_>>();
+    let key = unwrap_tagged_values(key);
 
-    for (key, mut value) in entries {
-        if key.as_str() == Some("include") {
-            inline_include_value(mapping, &value, include_dir, depth + 1)?;
-            continue;
-        }
-
-        match include_path_from_tag(&value)? {
-            Some(include_name) => {
-                let (mut included, included_dir) = load_include(include_dir, include_name)?;
-                resolve_includes(&mut included, &included_dir, depth + 1)?;
-                value = included;
-            }
-            None => resolve_includes(&mut value, include_dir, depth)?,
-        }
-
-        upsert_mapping_entry(mapping, key, value);
+    if key.as_str() == Some("include") {
+        return inline_include_value(target, &value, include_dir, depth + 1);
     }
 
-    Ok(())
+    match include_path_from_tag(&value)? {
+        Some(include_name) => {
+            let (included, included_dir) = load_include(include_dir, include_name, depth + 1)?;
+            set_entry(target, key, included, &included_dir, depth + 1)
+        }
+        None => set_entry(target, key, value, include_dir, depth),
+    }
+}
+
+// Set the value for a plain or dotted key in the target mapping.
+fn set_entry(
+    target: &mut MappingOwned, key: YamlOwned, value: YamlOwned, include_dir: &Path, depth: usize,
+) -> Result<(), LoadError> {
+    match dotted_key_segments(&key) {
+        Some(segments) => {
+            let node = dotted_path_node(target, &segments).map_err(|reason| {
+                LoadError::InvalidDottedKey {
+                    key: segments.join("."),
+                    reason,
+                }
+            })?;
+            merge_value(node, value, include_dir, depth)
+        }
+        None => {
+            let value = resolve_value(value, include_dir, depth)?;
+            upsert_mapping_entry(target, key, value);
+            Ok(())
+        }
+    }
+}
+
+// Merge a value into an existing node. A mapping value merged into a
+// mapping is applied entry by entry, anything else replaces the node.
+fn merge_value(
+    node: &mut YamlOwned, value: YamlOwned, include_dir: &Path, depth: usize,
+) -> Result<(), LoadError> {
+    match (node, strip_tags(value)) {
+        (YamlOwned::Mapping(existing), YamlOwned::Mapping(entries)) => {
+            for (key, value) in entries {
+                apply_entry(existing, key, value, include_dir, depth)?;
+            }
+            Ok(())
+        }
+        (node, value) => {
+            *node = resolve_value(value, include_dir, depth)?;
+            Ok(())
+        }
+    }
+}
+
+// Remove the outer YAML tags from a node.
+fn strip_tags(mut node: YamlOwned) -> YamlOwned {
+    while let YamlOwned::Tagged(_, value) = node {
+        node = *value;
+    }
+    node
 }
 
 // Extract the include filename from a !include tag if present.
@@ -160,21 +206,21 @@ fn inline_include_value(
     Ok(())
 }
 
-// Load one include file and merge its root mapping into the target mapping.
+// Load one include file and apply the entries of its root mapping to the
+// target mapping.
 fn inline_include_file(
     mapping: &mut MappingOwned, include_name: &str, include_dir: &Path, depth: usize,
 ) -> Result<(), LoadError> {
-    let (mut included, included_dir) = load_include(include_dir, include_name)?;
-    resolve_includes(&mut included, &included_dir, depth)?;
+    let (included, included_dir) = load_include(include_dir, include_name, depth)?;
 
-    let YamlOwned::Mapping(included_mapping) = included else {
+    let YamlOwned::Mapping(included_mapping) = strip_tags(included) else {
         return Err(LoadError::InvalidInclude(format!(
             "included file {include_name:?} must contain a mapping at the document root"
         )));
     };
 
     for (key, value) in included_mapping {
-        upsert_mapping_entry(mapping, key, value);
+        apply_entry(mapping, key, value, &included_dir, depth)?;
     }
 
     Ok(())
@@ -207,35 +253,6 @@ fn unwrap_tagged_values(node: YamlOwned) -> YamlOwned {
     }
 }
 
-// Apply dotted-key overrides throughout the config tree.
-fn apply_dotted_overrides(node: &mut Config) {
-    match node {
-        YamlOwned::Mapping(mapping) => apply_dotted_overrides_mapping(mapping),
-        YamlOwned::Sequence(sequence) => {
-            for value in sequence {
-                apply_dotted_overrides(value);
-            }
-        }
-        YamlOwned::Tagged(_, value) => apply_dotted_overrides(value),
-        _ => {}
-    }
-}
-
-// Expand dotted keys in a mapping into nested mapping paths.
-fn apply_dotted_overrides_mapping(mapping: &mut MappingOwned) {
-    let entries = std::mem::take(mapping).into_iter().collect::<Vec<_>>();
-
-    for (key, mut value) in entries {
-        apply_dotted_overrides(&mut value);
-
-        if let Some(segments) = dotted_key_segments(&key) {
-            apply_dotted_override(mapping, &segments, value);
-        } else {
-            upsert_mapping_entry(mapping, key, value);
-        }
-    }
-}
-
 // Split a dotted mapping key into path segments when applicable.
 fn dotted_key_segments(key: &YamlOwned) -> Option<Vec<&str>> {
     let key = key.as_str()?;
@@ -251,45 +268,74 @@ fn dotted_key_segments(key: &YamlOwned) -> Option<Vec<&str>> {
     Some(segments)
 }
 
-// Apply one dotted key override into the target mapping.
-fn apply_dotted_override(mapping: &mut MappingOwned, segments: &[&str], value: YamlOwned) {
-    if segments.is_empty() {
-        return;
-    }
+// Walk a dotted key path below a mapping and return the node at the end
+// of the path, creating missing nodes along the way. Errors are returned
+// as a reason string.
+fn dotted_path_node<'a>(
+    mapping: &'a mut MappingOwned, segments: &[&str],
+) -> Result<&'a mut YamlOwned, String> {
+    let Some((first, rest)) = segments.split_first() else {
+        return Err("empty key".into());
+    };
 
-    let mut current = mapping;
-
-    for segment in &segments[..segments.len() - 1] {
-        let segment_key = dotted_segment_key(segment);
-        if !current.contains_key(&segment_key) {
-            current.insert(segment_key.clone(), YamlOwned::Mapping(MappingOwned::new()));
-        }
-
-        let Some(child) = current.get_mut(&segment_key) else {
-            return;
-        };
-
-        if mapping_node_mut(child).is_none() {
-            *child = YamlOwned::Mapping(MappingOwned::new());
-        }
-
-        let Some(next) = mapping_node_mut(child) else {
-            return;
-        };
-        current = next;
-    }
-
-    let leaf_key = dotted_segment_key(segments[segments.len() - 1]);
-    upsert_mapping_entry(current, leaf_key, value);
+    let child = dotted_mapping_child(mapping, first)?;
+    descend_dotted_path(child, rest)
 }
 
-// Return a mutable mapping view for plain or tagged mapping nodes.
-fn mapping_node_mut(node: &mut YamlOwned) -> Option<&mut MappingOwned> {
-    match node {
-        YamlOwned::Mapping(mapping) => Some(mapping),
-        YamlOwned::Tagged(_, value) => mapping_node_mut(value),
-        _ => None,
+// Continue walking a dotted key path below a node.
+//
+// Like the C configuration tree, a numeric segment selects a sequence
+// entry. An index one past the end appends a new entry. A node that is
+// neither a mapping nor a sequence is replaced with a mapping.
+fn descend_dotted_path<'a>(
+    node: &'a mut YamlOwned, segments: &[&str],
+) -> Result<&'a mut YamlOwned, String> {
+    let Some((first, rest)) = segments.split_first() else {
+        return Ok(node);
+    };
+
+    if !matches!(node, YamlOwned::Mapping(_) | YamlOwned::Sequence(_)) {
+        *node = YamlOwned::Mapping(MappingOwned::new());
     }
+
+    let child = match node {
+        YamlOwned::Mapping(mapping) => dotted_mapping_child(mapping, first)?,
+        YamlOwned::Sequence(sequence) => {
+            let Some(index) = first
+                .parse::<usize>()
+                .ok()
+                .filter(|index| *index <= sequence.len())
+            else {
+                return Err(format!(
+                    "{first:?} is not a valid index for a sequence of length {}",
+                    sequence.len()
+                ));
+            };
+            if index == sequence.len() {
+                sequence.push(YamlOwned::Value(ScalarOwned::Null));
+            }
+            &mut sequence[index]
+        }
+        _ => {
+            return Err(format!("cannot descend into {first:?}"));
+        }
+    };
+
+    descend_dotted_path(child, rest)
+}
+
+// Return the child of a mapping for a dotted-path segment, inserting a
+// null child if missing. Existing entries keep their position.
+fn dotted_mapping_child<'a>(
+    mapping: &'a mut MappingOwned, segment: &str,
+) -> Result<&'a mut YamlOwned, String> {
+    let key = dotted_segment_key(segment);
+    if !mapping.contains_key(&key) {
+        mapping.insert(key.clone(), YamlOwned::Value(ScalarOwned::Null));
+    }
+    mapping
+        .get_mut(&key)
+        .ok_or_else(|| format!("failed to insert {segment:?}"))
 }
 
 // Build a YAML string key node for a dotted-path segment.
@@ -298,7 +344,13 @@ fn dotted_segment_key(segment: &str) -> YamlOwned {
 }
 
 // Resolve and load one include file and return it with its base directory.
-fn load_include(include_dir: &Path, include_name: &str) -> Result<(Config, PathBuf), LoadError> {
+fn load_include(
+    include_dir: &Path, include_name: &str, depth: usize,
+) -> Result<(Config, PathBuf), LoadError> {
+    if depth > INCLUDE_RECURSION_LIMIT {
+        return Err(LoadError::IncludeRecursionLimit(INCLUDE_RECURSION_LIMIT));
+    }
+
     let include_path = if Path::new(include_name).is_absolute() {
         PathBuf::from(include_name)
     } else {
