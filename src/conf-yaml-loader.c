@@ -1272,6 +1272,120 @@ static int ConfYamlIncludeDottedOverrideOrderTest(void)
     PASS;
 }
 
+#define NESTED_INCLUDE_DIR    "ConfYamlNestedIncludeTest-dir"
+#define NESTED_INCLUDE_CONFIG "ConfYamlNestedIncludeTest-config.yaml"
+#define NESTED_INCLUDE_ONE    NESTED_INCLUDE_DIR "/one.yaml"
+#define NESTED_INCLUDE_TWO    NESTED_INCLUDE_DIR "/two.yaml"
+#define NESTED_INCLUDE_TAGGED NESTED_INCLUDE_DIR "/tagged.yaml"
+
+/**
+ * Write a top-level configuration file and a set of files in a
+ * subdirectory that include each other by paths relative to the
+ * top-level configuration directory. Then load the configuration file
+ * into a fresh configuration context, optionally include an additional
+ * file like --include does, and run the checks. The context is always
+ * restored and the files removed, even if a check fails.
+ */
+static int ConfYamlNestedIncludeLoadAndCheck(
+        const char *config, const char *additional, int (*check)(void))
+{
+    /* The include paths are relative to the top-level configuration
+     * directory, not to the directory of the including file. */
+    const char one[] = "%YAML 1.1\n"
+                       "---\n"
+                       "from-one: one\n"
+                       "from-tag: !include " NESTED_INCLUDE_TAGGED "\n"
+                       "include: " NESTED_INCLUDE_TWO "\n";
+    const char two[] = "%YAML 1.1\n"
+                       "---\n"
+                       "from-two: two\n";
+    const char tagged[] = "%YAML 1.1\n"
+                          "---\n"
+                          "source: nested-tag\n";
+    int result = 0;
+
+    SCConfCreateContextBackup();
+    SCConfInit();
+
+    /* Reset conf_dirname. */
+    if (conf_dirname != NULL) {
+        SCFree(conf_dirname);
+        conf_dirname = NULL;
+    }
+
+    if ((SCDefaultMkDir(NESTED_INCLUDE_DIR) == 0 || errno == EEXIST) &&
+            TestHelperBufferToFile(
+                    NESTED_INCLUDE_CONFIG, (const uint8_t *)config, strlen(config)) == 0 &&
+            TestHelperBufferToFile(NESTED_INCLUDE_ONE, (const uint8_t *)one, strlen(one)) == 0 &&
+            TestHelperBufferToFile(NESTED_INCLUDE_TWO, (const uint8_t *)two, strlen(two)) == 0 &&
+            TestHelperBufferToFile(
+                    NESTED_INCLUDE_TAGGED, (const uint8_t *)tagged, strlen(tagged)) == 0) {
+        result = SCConfYamlLoadFile(NESTED_INCLUDE_CONFIG) == 0 &&
+                 (additional == NULL ||
+                         SCConfYamlHandleInclude(SCConfGetRootNode(), additional) == 0) &&
+                 check();
+    }
+
+    SCConfDeInit();
+    SCConfRestoreContextBackup();
+
+    unlink(NESTED_INCLUDE_CONFIG);
+    unlink(NESTED_INCLUDE_ONE);
+    unlink(NESTED_INCLUDE_TWO);
+    unlink(NESTED_INCLUDE_TAGGED);
+    rmdir(NESTED_INCLUDE_DIR);
+
+    return result;
+}
+
+static int ConfYamlNestedIncludeCheck(void)
+{
+    const char *value;
+
+    FAIL_IF_NOT(SCConfGet("base", &value));
+    FAIL_IF(strcmp(value, "root") != 0);
+    FAIL_IF_NOT(SCConfGet("from-one", &value));
+    FAIL_IF(strcmp(value, "one") != 0);
+    FAIL_IF_NOT(SCConfGet("from-two", &value));
+    FAIL_IF(strcmp(value, "two") != 0);
+    FAIL_IF_NOT(SCConfGet("from-tag.source", &value));
+    FAIL_IF(strcmp(value, "nested-tag") != 0);
+
+    PASS;
+}
+
+/**
+ * Test that includes in an included file are resolved relative to the
+ * directory of the top-level configuration file, not to the directory
+ * of the included file.
+ */
+static int ConfYamlNestedIncludeTest(void)
+{
+    const char config[] = "%YAML 1.1\n"
+                          "---\n"
+                          "base: root\n"
+                          "include: " NESTED_INCLUDE_ONE "\n";
+
+    FAIL_IF_NOT(ConfYamlNestedIncludeLoadAndCheck(config, NULL, ConfYamlNestedIncludeCheck));
+    PASS;
+}
+
+/**
+ * Test that includes in an additional configuration file (--include) are
+ * resolved relative to the directory of the top-level configuration
+ * file, not to the directory of the additional file.
+ */
+static int ConfYamlHandleIncludeNestedTest(void)
+{
+    const char config[] = "%YAML 1.1\n"
+                          "---\n"
+                          "base: root\n";
+
+    FAIL_IF_NOT(ConfYamlNestedIncludeLoadAndCheck(
+            config, NESTED_INCLUDE_ONE, ConfYamlNestedIncludeCheck));
+    PASS;
+}
+
 #endif /* UNITTESTS */
 
 void SCConfYamlRegisterTests(void)
@@ -1294,5 +1408,7 @@ void SCConfYamlRegisterTests(void)
             "ConfYamlIncludeAfterDottedOverrideTest", ConfYamlIncludeAfterDottedOverrideTest);
     UtRegisterTest(
             "ConfYamlIncludeDottedOverrideOrderTest", ConfYamlIncludeDottedOverrideOrderTest);
+    UtRegisterTest("ConfYamlNestedIncludeTest", ConfYamlNestedIncludeTest);
+    UtRegisterTest("ConfYamlHandleIncludeNestedTest", ConfYamlHandleIncludeNestedTest);
 #endif /* UNITTESTS */
 }
