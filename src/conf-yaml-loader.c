@@ -1386,6 +1386,110 @@ static int ConfYamlHandleIncludeNestedTest(void)
     PASS;
 }
 
+/**
+ * Load a configuration string into a fresh configuration context and
+ * return the result of loading it. The context is always restored.
+ */
+static int ConfYamlLoadStringResult(const char *config)
+{
+    SCConfCreateContextBackup();
+    SCConfInit();
+
+    int ret = SCConfYamlLoadString(config, strlen(config));
+
+    SCConfDeInit();
+    SCConfRestoreContextBackup();
+
+    return ret;
+}
+
+/**
+ * Build a configuration with depth levels of nested mappings, counting
+ * the root mapping, like "key: {a: {a: 1}}" for a depth of 3. The value
+ * 1 is at "key" followed by depth - 1 times ".a".
+ */
+static char *ConfYamlNestedMappings(int depth)
+{
+    const size_t len = 32 + (size_t)depth * 5;
+    char *config = SCCalloc(1, len);
+    if (config == NULL) {
+        return NULL;
+    }
+
+    strlcpy(config, "%YAML 1.1\n---\nkey: ", len);
+    for (int i = 1; i < depth; i++) {
+        strlcat(config, "{a: ", len);
+    }
+    strlcat(config, "1", len);
+    for (int i = 1; i < depth; i++) {
+        strlcat(config, "}", len);
+    }
+    strlcat(config, "\n", len);
+
+    return config;
+}
+
+static int ConfYamlNestingLimitCheck(void)
+{
+    char name[16 + 128 * 2];
+    const char *value;
+
+    strlcpy(name, "key", sizeof(name));
+    for (int i = 1; i < 128; i++) {
+        strlcat(name, ".a", sizeof(name));
+    }
+    FAIL_IF_NOT(SCConfGet(name, &value));
+    FAIL_IF(strcmp(value, "1") != 0);
+
+    PASS;
+}
+
+/**
+ * Test that a configuration nested 128 levels deep, counting the root
+ * mapping, loads, and that one nested 129 levels deep fails to load.
+ */
+static int ConfYamlNestingLimitTest(void)
+{
+    char *config = ConfYamlNestedMappings(128);
+    FAIL_IF_NULL(config);
+    int ret = ConfYamlLoadStringAndCheck(config, ConfYamlNestingLimitCheck);
+    SCFree(config);
+    FAIL_IF_NOT(ret);
+
+    config = ConfYamlNestedMappings(129);
+    FAIL_IF_NULL(config);
+    ret = ConfYamlLoadStringResult(config);
+    SCFree(config);
+    FAIL_IF(ret == 0);
+
+    PASS;
+}
+
+/**
+ * Test that a configuration nested far beyond the limit fails to load
+ * cleanly.
+ */
+static int ConfYamlDeepNestingTest(void)
+{
+    const int depth = 1000;
+    const size_t len = 32 + (size_t)depth * 2;
+    char *config = SCCalloc(1, len);
+    FAIL_IF_NULL(config);
+
+    /* Compact nested sequences: "key:\n  - - - x\n". */
+    strlcpy(config, "%YAML 1.1\n---\nkey:\n  ", len);
+    for (int i = 0; i < depth; i++) {
+        strlcat(config, "- ", len);
+    }
+    strlcat(config, "x\n", len);
+
+    int ret = ConfYamlLoadStringResult(config);
+    SCFree(config);
+    FAIL_IF(ret == 0);
+
+    PASS;
+}
+
 #endif /* UNITTESTS */
 
 void SCConfYamlRegisterTests(void)
@@ -1410,5 +1514,7 @@ void SCConfYamlRegisterTests(void)
             "ConfYamlIncludeDottedOverrideOrderTest", ConfYamlIncludeDottedOverrideOrderTest);
     UtRegisterTest("ConfYamlNestedIncludeTest", ConfYamlNestedIncludeTest);
     UtRegisterTest("ConfYamlHandleIncludeNestedTest", ConfYamlHandleIncludeNestedTest);
+    UtRegisterTest("ConfYamlNestingLimitTest", ConfYamlNestingLimitTest);
+    UtRegisterTest("ConfYamlDeepNestingTest", ConfYamlDeepNestingTest);
 #endif /* UNITTESTS */
 }
