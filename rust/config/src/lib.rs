@@ -519,6 +519,87 @@ tagged.path: !leaf final
         assert_eq!(config["tagged-key"].as_str(), Some("tagged-value"));
     }
 
+    // Build a config with `depth` levels of nested mappings, counting the
+    // root mapping. The value 1 is at "key" followed by depth - 1 times
+    // "a".
+    fn nested_mappings(depth: usize) -> String {
+        format!(
+            "key: {}1{}\n",
+            "{a: ".repeat(depth - 1),
+            "}".repeat(depth - 1)
+        )
+    }
+
+    fn assert_nesting_limit<T: std::fmt::Debug>(result: Result<T, LoadError>) {
+        let err = result.expect_err("config over the nesting limit should fail to load");
+        assert!(
+            err.to_string().contains("maximum nesting depth"),
+            "unexpected error: {err}"
+        );
+    }
+
+    // Like the C loader, a config may be nested 128 levels deep, counting
+    // the root mapping.
+    #[test]
+    fn test_nesting_limit() {
+        let config = load_string(&nested_mappings(128)).expect("128 levels should load");
+        let mut node = &config["key"];
+        for _ in 1..128 {
+            node = &node["a"];
+        }
+        assert_eq!(node.as_integer(), Some(1));
+
+        assert_nesting_limit(load_string(&nested_mappings(129)));
+    }
+
+    // Nesting far beyond the limit fails cleanly instead of overflowing
+    // the stack.
+    #[test]
+    fn test_nesting_limit_deep() {
+        let input = format!("key:\n  {}x\n", "- ".repeat(100_000));
+        assert_nesting_limit(load_string(&input));
+    }
+
+    // Each part of a dotted key is a level of nesting.
+    #[test]
+    fn test_nesting_limit_dotted_key() {
+        let key = |segments: usize| vec!["a"; segments].join(".");
+
+        load_string(&format!("{}: 1\n", key(128))).expect("128 levels should load");
+        assert_nesting_limit(load_string(&format!("{}: 1\n", key(129))));
+    }
+
+    // Aliases copy the anchored node, so a chain of aliases nests deeper
+    // than the document itself.
+    #[test]
+    fn test_nesting_limit_aliases() {
+        let mut input = String::from("a0: &a0 [x]\n");
+        for i in 1..200 {
+            input.push_str(&format!("a{i}: &a{i} [*a{}]\n", i - 1));
+        }
+        assert_nesting_limit(load_string(&input));
+    }
+
+    // An included file is nested at the depth of the include.
+    #[test]
+    fn test_nesting_limit_include() {
+        let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("tests");
+
+        let config = load_file(&dir.join("nesting-include-under.yaml"))
+            .expect("include within the nesting limit should load");
+        let mut node = &config["key"];
+        for _ in 0..59 {
+            node = &node["a"];
+        }
+        node = &node["inner"];
+        for _ in 0..49 {
+            node = &node["a"];
+        }
+        assert_eq!(node.as_integer(), Some(1));
+
+        assert_nesting_limit(load_file(&dir.join("nesting-include-over.yaml")));
+    }
+
     #[test]
     fn test_null() {
         // Standard YAML null forms.
