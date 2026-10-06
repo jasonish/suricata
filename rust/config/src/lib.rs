@@ -354,6 +354,64 @@ mod tests {
         );
     }
 
+    // A dotted key can index into a sequence without replacing it.
+    #[test]
+    fn test_load_config_dotted_override_sequence() {
+        let path =
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/dotted-sequence.yaml");
+
+        let config = load_file(&path).expect("config should load");
+
+        let outputs = config["outputs"]
+            .as_sequence()
+            .expect("outputs should still be a sequence");
+        assert_eq!(outputs.len(), 2);
+        assert_eq!(outputs[0]["fast"]["enabled"].as_str(), Some("yes"));
+        assert_eq!(outputs[1]["eve-log"]["enabled"].as_str(), Some("no"));
+        assert_eq!(outputs[1]["eve-log"]["filetype"].as_str(), Some("regular"));
+    }
+
+    // A dotted key with a mapping value merges into the existing mapping.
+    #[test]
+    fn test_load_config_dotted_override_mapping_merge() {
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("tests/dotted-mapping-merge.yaml");
+
+        let config = load_file(&path).expect("config should load");
+
+        let address_groups = &config["vars"]["address-groups"];
+        assert_eq!(address_groups["HOME_NET"].as_str(), Some("10.10.10.10/32"));
+        assert_eq!(address_groups["EXTERNAL_NET"].as_str(), Some("!$HOME_NET"));
+    }
+
+    // An include that comes after a dotted override replaces it.
+    #[test]
+    fn test_load_config_include_after_dotted_override() {
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("tests/dotted-include-after.yaml");
+
+        let config = load_file(&path).expect("config should load");
+
+        let address_groups = &config["vars"]["address-groups"];
+        assert_eq!(address_groups["HOME_NET"].as_str(), Some("3.3.3.3"));
+        assert!(address_groups.as_mapping_get("EXTERNAL_NET").is_none());
+    }
+
+    // A dotted override from an include is applied in document order,
+    // even when the same dotted key was used earlier.
+    #[test]
+    fn test_load_config_include_dotted_override_order() {
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("tests/dotted-include-order.yaml");
+
+        let config = load_file(&path).expect("config should load");
+
+        assert_eq!(
+            config["vars"]["address-groups"]["HOME_NET"].as_str(),
+            Some("3.3.3.3")
+        );
+    }
+
     #[test]
     fn test_print_flat_config_includes() {
         let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/include.yaml");
