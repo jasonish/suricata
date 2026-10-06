@@ -618,6 +618,8 @@ int SCConfYamlLoadFileWithPrefix(const char *filename, const char *prefix)
 
 #ifdef UNITTESTS
 
+#include "util-unittest-helper.h"
+
 static int
 ConfYamlSequenceTest(void)
 {
@@ -1064,6 +1066,212 @@ static int ConfYamlNull(void)
     PASS;
 }
 
+/**
+ * Load a configuration string into a fresh configuration context and run
+ * the checks. The context is always restored, even if a check fails, so a
+ * failure doesn't break later tests.
+ */
+static int ConfYamlLoadStringAndCheck(const char *config, int (*check)(void))
+{
+    SCConfCreateContextBackup();
+    SCConfInit();
+
+    int result = SCConfYamlLoadString(config, strlen(config)) == 0 && check();
+
+    SCConfDeInit();
+    SCConfRestoreContextBackup();
+
+    return result;
+}
+
+/**
+ * Write a configuration file and an include file, load the configuration
+ * file into a fresh configuration context and run the checks. The context
+ * is always restored and the files removed, even if a check fails.
+ */
+static int ConfYamlLoadFilesAndCheck(const char *config_filename, const char *config,
+        const char *include_filename, const char *include, int (*check)(void))
+{
+    int result = 0;
+
+    SCConfCreateContextBackup();
+    SCConfInit();
+
+    /* Reset conf_dirname. */
+    if (conf_dirname != NULL) {
+        SCFree(conf_dirname);
+        conf_dirname = NULL;
+    }
+
+    if (TestHelperBufferToFile(config_filename, (const uint8_t *)config, strlen(config)) == 0 &&
+            TestHelperBufferToFile(include_filename, (const uint8_t *)include, strlen(include)) ==
+                    0) {
+        result = SCConfYamlLoadFile(config_filename) == 0 && check();
+    }
+
+    SCConfDeInit();
+    SCConfRestoreContextBackup();
+
+    unlink(config_filename);
+    unlink(include_filename);
+
+    return result;
+}
+
+static int ConfYamlDottedOverrideSequenceCheck(void)
+{
+    const char *value;
+
+    SCConfNode *outputs = SCConfGetNode("outputs");
+    FAIL_IF_NULL(outputs);
+    FAIL_IF_NOT(SCConfNodeIsSequence(outputs));
+
+    /* The first entry is untouched. */
+    FAIL_IF_NOT(SCConfGet("outputs.0", &value));
+    FAIL_IF(strcmp(value, "fast") != 0);
+    FAIL_IF_NOT(SCConfGet("outputs.0.fast.enabled", &value));
+    FAIL_IF(strcmp(value, "yes") != 0);
+
+    /* The second entry has the overridden value and keeps its siblings. */
+    FAIL_IF_NOT(SCConfGet("outputs.1", &value));
+    FAIL_IF(strcmp(value, "eve-log") != 0);
+    FAIL_IF_NOT(SCConfGet("outputs.1.eve-log.enabled", &value));
+    FAIL_IF(strcmp(value, "no") != 0);
+    FAIL_IF_NOT(SCConfGet("outputs.1.eve-log.filetype", &value));
+    FAIL_IF(strcmp(value, "regular") != 0);
+
+    PASS;
+}
+
+/**
+ * Test that a dotted key can override a value inside a sequence entry
+ * by index without replacing the sequence.
+ */
+static int ConfYamlDottedOverrideSequenceTest(void)
+{
+    const char config[] = "%YAML 1.1\n"
+                          "---\n"
+                          "outputs:\n"
+                          "  - fast:\n"
+                          "      enabled: yes\n"
+                          "  - eve-log:\n"
+                          "      enabled: yes\n"
+                          "      filetype: regular\n"
+                          "outputs.1.eve-log.enabled: no\n";
+
+    FAIL_IF_NOT(ConfYamlLoadStringAndCheck(config, ConfYamlDottedOverrideSequenceCheck));
+    PASS;
+}
+
+static int ConfYamlDottedOverrideMappingMergeCheck(void)
+{
+    const char *value;
+
+    FAIL_IF_NOT(SCConfGet("vars.address-groups.HOME_NET", &value));
+    FAIL_IF(strcmp(value, "10.10.10.10/32") != 0);
+    FAIL_IF_NOT(SCConfGet("vars.address-groups.EXTERNAL_NET", &value));
+    FAIL_IF(strcmp(value, "!$HOME_NET") != 0);
+
+    PASS;
+}
+
+/**
+ * Test that a dotted key with a mapping value merges into the existing
+ * mapping rather than replacing it.
+ */
+static int ConfYamlDottedOverrideMappingMergeTest(void)
+{
+    const char config[] = "%YAML 1.1\n"
+                          "---\n"
+                          "vars:\n"
+                          "  address-groups:\n"
+                          "    HOME_NET: \"[192.168.0.0/16]\"\n"
+                          "    EXTERNAL_NET: \"!$HOME_NET\"\n"
+                          "vars.address-groups:\n"
+                          "  HOME_NET: \"10.10.10.10/32\"\n";
+
+    FAIL_IF_NOT(ConfYamlLoadStringAndCheck(config, ConfYamlDottedOverrideMappingMergeCheck));
+    PASS;
+}
+
+static int ConfYamlIncludeAfterDottedOverrideCheck(void)
+{
+    const char *value;
+
+    /* The include came last, so its vars mapping replaces everything
+     * before it, including the dotted override. */
+    FAIL_IF_NOT(SCConfGet("vars.address-groups.HOME_NET", &value));
+    FAIL_IF(strcmp(value, "3.3.3.3") != 0);
+    FAIL_IF_NOT_NULL(SCConfGetNode("vars.address-groups.EXTERNAL_NET"));
+
+    PASS;
+}
+
+/**
+ * Test that an included mapping replaces a dotted override that came
+ * before the include.
+ */
+static int ConfYamlIncludeAfterDottedOverrideTest(void)
+{
+    const char config_filename[] = "ConfYamlIncludeAfterDottedOverrideTest-config.yaml";
+    const char config[] = "%YAML 1.1\n"
+                          "---\n"
+                          "vars:\n"
+                          "  address-groups:\n"
+                          "    HOME_NET: \"1.1.1.1\"\n"
+                          "    EXTERNAL_NET: any\n"
+                          "vars.address-groups.HOME_NET: \"2.2.2.2\"\n"
+                          "include: ConfYamlIncludeAfterDottedOverrideTest-include.yaml\n";
+
+    const char include_filename[] = "ConfYamlIncludeAfterDottedOverrideTest-include.yaml";
+    const char include[] = "%YAML 1.1\n"
+                           "---\n"
+                           "vars:\n"
+                           "  address-groups:\n"
+                           "    HOME_NET: \"3.3.3.3\"\n";
+
+    FAIL_IF_NOT(ConfYamlLoadFilesAndCheck(config_filename, config, include_filename, include,
+            ConfYamlIncludeAfterDottedOverrideCheck));
+    PASS;
+}
+
+static int ConfYamlIncludeDottedOverrideOrderCheck(void)
+{
+    const char *value;
+
+    /* The dotted override in the include came last, so it wins. */
+    FAIL_IF_NOT(SCConfGet("vars.address-groups.HOME_NET", &value));
+    FAIL_IF(strcmp(value, "3.3.3.3") != 0);
+
+    PASS;
+}
+
+/**
+ * Test that a dotted override from an include is applied after the
+ * values that came before the include, even when the same dotted key
+ * was also used earlier.
+ */
+static int ConfYamlIncludeDottedOverrideOrderTest(void)
+{
+    const char config_filename[] = "ConfYamlIncludeDottedOverrideOrderTest-config.yaml";
+    const char config[] = "%YAML 1.1\n"
+                          "---\n"
+                          "vars.address-groups.HOME_NET: \"1.1.1.1\"\n"
+                          "vars:\n"
+                          "  address-groups:\n"
+                          "    HOME_NET: \"2.2.2.2\"\n"
+                          "include: ConfYamlIncludeDottedOverrideOrderTest-include.yaml\n";
+
+    const char include_filename[] = "ConfYamlIncludeDottedOverrideOrderTest-include.yaml";
+    const char include[] = "%YAML 1.1\n"
+                           "---\n"
+                           "vars.address-groups.HOME_NET: \"3.3.3.3\"\n";
+
+    FAIL_IF_NOT(ConfYamlLoadFilesAndCheck(config_filename, config, include_filename, include,
+            ConfYamlIncludeDottedOverrideOrderCheck));
+    PASS;
+}
+
 #endif /* UNITTESTS */
 
 void SCConfYamlRegisterTests(void)
@@ -1079,5 +1287,12 @@ void SCConfYamlRegisterTests(void)
     UtRegisterTest("ConfYamlOverrideTest", ConfYamlOverrideTest);
     UtRegisterTest("ConfYamlOverrideFinalTest", ConfYamlOverrideFinalTest);
     UtRegisterTest("ConfYamlNull", ConfYamlNull);
+    UtRegisterTest("ConfYamlDottedOverrideSequenceTest", ConfYamlDottedOverrideSequenceTest);
+    UtRegisterTest(
+            "ConfYamlDottedOverrideMappingMergeTest", ConfYamlDottedOverrideMappingMergeTest);
+    UtRegisterTest(
+            "ConfYamlIncludeAfterDottedOverrideTest", ConfYamlIncludeAfterDottedOverrideTest);
+    UtRegisterTest(
+            "ConfYamlIncludeDottedOverrideOrderTest", ConfYamlIncludeDottedOverrideOrderTest);
 #endif /* UNITTESTS */
 }
