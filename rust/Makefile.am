@@ -2,6 +2,7 @@ SUBDIRS =	derive \
 		ffi \
 		htp \
 		sys \
+		config \
 		suricatasc \
 		suricatactl
 
@@ -18,6 +19,7 @@ EXTRA_DIST =	.cargo/audit.toml \
 		ffi \
 		htp \
 		src \
+		config \
 		suricatactl \
 		suricatasc \
 		sys \

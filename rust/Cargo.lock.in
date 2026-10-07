@@ -1575,6 +1575,7 @@ dependencies = [
  "sha1",
  "sha2",
  "snmp-parser",
+ "suricata-config",
  "suricata-derive",
  "suricata-ffi",
  "suricata-htp",
@@ -1588,6 +1589,10 @@ dependencies = [
  "x509-parser",
  "zstd",
 ]
+
+[[package]]
+name = "suricata-config"
+version = "9.0.0-dev"
 
 [[package]]
 name = "suricata-derive"

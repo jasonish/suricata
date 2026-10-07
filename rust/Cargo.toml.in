@@ -9,6 +9,7 @@ rust-version.workspace = true
 [workspace]
 members = [
     ".",
+    "config",
     "derive",
     "suricatactl",
     "suricatasc",
@@ -115,6 +116,7 @@ serde_json.workspace = true
 suricata-derive = { path = "./derive", version = "@PACKAGE_VERSION@" }
 suricata-sys.workspace = true
 suricata-ffi = { path = "./ffi", version = "@PACKAGE_VERSION@" }
+suricata-config = { path = "./config", version = "@PACKAGE_VERSION@" }
 
 suricata-lua-sys = { version = "5.4.8002" }
 

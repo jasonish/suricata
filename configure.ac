@@ -2569,6 +2569,7 @@ AC_CONFIG_FILES(Makefile src/Makefile rust/Makefile rust/Cargo.lock rust/Cargo.t
 AC_CONFIG_FILES(rust/derive/Makefile rust/derive/Cargo.toml)
 AC_CONFIG_FILES(rust/sys/Makefile rust/sys/Cargo.toml)
 AC_CONFIG_FILES(rust/ffi/Makefile rust/ffi/Cargo.toml)
+AC_CONFIG_FILES(rust/config/Makefile rust/config/Cargo.toml)
 AC_CONFIG_FILES(rust/suricatactl/Makefile rust/suricatactl/Cargo.toml)
 AC_CONFIG_FILES(rust/suricatasc/Makefile rust/suricatasc/Cargo.toml)
 AC_CONFIG_FILES(rust/htp/Makefile rust/htp/Cargo.toml)
