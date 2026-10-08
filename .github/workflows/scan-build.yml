@@ -20,94 +20,17 @@ jobs:
   scan-build:
     name: Scan-build
     runs-on: ubuntu-latest
-    container: ubuntu:25.04
+    container: ubuntu:26.04
     steps:
       - name: Cache scan-build
         uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57
         with:
           path: ~/.cargo
           key: scan-build
-
-      - name: Install system packages
-        run: |
-          apt update
-          apt -y install \
-                libpcre2-dev \
-                build-essential \
-                autoconf \
-                automake \
-                cargo \
-                cbindgen \
-                clang-20 \
-                clang-tools-20 \
-                dpdk-dev \
-                git \
-                libtool \
-                libpcap-dev \
-                libnet1-dev \
-                libyaml-0-2 \
-                libyaml-dev \
-                libcap-ng-dev \
-                libcap-ng0 \
-                libmagic-dev \
-                libnetfilter-log-dev \
-                libnetfilter-queue-dev \
-                libnetfilter-queue1 \
-                libnfnetlink-dev \
-                libnfnetlink0 \
-                libnuma-dev \
-                libhiredis-dev \
-                libhyperscan-dev \
-                libjansson-dev \
-                libevent-dev \
-                libevent-pthreads-2.1-7 \
-                liblz4-dev \
-                llvm-20-dev \
-                make \
-                python3-yaml \
-                rustc \
-                software-properties-common \
-                zlib1g \
-                zlib1g-dev
+      - run: apt update && apt -y install git
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
-      - run: git config --global --add safe.directory /__w/suricata/suricata
-      - run: ./scripts/bundle.sh
-      - run: ./autogen.sh
-      - run: scan-build-20 ./configure --enable-warnings --enable-dpdk --enable-nfqueue --enable-nflog
-        env:
-          CC: clang-20
-      # disable security.insecureAPI.DeprecatedOrUnsafeBufferHandling explicitly as
-      # this will require significant effort to address.
-      - run: |
-          scan-build-20 --status-bugs --exclude rust \
-                -o scan-build-report/ \
-                -enable-checker valist.Uninitialized \
-                -enable-checker valist.CopyToSelf \
-                -enable-checker valist.Unterminated \
-                -enable-checker security.insecureAPI.bcmp \
-                -enable-checker security.insecureAPI.bcopy \
-                -enable-checker security.insecureAPI.bzero \
-                -enable-checker security.insecureAPI.rand \
-                -enable-checker security.insecureAPI.strcpy \
-                -enable-checker security.insecureAPI.decodeValueOfObjCType \
-                -enable-checker security.FloatLoopCounter \
-                -enable-checker optin.portability.UnixAPI \
-                -enable-checker optin.performance.GCDAntipattern \
-                -enable-checker nullability.NullableReturnedFromNonnull \
-                -enable-checker nullability.NullablePassedToNonnull \
-                -enable-checker nullability.NullableDereferenced \
-                -enable-checker optin.performance.Padding \
-                -enable-checker security.MmapWriteExec \
-                -enable-checker security.PointerSub \
-                -enable-checker security.PutenvStackArray \
-                -enable-checker security.SetgidSetuidOrder \
-                -enable-checker security.cert.env.InvalidPtr \
-                \
-                -disable-checker security.insecureAPI.DeprecatedOrUnsafeBufferHandling \
-                \
-                make
-        env:
-          CC: clang-20
+      - name: Build with scan-build
+        run: ./qa/ci/scan-build.sh
       - name: 'Upload Scan Build Results'
         uses: actions/upload-artifact@v4
         if: always()
@@ -115,3 +38,4 @@ jobs:
           name: scan-build-results
           path: scan-build-report/
           retention-days: 5
+
