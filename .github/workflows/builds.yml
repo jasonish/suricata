@@ -1063,6 +1063,38 @@ jobs:
   # jobs in GitHub actions are run as root inside the container.
   # Also ja3 and ja4 are disabled to run SV tests that require
   # the absence of these features
+  # Build both C and Rust with AddressSanitizer, then run Suricata-Verify.
+  fedora-44-rust-asan:
+    name: Fedora 44 (rust-asan, sv)
+    runs-on: ubuntu-latest
+    container: fedora:44
+    needs: [prepare-deps]
+    steps:
+      - name: Cache cargo registry
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57
+        with:
+          path: ~/.cargo/registry
+          key: ${{ github.job }}-cargo-registry
+      - run: dnf -y install git
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          name: prep
+          path: prep
+      - run: tar xf prep/suricata-update.tar.gz
+      - run: tar xf prep/suricata-verify.tar.gz
+      - name: Build and test with Rust ASAN
+        run: ./qa/ci/rust-asan.sh
+      - name: Upload failure logs
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: rust-asan-logs
+          if-no-files-found: ignore
+          path: |
+            *.log
+            suricata-verify/tests/**/output/
+
   fedora-non-root:
     name: Fedora (non-root, debug, clang, asan, wshadow, rust-strict, no-ja)
     runs-on: ubuntu-latest
