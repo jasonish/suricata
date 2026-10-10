@@ -847,6 +847,7 @@ mod tests {
                 ptr::null(),
                 &mut err,
             );
+            assert!(!tree.is_null(), "{:?}", CStr::from_ptr(err));
             assert_eq!(SCConfTreeOverrideCount(tree), 0);
             let mut len = 1;
             assert!(SCConfTreeOverridePath(tree, 0, &mut len).is_null());

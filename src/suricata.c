@@ -524,8 +524,11 @@ static void AddConfigOverride(SCInstance *suri, const char *path, const char *va
     }
     suri->override_values = values;
     paths[n] = SCStrdup(path);
+    if (paths[n] == NULL) {
+        FatalError("Failed to allocate memory for configuration overrides: %s", strerror(errno));
+    }
     values[n] = SCStrdup(value);
-    if (paths[n] == NULL || values[n] == NULL) {
+    if (values[n] == NULL) {
         FatalError("Failed to allocate memory for configuration overrides: %s", strerror(errno));
     }
     paths[n + 1] = NULL;
