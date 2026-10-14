@@ -138,6 +138,7 @@ impl ConfNode {
         }
     }
 
+    /// The value of the node, or an empty string if it has none.
     pub fn value(&self) -> &str {
         let vptr = unsafe { SCConfGetValueNode(self.conf) };
         if vptr.is_null() {
