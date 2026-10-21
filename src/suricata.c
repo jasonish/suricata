@@ -2870,15 +2870,6 @@ int PostConfLoadedSetup(SCInstance *suri)
         LiveSetOffloadWarn();
     }
 
-    const char *cv = NULL;
-    if (SCConfGetNonNull("capture.checksum-validation", &cv) == 1) {
-        if (strcmp(cv, "none") == 0) {
-            SCConfSet("stream.checksum-validation", "0");
-        } else if (strcmp(cv, "all") == 0) {
-            SCConfSet("stream.checksum-validation", "1");
-        }
-    }
-
     SCStorageInit();
 #ifdef HAVE_PACKET_EBPF
     if (suri->run_mode == RUNMODE_AFP_DEV) {
