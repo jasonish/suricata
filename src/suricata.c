@@ -1151,16 +1151,6 @@ static TmEcode ParseInterfacesList(const int runmode, char *pcap_dev)
                 SCReturnInt(TM_ECODE_FAILED);
             }
         }
-    } else if (runmode == RUNMODE_PLUGIN) {
-        if (strcmp(suricata.capture_plugin_name, "pfring") == 0) {
-            /* Special handling for pfring. */
-            if (strlen(pcap_dev)) {
-                if (SCConfSetFinal("pfring.live-interface", pcap_dev) != 1) {
-                    SCLogError("Failed to set pfring.live-interface");
-                    SCReturnInt(TM_ECODE_FAILED);
-                }
-            }
-        }
 #ifdef HAVE_DPDK
     } else if (runmode == RUNMODE_DPDK) {
         char iface_selector[] = "dpdk.interfaces";
@@ -1172,13 +1162,8 @@ static TmEcode ParseInterfacesList(const int runmode, char *pcap_dev)
 #endif
 #ifdef HAVE_AF_PACKET
     } else if (runmode == RUNMODE_AFP_DEV) {
-        /* iface has been set on command line */
-        if (strlen(pcap_dev)) {
-            if (SCConfSetFinal("af-packet.live-interface", pcap_dev) != 1) {
-                SCLogError("Failed to set af-packet.live-interface");
-                SCReturnInt(TM_ECODE_FAILED);
-            }
-        } else {
+        /* no iface on the command line, use the configured ones */
+        if (strlen(pcap_dev) == 0) {
             int ret = LiveBuildDeviceList("af-packet");
             if (ret == 0) {
                 SCLogError("No interface found in config for af-packet");
@@ -1188,13 +1173,8 @@ static TmEcode ParseInterfacesList(const int runmode, char *pcap_dev)
 #endif
 #ifdef HAVE_AF_XDP
     } else if (runmode == RUNMODE_AFXDP_DEV) {
-        /* iface has been set on command line */
-        if (strlen(pcap_dev)) {
-            if (SCConfSetFinal("af-xdp.live-interface", pcap_dev) != 1) {
-                SCLogError("Failed to set af-xdp.live-interface");
-                SCReturnInt(TM_ECODE_FAILED);
-            }
-        } else {
+        /* no iface on the command line, use the configured ones */
+        if (strlen(pcap_dev) == 0) {
             int ret = LiveBuildDeviceList("af-xdp");
             if (ret == 0) {
                 SCLogError("No interface found in config for af-xdp");
@@ -1204,13 +1184,8 @@ static TmEcode ParseInterfacesList(const int runmode, char *pcap_dev)
 #endif
 #ifdef HAVE_NETMAP
     } else if (runmode == RUNMODE_NETMAP) {
-        /* iface has been set on command line */
-        if (strlen(pcap_dev)) {
-            if (SCConfSetFinal("netmap.live-interface", pcap_dev) != 1) {
-                SCLogError("Failed to set netmap.live-interface");
-                SCReturnInt(TM_ECODE_FAILED);
-            }
-        } else {
+        /* no iface on the command line, use the configured ones */
+        if (strlen(pcap_dev) == 0) {
             int ret = LiveBuildDeviceList("netmap");
             if (ret == 0) {
                 SCLogError("No interface found in config for netmap");
@@ -2199,6 +2174,21 @@ TmEcode SCParseCommandLine(int argc, char **argv)
     if (suri->disabled_detect) {
         /* disable raw reassembly */
         AddConfigOverride(suri, "stream.reassembly.raw", "false");
+    }
+
+    /* an interface given on the command line is set as the live
+     * interface of the capture method, which then uses only it */
+    if (strlen(suri->pcap_dev) > 0) {
+        if (suri->run_mode == RUNMODE_PLUGIN &&
+                strcmp(suri->capture_plugin_name, "pfring") == 0) {
+            AddConfigOverride(suri, "pfring.live-interface", suri->pcap_dev);
+        } else if (suri->run_mode == RUNMODE_AFP_DEV) {
+            AddConfigOverride(suri, "af-packet.live-interface", suri->pcap_dev);
+        } else if (suri->run_mode == RUNMODE_AFXDP_DEV) {
+            AddConfigOverride(suri, "af-xdp.live-interface", suri->pcap_dev);
+        } else if (suri->run_mode == RUNMODE_NETMAP) {
+            AddConfigOverride(suri, "netmap.live-interface", suri->pcap_dev);
+        }
     }
 
     /* save the runmode from the command-line (if any) */
