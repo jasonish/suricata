@@ -2232,10 +2232,15 @@ TmEcode SCParseCommandLine(int argc, char **argv)
     suri->offline = IsRunModeOffline(suri->run_mode);
     g_system = suri->system = IsRunModeSystem(suri->run_mode);
 
-    if (!suri->system && !suri->set_logdir) {
-        /* in user mode the log directory defaults to the current
-         * working directory */
-        AddConfigOverride(suri, "default-log-dir", ".");
+    if (!suri->system) {
+        /* in user mode the log and data directories default to the
+         * current working directory */
+        if (!suri->set_logdir) {
+            AddConfigOverride(suri, "default-log-dir", ".");
+        }
+        if (!suri->set_datadir) {
+            AddConfigOverride(suri, "default-data-dir", ".");
+        }
     }
 
     ret = SetBpfString(optind, argv);
@@ -2835,19 +2840,6 @@ static void PostConfLoadedSetupHostMode(void)
     }
 }
 
-static void SetupUserMode(SCInstance *suri)
-{
-    /* apply 'user mode' config updates here */
-    if (!suri->system) {
-        if (!suri->set_datadir) {
-            /* override data dir to current work dir" */
-            if (ConfigSetDataDirectory((char *)".") != TM_ECODE_OK) {
-                FatalError("could not set USER mode datadir");
-            }
-        }
-    }
-}
-
 /**
  * This function is meant to contain code that needs
  * to be run once the configuration has been loaded.
@@ -3166,7 +3158,6 @@ void SuricataInit(void)
         /* Ignore recursion level when comparing flows. */
         g_recurlvl_mask = 0x00;
     }
-    SetupUserMode(&suricata);
     InitRunAs(&suricata);
 
     /* Since our config is now loaded we can finish configuring the

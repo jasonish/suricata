@@ -81,18 +81,6 @@ TmEcode ConfigNormalizeDataDirectory(const char *name, char *out, size_t out_siz
     return TM_ECODE_OK;
 }
 
-TmEcode ConfigSetDataDirectory(char *name)
-{
-    if (strlen(name) == 0)
-        return TM_ECODE_OK;
-
-    char dir[PATH_MAX + 1];
-    if (ConfigNormalizeDataDirectory(name, dir, sizeof(dir)) != TM_ECODE_OK)
-        return TM_ECODE_FAILED;
-
-    return SCConfSetFinal("default-data-dir", dir) ? TM_ECODE_OK : TM_ECODE_FAILED;
-}
-
 const char *ConfigGetDataDirectory(void)
 {
     const char *data_dir = NULL;
