@@ -2232,6 +2232,12 @@ TmEcode SCParseCommandLine(int argc, char **argv)
     suri->offline = IsRunModeOffline(suri->run_mode);
     g_system = suri->system = IsRunModeSystem(suri->run_mode);
 
+    if (!suri->system && !suri->set_logdir) {
+        /* in user mode the log directory defaults to the current
+         * working directory */
+        AddConfigOverride(suri, "default-log-dir", ".");
+    }
+
     ret = SetBpfString(optind, argv);
     if (ret != TM_ECODE_OK)
         return ret;
@@ -2833,12 +2839,6 @@ static void SetupUserMode(SCInstance *suri)
 {
     /* apply 'user mode' config updates here */
     if (!suri->system) {
-        if (!suri->set_logdir) {
-            /* override log dir to current work dir" */
-            if (ConfigSetLogDirectory((char *)".") != TM_ECODE_OK) {
-                FatalError("could not set USER mode logdir");
-            }
-        }
         if (!suri->set_datadir) {
             /* override data dir to current work dir" */
             if (ConfigSetDataDirectory((char *)".") != TM_ECODE_OK) {

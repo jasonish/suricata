@@ -27,7 +27,6 @@
 
 #include "conf.h"
 
-TmEcode ConfigSetLogDirectory(const char *name);
 const char *SCConfigGetLogDirectory(void);
 TmEcode ConfigCheckLogDirectoryExists(const char *log_dir);
 

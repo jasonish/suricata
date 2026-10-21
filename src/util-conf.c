@@ -30,11 +30,6 @@
 #include "util-debug.h"
 #include "util-path.h"
 
-TmEcode ConfigSetLogDirectory(const char *name)
-{
-    return SCConfSetFinal("default-log-dir", name) ? TM_ECODE_OK : TM_ECODE_FAILED;
-}
-
 const char *SCConfigGetLogDirectory(void)
 {
     const char *log_dir = NULL;
