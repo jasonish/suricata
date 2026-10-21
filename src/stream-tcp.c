@@ -565,14 +565,18 @@ void StreamTcpInitConfig(bool quiet)
         SCLogConfig("stream \"async-oneside\": %s", stream_config.async_oneside ? "enabled" : "disabled");
     }
 
-    int csum = 0;
-
-    if ((SCConfGetBool("stream.checksum-validation", &csum)) == 1) {
-        if (csum == 1) {
-            stream_config.flags |= STREAMTCP_INIT_FLAG_CHECKSUM_VALIDATION;
-        }
-    /* Default is that we validate the checksum of all the packets */
-    } else {
+    /* capture.checksum-validation, which -k sets, takes precedence over
+     * stream.checksum-validation. Default is that we validate the
+     * checksum of all the packets. */
+    int csum = 1;
+    const char *capture_csum = NULL;
+    if (SCConfGetNonNull("capture.checksum-validation", &capture_csum) == 1 &&
+            (strcmp(capture_csum, "none") == 0 || strcmp(capture_csum, "all") == 0)) {
+        csum = strcmp(capture_csum, "all") == 0;
+    } else if (SCConfGetBool("stream.checksum-validation", &csum) != 1) {
+        csum = 1;
+    }
+    if (csum) {
         stream_config.flags |= STREAMTCP_INIT_FLAG_CHECKSUM_VALIDATION;
     }
 
