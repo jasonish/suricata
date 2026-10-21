@@ -1766,6 +1766,7 @@ TmEcode SCParseCommandLine(int argc, char **argv)
                 }
             } else if (strcmp((long_opts[option_index]).name, "runmode") == 0) {
                 suri->runmode_custom_mode = optarg;
+                AddConfigOverride(suri, "runmode", optarg);
             } else if (strcmp((long_opts[option_index]).name, "engine-analysis") == 0) {
                 // do nothing for now
             }
@@ -2898,10 +2899,6 @@ int PostConfLoadedSetup(SCInstance *suri)
         case 1:
             SCConfSet("stream.checksum-validation", "1");
             break;
-    }
-
-    if (suri->runmode_custom_mode) {
-        SCConfSet("runmode", suri->runmode_custom_mode);
     }
 
     SCStorageInit();
