@@ -2199,6 +2199,11 @@ TmEcode SCParseCommandLine(int argc, char **argv)
         return TM_ECODE_FAILED;
     }
 
+    if (suri->disabled_detect) {
+        /* disable raw reassembly */
+        AddConfigOverride(suri, "stream.reassembly.raw", "false");
+    }
+
     /* save the runmode from the command-line (if any) */
     suri->aux_run_mode = suri->run_mode;
 
@@ -3034,8 +3039,6 @@ int PostConfLoadedSetup(SCInstance *suri)
 
     if (suri->disabled_detect) {
         SCLogConfig("detection engine disabled");
-        /* disable raw reassembly */
-        (void)SCConfSetFinal("stream.reassembly.raw", "false");
     }
 
     HostInitConfig(HOST_VERBOSE);
