@@ -1258,8 +1258,6 @@ static void SCInstanceInit(SCInstance *suri, const char *progname)
     suri->daemon = 0;
     suri->offline = 0;
     suri->verbose = 0;
-    /* use -1 as unknown */
-    suri->checksum_validation = -1;
 #if HAVE_DETECT_DISABLED==1
     g_detect_disabled = suri->disabled_detect = 1;
 #else
@@ -2176,11 +2174,9 @@ TmEcode SCParseCommandLine(int argc, char **argv)
                 SCLogError("no option argument (optarg) for -k");
                 return TM_ECODE_FAILED;
             }
-            if (!strcmp("all", optarg))
-                suri->checksum_validation = 1;
-            else if (!strcmp("none", optarg))
-                suri->checksum_validation = 0;
-            else {
+            if (strcmp("all", optarg) == 0 || strcmp("none", optarg) == 0) {
+                AddConfigOverride(suri, "capture.checksum-validation", optarg);
+            } else {
                 SCLogError("option '%s' invalid for -k", optarg);
                 return TM_ECODE_FAILED;
             }
@@ -2874,23 +2870,13 @@ int PostConfLoadedSetup(SCInstance *suri)
         LiveSetOffloadWarn();
     }
 
-    if (suri->checksum_validation == -1) {
-        const char *cv = NULL;
-        if (SCConfGetNonNull("capture.checksum-validation", &cv) == 1) {
-            if (strcmp(cv, "none") == 0) {
-                suri->checksum_validation = 0;
-            } else if (strcmp(cv, "all") == 0) {
-                suri->checksum_validation = 1;
-            }
-        }
-    }
-    switch (suri->checksum_validation) {
-        case 0:
+    const char *cv = NULL;
+    if (SCConfGetNonNull("capture.checksum-validation", &cv) == 1) {
+        if (strcmp(cv, "none") == 0) {
             SCConfSet("stream.checksum-validation", "0");
-            break;
-        case 1:
+        } else if (strcmp(cv, "all") == 0) {
             SCConfSet("stream.checksum-validation", "1");
-            break;
+        }
     }
 
     SCStorageInit();

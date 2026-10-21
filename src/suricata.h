@@ -168,7 +168,6 @@ typedef struct SCInstance_ {
     int daemon;
     int offline;
     int verbose;
-    int checksum_validation;
     int output_flush_interval;
 
     struct timeval start_time;
